@@ -51,3 +51,31 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+---
+
+##  Configure commits to track automatically the issues names:
+
+```
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+
+# Ensure BRANCH_NAME is not empty and is not in a detached HEAD state (i.e. rebase).
+# SKIP_PREPARE_COMMIT_MSG may be used as an escape hatch to disable this hook,
+# while still allowing other githooks to run.
+if [ ! -z "$BRANCH_NAME" ] && [ "$BRANCH_NAME" != "HEAD" ] && [ "$SKIP_PREPARE_COMMIT_MSG" != 1 ]; then
+
+  PREFIX_PATTERN='[A-Z]{2,9}-[0-9]{1,9}'
+
+  [[ $BRANCH_NAME =~ $PREFIX_PATTERN ]]
+
+  PREFIX=${BASH_REMATCH[0]}
+
+  PREFIX_IN_COMMIT=$(grep -c "$PREFIX\:" $1)
+
+  # Ensure PREFIX exists in BRANCH_NAME and is not already present in the commit message
+  if [[ -n "$PREFIX" ]] && [ $PREFIX_IN_COMMIT -le 0 ]; then
+    sed -i.bak -e "1s~^~$PREFIX: ~" $1
+  fi
+
+fi
+```
