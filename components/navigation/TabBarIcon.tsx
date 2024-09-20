@@ -1,9 +1,20 @@
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
+import * as Icons from 'lucide-react-native';
+import React from 'react';
 
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { type IconProps } from '@expo/vector-icons/build/createIconSet';
-import { type ComponentProps } from 'react';
+type TabBarIconProps = {
+  name: keyof typeof Icons;
+  color: string;
+  size?: number;
+  style?: any;
+};
 
-export function TabBarIcon({ style, ...rest }: IconProps<ComponentProps<typeof Ionicons>['name']>) {
-  return <Ionicons size={28} style={[{ marginBottom: -3 }, style]} {...rest} />;
+export function TabBarIcon({ name, color, size = 28, style, ...rest }: TabBarIconProps) {
+  const IconComponent = Icons[name] as React.ElementType;
+
+  if (!IconComponent) {
+    console.warn(`Icon "${name}" not found in lucide-react-native`);
+    return null;
+  }
+
+  return <IconComponent color={color} size={size} style={[{ marginBottom: -3 }, style]} {...rest} />;
 }

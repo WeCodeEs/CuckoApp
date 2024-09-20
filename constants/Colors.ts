@@ -3,24 +3,39 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+// Constant colors that follows the Cucko Manual Document.
+// #000000 #183542 #0B818F #139FAA #49BCCE #B3E1E4 #F07122
+
+const textColorLight = '#000000';
+const backgroundColorLight = '#fff';
+const tintColorLight = '#0B818F';
+const iconColorLight = '#183542';
+const tabIconDefaultColorLight = '#139FAA';
+const tabIconSelectedColorLight = '#F07122';
+
+
+const textColorDark = '#ECEDEE';
+const backgroundColorDark = '#151718';
+const tintColorDark = '#0B818F';
+const iconColorDark = '#9BA1A6';
+const tabIconDefaultColorDark = '#9BA1A6';
+const tabIconSelectedColorDark = '#F07122';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: textColorLight,
+    background: backgroundColorLight,
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    icon: iconColorLight,
+    tabIconDefault: tabIconDefaultColorLight,
+    tabIconSelected: tabIconSelectedColorLight,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
+    text: textColorDark,
+    background: backgroundColorDark,
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    icon: iconColorDark,
+    tabIconDefault: tabIconDefaultColorDark,
+    tabIconSelected: tabIconSelectedColorDark,
   },
 };

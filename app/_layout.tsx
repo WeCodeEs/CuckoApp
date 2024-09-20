@@ -13,10 +13,14 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    PoppinsBold: require("../assets/fonts/Poppins/Poppins-ExtraBold.ttf"),
+    PoppinsMedium: require("../assets/fonts/Poppins/Poppins-Medium.ttf"),
+    PoppinsRegular: require("../assets/fonts/Poppins/Poppins-Regular.ttf"),
   });
 
   useEffect(() => {
@@ -30,8 +34,8 @@ export default function RootLayout() {
   }
 
   return (
-    <GluestackUIProvider  mode="light">
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <GluestackUIProvider mode="light">
+      <ThemeProvider value={colorScheme === "light" ? DefaultTheme : DarkTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
