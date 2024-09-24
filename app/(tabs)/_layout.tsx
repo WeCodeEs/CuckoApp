@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-// import { CustomHeader } from '@/components/CustomHeader';
+import { CustomHeader } from '@/components/CustomHeader';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -19,7 +19,7 @@ export default function TabLayout() {
         //Muestra u oculta el header
         // headerShown: false,
         //Muestra un header personalizado
-        // header: () => <CustomHeader />,
+        header: () => <CustomHeader />,
       }}>
       <Tabs.Screen
         //Define a qué vista se redirigirá cuando se de clic sobre la tab
