@@ -13,7 +13,7 @@ export function CustomHeader() {
   return (
     <>
     {/* Oculta la status bar */}
-    <StatusBar hidden={true}/>
+    {/* <StatusBar hidden={true}/> */}
     {/* Este componente hace que todo comience a renderizarse una 
     vez termina la StatusBar */}
     <SafeAreaView style={styles.container}>
@@ -48,7 +48,7 @@ export function CustomHeader() {
 const styles = StyleSheet.create({
   container: {
     height: Platform.OS === 'ios' ? 130 : 115,
-    paddingTop: Platform.OS === 'ios' ? 0 : 50,
+    paddingTop: Platform.OS === 'ios' ? 0 : 40,
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
