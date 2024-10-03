@@ -12,10 +12,6 @@ export function CustomHeader() {
 
   return (
     <>
-    {/* Oculta la status bar */}
-    {/* <StatusBar hidden={true}/> */}
-    {/* Este componente hace que todo comience a renderizarse una 
-    vez termina la StatusBar */}
     <SafeAreaView style={styles.container}>
         <Box className="w-full h-full flex flex-row justify-center items-center">
             <Box className="w-3/4 flex items-center">

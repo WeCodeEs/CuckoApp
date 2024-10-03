@@ -12,25 +12,16 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        //Indica el color de una tab cuando está activa o no
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tabIconSelected,
-        //Oculta el "title" de cada tabIcon
         tabBarShowLabel: false,
-        //Muestra u oculta el header
-        // headerShown: false,
-        //Muestra un header personalizado
         header: () => <CustomHeader />,
       }}>
       <Tabs.Screen
-        //Define a qué vista se redirigirá cuando se de clic sobre la tab
         name="(home)"
         options={{
-          //Define el texto que se mostrará debajo del ícono
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
-            //Define el ícono que se mostrará
             <TabBarIcon name={focused ? 'House' : 'House'} color={color} />
-            //Los nombres de ícono compuestos no usan guiones, sino CammelCase
           ),
         }}
       />
