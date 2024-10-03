@@ -6,6 +6,7 @@ import { Image } from '@/components/ui/image';
 import { Divider } from '@/components/ui/divider';
 import { Avatar,AvatarBadge,AvatarFallbackText,AvatarImage } from '@/components/ui/avatar';
 import { Box } from '@/components/ui/box';
+import { HStack } from './ui/hstack';
 
 export function CustomHeader() {
   const navigation = useNavigation();
@@ -13,7 +14,8 @@ export function CustomHeader() {
   return (
     <>
     <SafeAreaView style={styles.container}>
-        <Box className="w-full h-full flex flex-row justify-center items-center">
+        <HStack className="justify-between items-center px-2 py-2 bg-white w-full">
+            <Box className="w-12 h-12"/>
             <Box className="w-3/4 flex items-center">
                 <Image 
                     className="rounded-full w-2/3 h-full"
@@ -23,8 +25,8 @@ export function CustomHeader() {
                     resizeMode="contain"
                 />
             </Box>
-            <Box className="mr-2 absolute right-0 justify-center">
-                <Avatar size="md" >
+            <Box className="h-12 w-12">
+                <Avatar className="w-full h-full" >
                     <AvatarFallbackText>Carlos Gonzalez</AvatarFallbackText>
                     <AvatarImage
                     source={{
@@ -34,7 +36,7 @@ export function CustomHeader() {
                     <AvatarBadge />
                 </Avatar>
             </Box>
-        </Box>
+        </HStack>
       <Divider/>
     </SafeAreaView>
     </>
