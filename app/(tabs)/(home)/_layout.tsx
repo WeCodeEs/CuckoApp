@@ -1,11 +1,14 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import MenuScreen  from '@/screens/MenuScreen'
+import { Stack } from 'expo-router';
 
-
-export default function TabLayout() {
+export default function HomeStack() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <MenuScreen />
-    </SafeAreaView>
+    <Stack
+      screenOptions={{
+        headerShown: false,                
+      }}
+    >
+      <Stack.Screen name="index" options={{ title: 'Home' }} />
+      <Stack.Screen name="detail_product" options={{ title: 'Details' }} />
+    </Stack>
   );
 }

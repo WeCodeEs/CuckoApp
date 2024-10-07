@@ -1,73 +1,41 @@
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
-import { Heading } from "@/components/ui/heading";
 import { View } from "@/components/ui/view";
-import { Divider } from '@/components/ui/divider';
-import {
-  Button,
-  ButtonText,
-  ButtonSpinner,
-  ButtonIcon,
-  ButtonGroup,
-} from "@/components/ui/button";
-import { Input, InputField } from "@/components/ui/input";
-import * as SplashScreen from "expo-splash-screen";
+import { Button, ButtonText } from "@/components/ui/button";
+import { Image } from "@/components/ui/image";
 import { StyleSheet } from "react-native";
 import { Center } from "@/components/ui/center";
-import { Box } from "@/components/ui/box";
-import { ArrowLeft } from "lucide-react-native";
+import { useNavigation } from '@react-navigation/native';
 
-SplashScreen.preventAutoHideAsync();
+const platillos = [
+  { id: 1, nombre: 'Ensalada Cajún', imagen: require('@/assets/images/platillos/ensalada_cajun.png'), precio: '$55.00' },
+  { id: 2, nombre: 'Ensalada Curry', imagen: require('@/assets/images/platillos/ensalada_curry.png'), precio: '$55.00' },
+  { id: 3, nombre: 'Baguette', imagen: require('@/assets/images/platillos/baguette.png'), precio: '$55.00' },
+  { id: 4, nombre: 'Croissant', imagen: require('@/assets/images/platillos/croissant.png'), precio: '$55.00' },
+];
 
 const MenuScreen = () => {
+  const navigation = useNavigation();
+
   return (
-    <View className="p-5">
-      <Center>
-        <Box className="p-5 max-w-96 border border-background-300 rounded-lg">
-          <VStack className="pb-4" space="xs">
-            <Heading size={"3xl"} >Ejemplo titulo H1</Heading>
-            <Heading size={"2xl"} >Ejemplo titulos H2</Heading>
-            <Heading size={"xl"} >Ejemplo titulos H3</Heading>
-            <Heading size={"lg"} >Ejemplo titulos H4</Heading>
-            <Heading size={"md"} >Ejemplo titulos H5</Heading>
-            <Heading size={"sm"} >Ejemplo titulos H6</Heading>
-
-            <Divider />
-
-            <Text size={"sm"}>Ejemplo texto sm</Text>
-            <Text size={"md"}>Ejemplo texto md</Text>
-            <Text size={"lg"}>Ejemplo texto lg</Text>
-            <Text size={"xl"}>Ejemplo texto xl</Text>
-            <Text size={"2xl"}>Ejemplo texto 2xl</Text>
-            <Text size={"3xl"}>Ejemplo texto 3xl</Text>
-
-            <Divider />
-
-            <Text className="text-sm">
-              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-              nonummy nibh euismod tincidunt ut laoreet dolore magna{" "}
-            </Text>
-          </VStack>
-          <VStack space="xl" className="py-2">
-            <Input>
-              <InputField className="py-2" placeholder="Ejemplo de input" />
-            </Input>
-          </VStack>
-          <VStack space="lg" className="pt-4">
-            <Button size="sm">
-              <ButtonText>Hello World!</ButtonText>
+    <Center className="bg-white h-full w-full" style={styles.container}>
+      <View className="flex flex-row flex-wrap justify-around" style={styles.grid}>
+        {platillos.map(platillo => (
+          <VStack key={platillo.id} className="items-center mb-4" style={styles.itemContainer}>
+            <Image source={platillo.imagen} alt="imagen" className="w-24 h-24 rounded-full" />
+            <Text size="lg" className="mt-2">{platillo.nombre}</Text>
+            <Text size="lg" className="mt-1 font-semibold text-orange-500">{platillo.precio}</Text>
+            <Button
+              size="xl"
+              className="mt-2 bg-blue-500 p-2 rounded-full"
+              onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}
+            >
+              <ButtonText className="text-white text-xl">+</ButtonText>
             </Button>
-            <Box className="flex flex-row">
-              <Button variant="link" size="sm" className="p-0">
-                {/* ArrowLeftIcon is imported from 'lucide-react-native' */}
-                <ButtonIcon className="mr-1" size="md" as={ArrowLeft} />
-                <ButtonText>de regreso?</ButtonText>
-              </Button>
-            </Box>
           </VStack>
-        </Box>
-      </Center>
-    </View>
+        ))}
+      </View>
+    </Center>
   );
 };
 
@@ -76,7 +44,16 @@ export default MenuScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#fff',
+  },
+  grid: {
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  itemContainer: {
+    width: '45%',
+    alignItems: 'center',
   },
 });
