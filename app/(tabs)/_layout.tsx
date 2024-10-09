@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import { CustomHeader } from '@/components/CustomHeader';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -12,7 +13,8 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tabIconSelected,
-        headerShown: false,
+        tabBarShowLabel: false,
+        header: () => <CustomHeader />,
       }}>
       <Tabs.Screen
         name="(home)"
@@ -26,9 +28,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="favorites"
         options={{
-          title: 'Favs',
+          title: 'Favoritos',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'Heart' : 'Heart'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="cart"
+        options={{
+          title: 'Carrito',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'ShoppingCart' : 'ShoppingCart'} color={color} />
           ),
         }}
       />
