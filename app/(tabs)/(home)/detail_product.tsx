@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
 import { Image } from "@/components/ui/image";
-import { Icon, ClockIcon, AddIcon, RemoveIcon, CheckIcon } from "@/components/ui/icon";
+import { Icon, ClockIcon, AddIcon, RemoveIcon, CheckIcon, FavouriteIcon } from "@/components/ui/icon";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { StyleSheet, ScrollView } from "react-native";
 import { Center } from "@/components/ui/center";
@@ -11,9 +11,11 @@ import Constants from 'expo-constants';
 import { Checkbox, CheckboxIcon, CheckboxLabel, CheckboxIndicator } from "@/components/ui/checkbox";
 import { RouteProp } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
+import { Heart, ChevronLeft } from "lucide-react-native";
+import { useNavigation } from '@react-navigation/native';
 
 type RootStackParamList = {
-  Detail_product: { platilloId: number };
+    Detail_product: { platilloId: number };
 };
 
 type DetailProductRouteProp = RouteProp<RootStackParamList, 'Detail_product'>;
@@ -64,10 +66,20 @@ const imagenes: { [key: number]: any } = {
     4: require("@/assets/images/platillos/croissant.png"),
 };
 
-export default function Detail_product( ) {
+export default function Detail_product() {
+    const navigation = useNavigation();
     const route = useRoute<DetailProductRouteProp>();
     const { platilloId } = route.params;
     const platillo = platillos.find(p => p.id === platilloId);
+    const [isFavourite, setIsFavourite] = useState(false);
+
+    const handlePress = () => {
+        setIsFavourite(!isFavourite);
+    };
+
+    const stackBack = () => {
+        navigation.goBack(); 
+      };
 
     if (!platillo) {
         return (
@@ -88,27 +100,35 @@ export default function Detail_product( ) {
 
     const disminuirCantidad = () => {
         if (cantidad > 1) {
-        const nuevaCantidad = cantidad - 1;
-        setCantidad(nuevaCantidad);
-        setPrecioTotal(nuevaCantidad * platillo.precio);
+            const nuevaCantidad = cantidad - 1;
+            setCantidad(nuevaCantidad);
+            setPrecioTotal(nuevaCantidad * platillo.precio);
         }
     };
 
     return (
         <ScrollView contentContainerStyle={styles.scrollContent}>
             <Center style={styles.header_container}>
-                <View style={{ bottom: '-45%' }}>
-                    <Text style={{ textAlign: 'center', color: '#fff', marginBottom: 5 }}>Detalles</Text>
+                <View style={{ bottom: '-50%', borderColor: '#000', borderWidth: 0, width: '100%', alignItems: 'center'}}>
+                    <View style={{marginTop:'2%', flexDirection:'row', height: '12%', width: '100%', borderColor: '#000', borderWidth: 0, alignItems: 'center', justifyContent:'space-between', paddingHorizontal: 17.5, zIndex: 2, position: 'absolute'}}>
+                        <Button size="md" style={{backgroundColor: "#fff" ,aspectRatio: '1/1', borderRadius: 100}} onPress={stackBack}>
+                            <ChevronLeft size={25} color="#000"/>
+                        </Button>
+                        <Button size="md" style={{backgroundColor: "#fff", aspectRatio: '1/1', borderRadius: 100}} onPress={handlePress}>
+                            <Heart size={20} color="#000" fill={isFavourite ? '#000' : 'none'}/>
+                        </Button>
+                    </View>
+                    {/* <Text style={{ textAlign: 'center', color: '#fff', marginBottom: 5 }}>Detalles</Text> */}
                     <Image source={imagenes[platillo.id]} alt={platillo.nombre} size="2xl" />
                 </View>
             </Center>
             <Center style={styles.general_container}>
                 <Box style={styles.content_box} className="p-5 max-w-250 border border-background-300">
                     <Text style={styles.title} className="text-center" size={"2xl"}>{platillo.nombre}</Text>
-                    <View style={styles.time} className="flex items-center justify-center">
-                        <Icon as={ClockIcon} className="text-typography-500 w-5 h-5" />
+                    {/* <View style={styles.time} className="flex items-center justify-center">
+                        <Icon as={ClockIcon} className="text-typography-500 w-5 h-5"/>
                         <Text size={"md"} style={{ justifyContent: 'flex-end', paddingLeft: 7, paddingTop: '0.65%' }}>{platillo.tiempo}</Text>
-                    </View>
+                    </View> */}
                     <Center style={{ flexDirection: 'row' }}>
                         <Text className="text-center font-bold" style={styles.price} size={"2xl"}>${precioTotal.toFixed(2)}</Text>
                         <Center style={styles.amount}>
@@ -195,8 +215,11 @@ const styles = StyleSheet.create({
     header_container: {
         zIndex: 1,
         width: '100%',
-        height: 190,
+        //18%
+        height: 160,
         backgroundColor: '#F07122',
+        borderColor: "#000",
+        borderWidth: 0,
     },
     general_container: {
         backgroundColor: '#F07122',
@@ -214,7 +237,8 @@ const styles = StyleSheet.create({
     title: {
         top: 'auto',
         marginTop: '25%',
-        padding: 10,
+        paddingTop: 10,
+        paddingBottom: 30,
         paddingHorizontal: 50,
     },
     time: {
@@ -255,6 +279,13 @@ const styles = StyleSheet.create({
         textAlignVertical: 'top',
         paddingRight: 25,
     },
+    btns_container: {
+        borderColor: '#000',
+        //borderWidth: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     cart_btn: {
         alignSelf: 'center',
         width: '85%',
@@ -262,5 +293,6 @@ const styles = StyleSheet.create({
         paddingVertical: 18,
         height: 'auto',
         backgroundColor: '#F07122',
+        marginRight: '3%',
     },
 });
