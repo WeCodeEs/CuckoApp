@@ -13,58 +13,13 @@ import { RouteProp } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import { Heart, ChevronLeft } from "lucide-react-native";
 import { useNavigation } from '@react-navigation/native';
+import { platillos, imagenes } from './platillos';
 
 type RootStackParamList = {
     Detail_product: { platilloId: number };
 };
 
 type DetailProductRouteProp = RouteProp<RootStackParamList, 'Detail_product'>;
-
-const platillos = [
-    {
-        id: 1,
-        nombre: "Ensalada Cajún",
-        tiempo: "30 min",
-        precio: 55,
-        personalizable: true,
-        ingredientes: ["Pollo", "Lechuga", "Tomate", "Pimiento", "Cebolla", "Zanahoria"],
-        descripcion: "Mezcla de lechugas, tomate y cebolla con pollo sazonado al estilo cajún, acompañado de pimientos frescos y zanahoria."
-    },
-    {
-        id: 2,
-        nombre: "Ensalada Curry con nuez de la India",
-        tiempo: "30 min",
-        precio: 55,
-        personalizable: true,
-        ingredientes: ["Pollo", "Lechuga", "Calabaza", "Pimiento", "Zanahoria", "Nuez de la India"],
-        descripcion: "Lechugas frescas, zanahoria, calabacitas y pimiento rojo con pechuga de pollo asada en salsa curry y nuez de la India. Servida con nuestro aderezo de temporada Curry Ranch."
-    },
-    {
-        id: 3,
-        nombre: "Baguette",
-        tiempo: "30 min",
-        precio: 55,
-        personalizable: false,
-        ingredientes: [],
-        descripcion: "Crujiente baguette relleno de jamón, queso, lechuga, tomate y aderezo de mostaza."
-    },
-    {
-        id: 4,
-        nombre: "Croissant",
-        tiempo: "30 min",
-        precio: 55,
-        personalizable: false,
-        ingredientes: [],
-        descripcion: "Croissant horneado relleno de jamón, queso suizo y un toque de mantequilla."
-    }
-];
-
-const imagenes: { [key: number]: any } = {
-    1: require("@/assets/images/platillos/ensalada_cajun.png"),
-    2: require("@/assets/images/platillos/ensalada_curry.png"),
-    3: require("@/assets/images/platillos/baguette.png"),
-    4: require("@/assets/images/platillos/croissant.png"),
-};
 
 export default function Detail_product() {
     const navigation = useNavigation();
@@ -110,33 +65,28 @@ export default function Detail_product() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
             <Center style={styles.header_container}>
                 <View style={{ bottom: '-50%', borderColor: '#000', borderWidth: 0, width: '100%', alignItems: 'center'}}>
-                    <View style={{marginTop:'2%', flexDirection:'row', height: '12%', width: '100%', borderColor: '#000', borderWidth: 0, alignItems: 'center', justifyContent:'space-between', paddingHorizontal: 17.5, zIndex: 2, position: 'absolute'}}>
-                        <Button size="md" style={{backgroundColor: "#fff" ,aspectRatio: '1/1', borderRadius: 100}} onPress={stackBack}>
+                    <View style={styles.header_btns}>
+                        <Button size="md" style={styles.header_btn} onPress={stackBack}>
                             <ChevronLeft size={25} color="#000"/>
                         </Button>
-                        <Button size="md" style={{backgroundColor: "#fff", aspectRatio: '1/1', borderRadius: 100}} onPress={handlePress}>
+                        <Button size="md" style={styles.header_btn} onPress={handlePress}>
                             <Heart size={20} color="#000" fill={isFavourite ? '#000' : 'none'}/>
                         </Button>
                     </View>
-                    {/* <Text style={{ textAlign: 'center', color: '#fff', marginBottom: 5 }}>Detalles</Text> */}
                     <Image source={imagenes[platillo.id]} alt={platillo.nombre} size="2xl" />
                 </View>
             </Center>
             <Center style={styles.general_container}>
-                <Box style={styles.content_box} className="p-5 max-w-250 border border-background-300">
-                    <Text style={styles.title} className="text-center" size={"2xl"}>{platillo.nombre}</Text>
-                    {/* <View style={styles.time} className="flex items-center justify-center">
-                        <Icon as={ClockIcon} className="text-typography-500 w-5 h-5"/>
-                        <Text size={"md"} style={{ justifyContent: 'flex-end', paddingLeft: 7, paddingTop: '0.65%' }}>{platillo.tiempo}</Text>
-                    </View> */}
+                <Box style={styles.content_box}>
+                    <Text style={styles.title} size={"2xl"}>{platillo.nombre}</Text>
                     <Center style={{ flexDirection: 'row' }}>
-                        <Text className="text-center font-bold" style={styles.price} size={"2xl"}>${precioTotal.toFixed(2)}</Text>
+                        <Text style={styles.price} size={"2xl"}>${precioTotal.toFixed(2)}</Text>
                         <Center style={styles.amount}>
-                            <Button size="lg" onPress={disminuirCantidad} className="rounded-full p-3.5 h-10 w-10" style={{ backgroundColor: '#F4F5F6' }}>
+                            <Button size="md" onPress={disminuirCantidad} style={styles.amount_btn}>
                                 <ButtonIcon as={RemoveIcon} stroke="#707070" />
                             </Button>
-                            <Text className="text-center font-bold" size={"xl"}>{cantidad}</Text>
-                            <Button size="lg" onPress={aumentarCantidad} className="rounded-full p-3.5 h-10 w-10" style={{ backgroundColor: '#F4F5F6' }}>
+                            <Text style={{alignItems: 'center'}} size={"xl"}>{cantidad}</Text>
+                            <Button size="md" onPress={aumentarCantidad} style={styles.amount_btn}>
                                 <ButtonIcon as={AddIcon} stroke="#707070" />
                             </Button>
                         </Center>
@@ -192,8 +142,8 @@ export default function Detail_product() {
                         </>
                     )}
                     <Text size={"xl"} style={styles.subtitle}>Descripción</Text>
-                    <Text size={"sm"} className="text-left" style={{ justifyContent: 'flex-end' }}>{platillo.descripcion}</Text>
-                    <Button size="sm" className="rounded-full" style={styles.cart_btn}>
+                    <Text size={"sm"} style={{ justifyContent: 'flex-end', textAlign: 'left' }}>{platillo.descripcion}</Text>
+                    <Button size="sm" style={styles.cart_btn}>
                         <ButtonText>AGREGAR AL CARRITO</ButtonText>
                     </Button>
                 </Box>
@@ -221,12 +171,33 @@ const styles = StyleSheet.create({
         borderColor: "#000",
         borderWidth: 0,
     },
+    header_btns: {
+        marginTop:'2%', 
+        flexDirection:'row', 
+        height: '12%', 
+        width: '100%', 
+        borderColor: '#000', 
+        borderWidth: 0, 
+        alignItems: 'center', 
+        justifyContent:'space-between', 
+        paddingHorizontal: 17.5, 
+        zIndex: 2, 
+        position: 'absolute'
+    },
+    header_btn: {
+        backgroundColor: "#fff" ,
+        aspectRatio: '1/1', 
+        borderRadius: 100,
+    },
     general_container: {
         backgroundColor: '#F07122',
         width: '100%',
         height: 'auto',
     },
     content_box: {
+        padding: 20,
+        borderWidth: 1,
+        borderColor: '#d1d5db',
         backgroundColor: '#fff',
         height: 'auto',
         width: '100%',
@@ -240,6 +211,7 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 30,
         paddingHorizontal: 50,
+        textAlign: 'center',
     },
     time: {
         flexDirection: 'row',
@@ -250,11 +222,19 @@ const styles = StyleSheet.create({
     price: {
         color: '#F07122',
         marginRight: 20,
+        textAlign: 'center',
+        fontWeight: 'bold',
     },
     amount: {
         flexDirection: 'row',
         width: '30%',
         justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    amount_btn:{
+        backgroundColor: '#F4F5F6',
+        borderRadius: 100,  
+        aspectRatio: '1/1',
     },
     subtitle: {
         paddingTop: 30,
@@ -280,8 +260,6 @@ const styles = StyleSheet.create({
         paddingRight: 25,
     },
     btns_container: {
-        borderColor: '#000',
-        //borderWidth: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -294,5 +272,6 @@ const styles = StyleSheet.create({
         height: 'auto',
         backgroundColor: '#F07122',
         marginRight: '3%',
+        borderRadius: 50,
     },
 });
