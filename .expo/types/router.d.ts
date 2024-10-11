@@ -6,7 +6,7 @@ export * from 'expo-router';
 declare module 'expo-router' {
   export namespace ExpoRouter {
     export interface __routes<T extends string = string> extends Record<string, unknown> {
-      StaticRoutes: `/` | `/(home)` | `/(home)/` | `/(home)/detail_product` | `/(home)/details` | `/(tabs)` | `/(tabs)/` | `/(tabs)/(home)` | `/(tabs)/(home)/` | `/(tabs)/(home)/detail_product` | `/(tabs)/(home)/details` | `/(tabs)/detail_product` | `/(tabs)/details` | `/(tabs)/favorites` | `/(tabs)\(home)\platillos` | `/_sitemap` | `/detail_product` | `/details` | `/favorites`;
+      StaticRoutes: `/` | `/(home)` | `/(home)/` | `/(home)/DetailProduct` | `/(home)/details` | `/(home)/platillos` | `/(tabs)` | `/(tabs)/` | `/(tabs)/(home)` | `/(tabs)/(home)/` | `/(tabs)/(home)/DetailProduct` | `/(tabs)/(home)/details` | `/(tabs)/(home)/platillos` | `/(tabs)/DetailProduct` | `/(tabs)/details` | `/(tabs)/favorites` | `/(tabs)/platillos` | `/(tabs)\(home)\detail_product` | `/DetailProduct` | `/_sitemap` | `/details` | `/favorites` | `/platillos`;
       DynamicRoutes: never;
       DynamicRouteTemplate: never;
     }

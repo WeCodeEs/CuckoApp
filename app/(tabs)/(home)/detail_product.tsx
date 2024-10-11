@@ -21,7 +21,7 @@ type RootStackParamList = {
 
 type DetailProductRouteProp = RouteProp<RootStackParamList, 'Detail_product'>;
 
-export default function Detail_product() {
+const Detail_product = () => {
     const navigation = useNavigation();
     const route = useRoute<DetailProductRouteProp>();
     const { platilloId } = route.params;
@@ -143,14 +143,21 @@ export default function Detail_product() {
                     )}
                     <Text size={"xl"} style={styles.subtitle}>Descripción</Text>
                     <Text size={"sm"} style={{ justifyContent: 'flex-end', textAlign: 'left' }}>{platillo.descripcion}</Text>
-                    <Button size="sm" style={styles.cart_btn}>
-                        <ButtonText>AGREGAR AL CARRITO</ButtonText>
-                    </Button>
+                    <View style={{flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}>
+                        <Button size="sm" style={[styles.cart_btn,{width: '85%', marginRight: 15}]}>
+                            <ButtonText>AGREGAR AL CARRITO</ButtonText>
+                        </Button>
+                        <Button size="lg" style={[styles.header_btn,{borderColor: '#F07122', borderWidth: 1, backgroundColor: "#F07122"}]} onPress={handlePress}>
+                                <Heart size={20} color="#fff" fill={isFavourite ? '#fff' : 'none'}/>
+                        </Button>
+                    </View>                    
                 </Box>
             </Center>
         </ScrollView>
     );
 }
+
+export default Detail_product;
 
 const styles = StyleSheet.create({
     container: {
@@ -265,13 +272,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     cart_btn: {
-        alignSelf: 'center',
+        //alignSelf: 'center',
         width: '85%',
         marginVertical: 30,
-        paddingVertical: 18,
-        height: 'auto',
+        paddingVertical: 10,
+        //height: 'auto',
+        height: '45%',
         backgroundColor: '#F07122',
         marginRight: '3%',
         borderRadius: 50,
+        alignItems: 'center',
     },
 });
