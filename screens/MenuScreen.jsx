@@ -13,112 +13,123 @@ import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
 import { useState } from "react";
 import platillos from '../constants/platillos';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const MenuScreen = () => {
   const [activeButton, setActiveButton] = useState("comida");
 
   return (
-    <Center style={styles.center}>
-      <Box style={styles.box}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-            <View style={styles.spaceAbove}></View>
-            
-          <VStack style={styles.vStack}>
-            <Box style={styles.headingBox}>
-              <Heading size={"lg"} bold="false" style={styles.headingLeft}>
-                ¿Qué te gustaría{'\n'}comer hoy?
-              </Heading>
-            </Box>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollViewContent}>
+        <Center style={styles.center}>
+          <Box style={styles.box}>
+            <VStack style={styles.vStack}>
+              <Box style={styles.headingBox}>
+                <Heading size={"lg"} bold="false" style={styles.headingLeft}>
+                  ¿Qué te gustaría{'\n'}comer hoy?
+                </Heading>
+              </Box>
 
-            <Input size="xl" style={styles.inputContainer}>
-              <InputSlot>
-                <Icon as={Search} size="md" />
-              </InputSlot>
-              <InputField
-                style={styles.inputFieldLarge}
-                placeholder="Buscar"
-              />
-            </Input>
+              <Input size="xl" style={styles.inputContainer}>
+                <InputSlot>
+                  <Icon as={Search} size="md" />
+                </InputSlot>
+                <InputField
+                  style={styles.inputFieldLarge}
+                  placeholder="Buscar"
+                />
+              </Input>
 
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-              <HStack space="sm" style={styles.buttonRow}>
-                <VStack alignItems="center">
-                  <Button onPress={() => setActiveButton("comida")} variant="link">
-                    <Box style={[styles.iconContainer, activeButton === "comida" && styles.activeIconContainer]}>
-                      <Icon as={ChefHat} size="20" />
-                    </Box>
-                  </Button>
-                  <Text style={styles.activeButtonText}>Comida</Text>
-                </VStack>
-                <VStack alignItems="center">
-                  <Button onPress={() => setActiveButton("snacks")} variant="link">
-                    <Box style={[styles.iconContainer, activeButton === "snacks" && styles.activeIconContainer]}>
-                      <Icon as={Sandwich} size="20" />
-                    </Box>
-                  </Button>
-                  <Text style={styles.activeButtonText}>Snacks</Text>
-                </VStack>
-                <VStack alignItems="center">
-                  <Button onPress={() => setActiveButton("ensaladas")} variant="link">
-                    <Box style={[styles.iconContainer, activeButton === "ensaladas" && styles.activeIconContainer]}>
-                      <Icon as={Salad} size="20" />
-                    </Box>
-                  </Button>
-                  <Text style={styles.activeButtonText}>Ensaladas</Text>
-                </VStack>
-                <VStack alignItems="center">
-                  <Button onPress={() => setActiveButton("platillos")} variant="link">
-                    <Box style={[styles.iconContainer, activeButton === "platillos" && styles.activeIconContainer]}>
-                      <Icon as={ForkKnife} size="20" />
-                    </Box>
-                  </Button>
-                  <Text style={styles.activeButtonText}>Platillos</Text>
-                </VStack>
-                <VStack alignItems="center">
-                  <Button onPress={() => setActiveButton("cafe")} variant="link">
-                    <Box style={[styles.iconContainer, activeButton === "cafe" && styles.activeIconContainer]}>
-                      <Icon as={Coffee} size="20" />
-                    </Box>
-                  </Button>
-                  <Text style={styles.activeButtonText}>Café</Text>
-                </VStack>
-                <VStack alignItems="center">
-                  <Button onPress={() => setActiveButton("limonadas")} variant="link">
-                    <Box style={[styles.iconContainer, activeButton === "limonadas" && styles.activeIconContainer]}>
-                      <Icon as={GlassWater} size="20" />
-                    </Box>
-                  </Button>
-                  <Text style={styles.activeButtonText}>Limonadas</Text>
-                </VStack>
-              </HStack>
-            </ScrollView>
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                <HStack space="sm" style={styles.buttonRow}>
+                  <VStack alignItems="center">
+                    <Button onPress={() => setActiveButton("comida")} variant="link">
+                      <Box style={[styles.iconContainer, activeButton === "comida" && styles.activeIconContainer]}>
+                        <Icon as={ChefHat} size="20" />
+                      </Box>
+                    </Button>
+                    <Text style={styles.activeButtonText}>Comida</Text>
+                  </VStack>
+                  <VStack alignItems="center">
+                    <Button onPress={() => setActiveButton("snacks")} variant="link">
+                      <Box style={[styles.iconContainer, activeButton === "snacks" && styles.activeIconContainer]}>
+                        <Icon as={Sandwich} size="20" />
+                      </Box>
+                    </Button>
+                    <Text style={styles.activeButtonText}>Snacks</Text>
+                  </VStack>
+                  <VStack alignItems="center">
+                    <Button onPress={() => setActiveButton("ensaladas")} variant="link">
+                      <Box style={[styles.iconContainer, activeButton === "ensaladas" && styles.activeIconContainer]}>
+                        <Icon as={Salad} size="20" />
+                      </Box>
+                    </Button>
+                    <Text style={styles.activeButtonText}>Ensaladas</Text>
+                  </VStack>
+                  <VStack alignItems="center">
+                    <Button onPress={() => setActiveButton("platillos")} variant="link">
+                      <Box style={[styles.iconContainer, activeButton === "platillos" && styles.activeIconContainer]}>
+                        <Icon as={ForkKnife} size="20" />
+                      </Box>
+                    </Button>
+                    <Text style={styles.activeButtonText}>Platillos</Text>
+                  </VStack>
+                  <VStack alignItems="center">
+                    <Button onPress={() => setActiveButton("cafe")} variant="link">
+                      <Box style={[styles.iconContainer, activeButton === "cafe" && styles.activeIconContainer]}>
+                        <Icon as={Coffee} size="20" />
+                      </Box>
+                    </Button>
+                    <Text style={styles.activeButtonText}>Café</Text>
+                  </VStack>
+                  <VStack alignItems="center">
+                    <Button onPress={() => setActiveButton("limonadas")} variant="link">
+                      <Box style={[styles.iconContainer, activeButton === "limonadas" && styles.activeIconContainer]}>
+                        <Icon as={GlassWater} size="20" />
+                      </Box>
+                    </Button>
+                    <Text style={styles.activeButtonText}>Limonadas</Text>
+                  </VStack>
+                </HStack>
+              </ScrollView>
 
-            <View style={styles.grid}>
-              {platillos[activeButton].map((platillo, index) => (
-                <VStack key={index} style={styles.vStackItem}>
-                  <Image size="xl" source={platillo.image} style={styles.image} />
-                  <Text size="lg" bold="true" style={styles.itemText}>{platillo.name}</Text>
-                  <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.price}</Text>
-                  <Button size="sm" style={styles.addButton}>
-                    <ButtonText style={styles.addButtonText}>+</ButtonText>
-                  </Button>
-                </VStack>
-              ))}
-            </View>
-          </VStack>
-          </ScrollView>
-      </Box>
-    </Center>
+              <View style={styles.grid}>
+                {platillos[activeButton].map((platillo, index) => (
+                  <VStack key={index} style={styles.vStackItem}>
+                    <Image size="xl" source={platillo.image} style={styles.image} alt={platillo.name}/>
+                    <Text size="lg" bold="true" style={styles.itemText}>{platillo.name}</Text>
+                    <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.price}</Text>
+                    <Button size="sm" style={styles.addButton}>
+                      <ButtonText style={styles.addButtonText}>+</ButtonText>
+                    </Button>
+                  </VStack>
+                ))}
+              </View>
+            </VStack>
+          </Box>
+        </Center>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default MenuScreen;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 5,
+    backgroundColor: 'white',
+    paddingTop: -50,
+  },
+  scrollViewContent: {
+    paddingBottom: 'auto',
+    paddingTop: 'auto',
+  },
   center: {
     backgroundColor: 'white',
     height: '100%',
     width: '100%',
+    flex: 1,
   },
   box: {
     marginHorizontal: 5,
@@ -130,13 +141,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     elevation: 1,
     backgroundColor: 'white',
-  },
-  scrollViewContent: {
-    paddingBottom: 10,
-  },
-  spaceAbove: {
-    height: 90,
-    backgroundColor: 'transparent',
   },
   vStack: {
     paddingBottom: 24,
