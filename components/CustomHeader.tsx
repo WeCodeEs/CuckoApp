@@ -1,5 +1,5 @@
 // CustomHeader.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StatusBar, StyleSheet, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from '@/components/ui/image';
@@ -19,7 +19,29 @@ import { User, Settings, CreditCard, History, Share, LogOut } from "lucide-react
 export function CustomHeader() {
   const navigation = useNavigation();
   const [showDrawer, setShowDrawer] = React.useState(false)
+  const [stylesReady, setStylesReady] = useState(false); // Estado para verificar si los estilos están listos
 
+  useEffect(() => {
+    const loadStyles = async () => {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setStylesReady(true);
+      } catch (error) {
+        console.error('Error al cargar el Header', error);
+      }
+    };
+
+    loadStyles();
+  }, []);
+
+  if (!stylesReady) {
+    return (
+      <>
+        <SafeAreaView style={styles.container}/>
+        <Divider/>
+      </>
+    );
+  }
 
   return (
     <>
