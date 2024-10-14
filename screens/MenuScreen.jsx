@@ -19,8 +19,8 @@ const MenuScreen = () => {
   const [activeButton, setActiveButton] = useState("comida");
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.scrollViewContent}>
+ 
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <Center style={styles.center}>
           <Box style={styles.box}>
             <VStack style={styles.vStack}>
@@ -109,25 +109,19 @@ const MenuScreen = () => {
           </Box>
         </Center>
       </ScrollView>
-    </SafeAreaView>
   );
 };
 
 export default MenuScreen;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 5,
-    backgroundColor: 'white',
-    paddingTop: -50,
-  },
+  
   scrollViewContent: {
-    paddingBottom: 'auto',
-    paddingTop: 'auto',
+    flexGrow: 1,
+    padding: 0,
   },
   center: {
     backgroundColor: 'white',
-    height: '100%',
     width: '100%',
     flex: 1,
   },
@@ -141,9 +135,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     elevation: 1,
     backgroundColor: 'white',
+    flex: 1,
   },
   vStack: {
     paddingBottom: 24,
+    flex: 1,
   },
   headingBox: {
     flexDirection: 'row',
