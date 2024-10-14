@@ -64,15 +64,8 @@ const Detail_product = () => {
     return (
         <ScrollView contentContainerStyle={styles.scrollContent}>
             <Center style={styles.header_container}>
-                <View style={{ bottom: '-50%', borderColor: '#000', borderWidth: 0, width: '100%', alignItems: 'center'}}>
-                    <View style={styles.header_btns}>
-                        <Button size="md" style={styles.header_btn} onPress={stackBack}>
-                            <ChevronLeft size={25} color="#000"/>
-                        </Button>
-                        <Button size="md" style={styles.header_btn} onPress={handlePress}>
-                            <Heart size={20} color="#000" fill={isFavourite ? '#000' : 'none'}/>
-                        </Button>
-                    </View>
+                <View style={{ bottom: '-42%' }}>
+                    <Text style={{ textAlign: 'center', color: '#fff', marginBottom: 5 }}>Detalles</Text>
                     <Image source={imagenes[platillo.id]} alt={platillo.nombre} size="2xl" />
                 </View>
             </Center>
@@ -147,7 +140,7 @@ const Detail_product = () => {
                         <Button size="sm" style={[styles.cart_btn,{width: '85%', marginRight: 15}]}>
                             <ButtonText>AGREGAR AL CARRITO</ButtonText>
                         </Button>
-                        <Button size="lg" style={[styles.header_btn,{borderColor: '#F07122', borderWidth: 1, backgroundColor: "#F07122"}]} onPress={handlePress}>
+                        <Button size="lg" style={[styles.fav_btn,{borderColor: '#F07122', borderWidth: 1, backgroundColor: "#F07122"}]} onPress={handlePress}>
                                 <Heart size={20} color="#fff" fill={isFavourite ? '#fff' : 'none'}/>
                         </Button>
                     </View>                    
@@ -172,29 +165,8 @@ const styles = StyleSheet.create({
     header_container: {
         zIndex: 1,
         width: '100%',
-        //18%
-        height: 160,
+        height: 195,
         backgroundColor: '#F07122',
-        borderColor: "#000",
-        borderWidth: 0,
-    },
-    header_btns: {
-        marginTop:'2%', 
-        flexDirection:'row', 
-        height: '12%', 
-        width: '100%', 
-        borderColor: '#000', 
-        borderWidth: 0, 
-        alignItems: 'center', 
-        justifyContent:'space-between', 
-        paddingHorizontal: 17.5, 
-        zIndex: 2, 
-        position: 'absolute'
-    },
-    header_btn: {
-        backgroundColor: "#fff" ,
-        aspectRatio: '1/1', 
-        borderRadius: 100,
     },
     general_container: {
         backgroundColor: '#F07122',
@@ -272,15 +244,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     cart_btn: {
-        //alignSelf: 'center',
         width: '85%',
         marginVertical: 30,
         paddingVertical: 10,
-        //height: 'auto',
         height: '45%',
         backgroundColor: '#F07122',
         marginRight: '3%',
         borderRadius: 50,
         alignItems: 'center',
+    },
+    fav_btn: {
+        backgroundColor: "#fff" ,
+        aspectRatio: '1/1', 
+        borderRadius: 100,
     },
 });
