@@ -1,4 +1,3 @@
-// CustomHeader.tsx
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StatusBar, StyleSheet, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
