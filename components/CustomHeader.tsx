@@ -19,7 +19,7 @@ import { User, Settings, CreditCard, History, Share, LogOut } from "lucide-react
 export function CustomHeader() {
   const navigation = useNavigation();
   const [showDrawer, setShowDrawer] = React.useState(false)
-  const [stylesReady, setStylesReady] = useState(false); // Estado para verificar si los estilos están listos
+  const [stylesReady, setStylesReady] = useState(false);
 
   useEffect(() => {
     const loadStyles = async () => {
