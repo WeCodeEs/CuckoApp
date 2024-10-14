@@ -13,7 +13,7 @@ import { RouteProp } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import { Heart, ChevronLeft } from "lucide-react-native";
 import { useNavigation } from '@react-navigation/native';
-import { platillos, imagenes } from './platillos';
+import { platillos, imagenes } from '../../../constants/platillos';
 
 type RootStackParamList = {
     Detail_product: { platilloId: number };
