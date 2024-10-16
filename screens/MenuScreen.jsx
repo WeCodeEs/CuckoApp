@@ -8,7 +8,6 @@ import { Center } from "@/components/ui/center";
 import { useNavigation } from '@react-navigation/native';
 import { useState } from "react";
 // import platillos from '../constants/platillos';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Heading } from "@/components/ui/heading";
 import { Input, InputField, InputSlot } from "@/components/ui/input";
@@ -17,12 +16,36 @@ import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "
 import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
 
-const platillos = [
-  { id: 1, nombre: 'Ensalada Cajún', imagen: require('@/assets/images/platillos/ensalada_cajun.png'), precio: '$55.00' },
-  { id: 2, nombre: 'Ensalada Curry', imagen: require('@/assets/images/platillos/ensalada_curry.png'), precio: '$55.00' },
-  { id: 3, nombre: 'Baguette', imagen: require('@/assets/images/platillos/baguette.png'), precio: '$55.00' },
-  { id: 4, nombre: 'Croissant', imagen: require('@/assets/images/platillos/croissant.png'), precio: '$55.00' },
-];
+const platillos = {
+  comida: [
+    { id: 1, nombre: "Ensalada Cajún", price: "$ 55.00", imagen: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
+    { id: 2, nombre: "Ensalada Curry", price: "$ 65.00", imagen: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
+    { id: 3, nombre: "Baguette", price: "$ 45.00", imagen: require('@/assets/images/baguette.png'), alt: 'Baguette' },
+    { id: 4, nombre: "Croissant", price: "$ 25.00", imagen: require('@/assets/images/croissant.png'), alt: 'Croissant' },
+    { id: 5, nombre: "Tlayuda", price: "$ 65.00", imagen: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
+    { id: 6, nombre: "Hamburguesa", price: "$ 50.00", imagen: require('@/assets/images/hamburguesa.png'), alt: 'Hamburguesa' },
+  ],
+  snacks: [
+    { id: 7, nombre: "Prueba1", price: "$ 00.00", imagen: require('@/assets/images/baguette.png'), alt: 'Baguette' },
+    { id: 8, nombre: "Hamburguesa", price: "$ 50.00", imagen: require('@/assets/images/hamburguesa.png'), alt: 'Baguette' },
+  ],
+  ensaladas: [
+    { id: 9, nombre: "Prueba2", price: "$ 00.00", imagen: require('@/assets/images/croissant.png'), alt: 'Prueba' },
+    { id: 10, nombre: "Ensalada Cajún", price: "$ 55.00", imagen: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
+  ],
+  platillos: [
+    { id: 11, nombre: "Prueba3", price: "$ 00.00", imagen: require('@/assets/images/baguette.png'), alt: 'Prueba'  },
+    { id: 12, nombre: "Tlayuda", price: "$ 65.00", imagen: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
+  ],
+  cafe: [
+    { id: 13, nombre: "Prueba4", price: "$ 00.00", imagen: require('@/assets/images/croissant.png'), alt: 'Prueba' },
+    { id: 14, nombre: "Baguette", price: "$ 45.00", imagen: require('@/assets/images/baguette.png'), alt: 'Baguette' },
+  ],
+  limonadas: [
+    { id: 15, nombre: "Prueba5", price: "$ 00.00", imagen: require('@/assets/images/baguette.png'), alt: 'Prueba' },
+    { id: 16, nombre: "Ensalada Curry", price: "$ 65.00", imagen: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
+  ],
+};
 
 const MenuScreen = () => {
   const navigation = useNavigation();
@@ -103,11 +126,11 @@ const MenuScreen = () => {
               </ScrollView>
 
               <View style={styles.grid}>
-                {platillos.map(platillo => (
+                {platillos[activeButton].map(platillo => (
                     <VStack key={platillo.id}  style={styles.vStackItem}>
                       <Image size="xl" source={platillo.imagen} alt={platillo.nombre} style={styles.image} />
                       <Text size="lg" bold="true" style={styles.itemText}>{platillo.nombre}</Text>
-                      <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.precio}</Text>
+                      <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.price}</Text>
                       <Button
                           size="sm"
                           style={styles.addButton}
