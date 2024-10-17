@@ -48,9 +48,11 @@ const Detail_product = () => {
     const [precioTotal, setPrecioTotal] = useState(platillo.precio);
 
     const aumentarCantidad = () => {
-        const nuevaCantidad = cantidad + 1;
-        setCantidad(nuevaCantidad);
-        setPrecioTotal(nuevaCantidad * platillo.precio);
+        if(cantidad < 10) {
+            const nuevaCantidad = cantidad + 1;
+            setCantidad(nuevaCantidad);
+            setPrecioTotal(nuevaCantidad * platillo.precio);
+        }
     };
 
     const disminuirCantidad = () => {
