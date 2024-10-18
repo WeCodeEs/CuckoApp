@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
 import { Image } from "@/components/ui/image";
-import { Icon, ClockIcon, AddIcon, RemoveIcon, CheckIcon, FavouriteIcon } from "@/components/ui/icon";
+import { AddIcon, RemoveIcon, CheckIcon } from "@/components/ui/icon";
 import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
 import { StyleSheet, ScrollView } from "react-native";
 import { Center } from "@/components/ui/center";
@@ -11,8 +11,7 @@ import Constants from 'expo-constants';
 import { Checkbox, CheckboxIcon, CheckboxLabel, CheckboxIndicator } from "@/components/ui/checkbox";
 import { RouteProp } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
-import { Heart, ChevronLeft } from "lucide-react-native";
-import { useNavigation } from '@react-navigation/native';
+import { Heart } from "lucide-react-native";
 import { platillos, imagenes } from '../../../constants/platillos';
 
 type RootStackParamList = {
@@ -22,7 +21,6 @@ type RootStackParamList = {
 type DetailProductRouteProp = RouteProp<RootStackParamList, 'Detail_product'>;
 
 const Detail_product = () => {
-    const navigation = useNavigation();
     const route = useRoute<DetailProductRouteProp>();
     const { platilloId } = route.params;
     const platillo = platillos.find(p => p.id === platilloId);
@@ -31,10 +29,6 @@ const Detail_product = () => {
     const handlePress = () => {
         setIsFavourite(!isFavourite);
     };
-
-    const stackBack = () => {
-        navigation.goBack(); 
-      };
 
     if (!platillo) {
         return (
