@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 0,
+    marginBottom: 10,
   },
   inputFieldLarge: {
     flex: 1,
