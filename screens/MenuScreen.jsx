@@ -15,6 +15,8 @@ import { Box } from "@/components/ui/box";
 import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
 import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
+import Carrusel from '../components/Carrusel';
+
 
 const platillos = {
   comida: [
@@ -71,6 +73,8 @@ const MenuScreen = () => {
                     placeholder="Buscar"
                 />
               </Input>
+
+              <Carrusel />
 
               <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                 <HStack space="sm" style={styles.buttonRow}>
@@ -268,7 +272,7 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 20,
+    paddingVertical: 30,
     paddingHorizontal: -5,
   },
   iconContainer: {
