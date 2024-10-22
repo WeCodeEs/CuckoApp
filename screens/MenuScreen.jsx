@@ -13,7 +13,7 @@ import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
 import { useState } from "react";
 import platillos from '../constants/platillos';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Carrusel from '../components/Carrusel';
 
 const MenuScreen = () => {
   const [activeButton, setActiveButton] = useState("comida");
@@ -39,6 +39,8 @@ const MenuScreen = () => {
                   placeholder="Buscar"
                 />
               </Input>
+
+              <Carrusel />
 
               <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                 <HStack space="sm" style={styles.buttonRow}>
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 0,
+    marginBottom: 10,
   },
   inputFieldLarge: {
     flex: 1,
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 20,
+    paddingVertical: 30,
     paddingHorizontal: -5,
   },
   iconContainer: {
