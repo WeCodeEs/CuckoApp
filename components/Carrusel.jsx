@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Dimensions, View, Image } from "react-native";
+import React from "react";
+import { View, Image } from "react-native";
 import Swiper from "react-native-swiper";
 import { VStack } from "@/components/ui/vstack";
-
-const { width } = Dimensions.get('window');
+import { Colors } from '@/constants/Colors';
 
 const Carrusel = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const promociones = [
     { image: require('@/assets/images/promo1.png') },
@@ -21,11 +19,10 @@ const Carrusel = () => {
         loop
         autoplay
         autoplayTimeout={4}
-        onIndexChanged={(index) => setCurrentIndex(index)}
         showsPagination
         paginationStyle={{ bottom: -20}}
-        activeDotStyle={{ backgroundColor: '#49bcce' }}
-        dotStyle={{ backgroundColor: 'gray' }}
+        activeDotStyle={{ backgroundColor: Colors['light'].tabIconDefault }} 
+        dotStyle={{ backgroundColor: Colors['light'].secondaryBackground }}
         scrollEnabled={true}
         autoplayDirection={true}
         loadMinimal

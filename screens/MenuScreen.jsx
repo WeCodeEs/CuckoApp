@@ -60,7 +60,7 @@ const MenuScreen = () => {
             <VStack style={styles.vStack}>
               <Box style={styles.headingBox}>
                 <Heading size={"lg"} bold="false" style={styles.headingLeft}>
-                  ¿Qué te gustaría{'\n'}comer hoy?
+                  ¿Qué te gustaría comer hoy?
                 </Heading>
               </Box>
 
@@ -76,7 +76,7 @@ const MenuScreen = () => {
 
               <Carrusel />
 
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollCategoryViewContent}>
                 <HStack space="sm" style={styles.buttonRow}>
                   <VStack alignItems="center">
                     <Button onPress={() => setActiveButton("comida")} variant="link">
@@ -171,6 +171,10 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     padding: 0,
+  },
+  scrollCategoryViewContent: {
+    flexGrow: 1, 
+    justifyContent: 'center'
   },
   center: {
     backgroundColor: 'white',
