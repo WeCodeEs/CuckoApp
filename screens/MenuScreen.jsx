@@ -54,112 +54,107 @@ const MenuScreen = () => {
   const [activeButton, setActiveButton] = useState("comida");
 
   return (
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <Center style={styles.center}>
-          <Box style={styles.box}>
-            <VStack style={styles.vStack}>
-              <Box style={styles.headingBox}>
-                <Heading size={"lg"} bold="false" style={styles.headingLeft}>
-                  ¿Qué te gustaría comer hoy?
-                </Heading>
-              </Box>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <Center style={styles.center}>
+        <Box style={styles.box}>
+          <VStack style={styles.vStack}>
+            <Box style={styles.headingBox}>
+              <Heading size={"lg"} bold="false" style={styles.headingLeft}>
+                ¿Qué te gustaría comer hoy?
+              </Heading>
+            </Box>
 
-              <Input size="xl" style={styles.inputContainer}>
-                <InputSlot>
-                  <Icon as={Search} size="md" />
-                </InputSlot>
-                <InputField
-                    style={styles.inputFieldLarge}
-                    placeholder="Buscar"
-                />
-              </Input>
+            <Input size="xl" style={styles.inputContainer}>
+              <InputSlot>
+                <Icon as={Search} size="md" />
+              </InputSlot>
+              <InputField
+                  style={styles.inputFieldLarge}
+                  placeholder="Buscar"
+              />
+            </Input>
 
-              <Carrusel />
+            <Carrusel />
 
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollCategoryViewContent}>
-                <HStack space="sm" style={styles.buttonRow}>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("comida")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "comida" && styles.activeIconContainer]}>
-                        <Icon as={ChefHat} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Comida</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("snacks")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "snacks" && styles.activeIconContainer]}>
-                        <Icon as={Sandwich} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Snacks</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("ensaladas")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "ensaladas" && styles.activeIconContainer]}>
-                        <Icon as={Salad} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Ensaladas</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("platillos")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "platillos" && styles.activeIconContainer]}>
-                        <Icon as={ForkKnife} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Platillos</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("cafe")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "cafe" && styles.activeIconContainer]}>
-                        <Icon as={Coffee} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Café</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("limonadas")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "limonadas" && styles.activeIconContainer]}>
-                        <Icon as={GlassWater} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Limonadas</Text>
-                  </VStack>
-                </HStack>
-              </ScrollView>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollCategoryViewContent}>
+              <HStack space="sm" style={styles.buttonRow}>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("comida")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "comida" && styles.activeIconContainer]}>
+                      <Icon as={ChefHat} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Comida</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("snacks")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "snacks" && styles.activeIconContainer]}>
+                      <Icon as={Sandwich} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Snacks</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("ensaladas")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "ensaladas" && styles.activeIconContainer]}>
+                      <Icon as={Salad} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Ensaladas</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("platillos")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "platillos" && styles.activeIconContainer]}>
+                      <Icon as={ForkKnife} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Platillos</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("cafe")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "cafe" && styles.activeIconContainer]}>
+                      <Icon as={Coffee} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Café</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("limonadas")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "limonadas" && styles.activeIconContainer]}>
+                      <Icon as={GlassWater} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Limonadas</Text>
+                </VStack>
+              </HStack>
+            </ScrollView>
 
-              <View style={styles.grid}>
-                {platillos[activeButton].map(platillo => (
-                  <VStack key={platillo.id} style={styles.vStackItem}>
-                    {/* Imagen con navegación al detalle */}
-                    <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}>
-                      <Image size="xl" source={platillo.imagen} alt={platillo.nombre} style={styles.image} />
-                    </TouchableOpacity>
+            <View style={styles.grid}>
+              {platillos[activeButton].map(platillo => (
+                <VStack key={platillo.id} style={styles.vStackItem}>
+                  <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })} style={styles.TouchableOpacity}>
 
-                    {/* Nombre del platillo (opcional) */}
+                    <Image size="xl" source={platillo.imagen} alt={platillo.nombre} style={styles.image} />
                     <Text size="lg" bold="true" style={styles.itemText}>{platillo.nombre}</Text>
+                    <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.price}</Text>
 
-                    {/* Precio con navegación al detalle */}
-                    <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}>
-                      <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.price}</Text>
-                    </TouchableOpacity>
+                  </TouchableOpacity>
 
-                    {/* Botón + con navegación al detalle */}
-                    <Button
-                      size="sm"
-                      style={styles.addButton}
-                      onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}
-                    >
-                      <Text style={styles.addButtonText}>+</Text>
-                    </Button>
-                  </VStack>
-                ))}
-              </View>
-            </VStack>
-          </Box>
-        </Center>
-      </ScrollView>
+                  <Button
+                    size="sm"
+                    style={styles.addButton}
+                    onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}
+                  >
+                    <Text style={styles.addButtonText}>+</Text>
+                  </Button>
+
+                </VStack>
+              ))}
+            </View>
+          </VStack>
+        </Box>
+      </Center>
+    </ScrollView>
 
   );
 };
@@ -318,6 +313,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '50%',
     marginBottom: 16,
+  },
+  TouchableOpacity: {
+    width: '100%', 
+    alignItems: 'center',
   },
   image: {
     width: 96,
