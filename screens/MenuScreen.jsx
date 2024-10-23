@@ -3,7 +3,7 @@ import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Image } from "@/components/ui/image";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Center } from "@/components/ui/center";
 import { useNavigation } from '@react-navigation/native';
 import { useState } from "react";
@@ -131,18 +131,29 @@ const MenuScreen = () => {
 
               <View style={styles.grid}>
                 {platillos[activeButton].map(platillo => (
-                    <VStack key={platillo.id}  style={styles.vStackItem}>
+                  <VStack key={platillo.id} style={styles.vStackItem}>
+                    {/* Imagen con navegación al detalle */}
+                    <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}>
                       <Image size="xl" source={platillo.imagen} alt={platillo.nombre} style={styles.image} />
-                      <Text size="lg" bold="true" style={styles.itemText}>{platillo.nombre}</Text>
+                    </TouchableOpacity>
+
+                    {/* Nombre del platillo (opcional) */}
+                    <Text size="lg" bold="true" style={styles.itemText}>{platillo.nombre}</Text>
+
+                    {/* Precio con navegación al detalle */}
+                    <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}>
                       <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.price}</Text>
-                      <Button
-                          size="sm"
-                          style={styles.addButton}
-                          onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}
-                      >
-                        <ButtonText style={styles.addButtonText}>+</ButtonText>
-                      </Button>
-                    </VStack>
+                    </TouchableOpacity>
+
+                    {/* Botón + con navegación al detalle */}
+                    <Button
+                      size="sm"
+                      style={styles.addButton}
+                      onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}
+                    >
+                      <Text style={styles.addButtonText}>+</Text>
+                    </Button>
+                  </VStack>
                 ))}
               </View>
             </VStack>
@@ -311,27 +322,30 @@ const styles = StyleSheet.create({
   },
   itemText: {
     marginTop: 8,
-    fontSize: 12,
+    fontSize: 15,
   },
   itemPrice: {
     marginTop: 3,
+    marginBottom: 6,
+    fontSize: 17,
     fontWeight: 'bold',
     color: '#f07122',
+
   },
   addButton: {
     marginTop: 6,
     backgroundColor: '#49bcce',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 43,
+    height: 43,
+    borderRadius: 23,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 0,
   },
   addButtonText: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 22,
     lineHeight: 30,
-    fontWeight: 'normal',
+    fontWeight: 'black',
+    textAlign: 'center',
   },
 });
