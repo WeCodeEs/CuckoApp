@@ -12,6 +12,7 @@ const tintColorLight = '#0B818F';
 const iconColorLight = '#183542';
 const tabIconDefaultColorLight = '#139FAA';
 const tabIconSelectedColorLight = '#F07122';
+const secondaryBackgroundColorLight = '#183542';
 
 
 const textColorDark = '#ECEDEE';
@@ -29,6 +30,7 @@ export const Colors = {
     icon: iconColorLight,
     tabIconDefault: tabIconDefaultColorLight,
     tabIconSelected: tabIconSelectedColorLight,
+    secondaryBackground: secondaryBackgroundColorLight,
   },
   dark: {
     text: textColorDark,
