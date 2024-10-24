@@ -23,6 +23,7 @@ import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
 import { View } from "@/components/ui/view";
 import Constants from 'expo-constants';
+import { Soup, Clock, Check, CheckCircle, HandPlatter, ShoppingBag } from 'lucide-react-native';
 
 interface Pedido {
   id: number;
@@ -90,14 +91,27 @@ const PedidoCard: React.FC<{ pedido: Pedido }> = ({ pedido }) => {
   return (
     <Box style={styles.card}>
       <View>
-        <Text style={[styles.estado, { backgroundColor: getBackgroundColor(), color: getTextColor()}]}>{pedido.estado}</Text>
-        <Text style={[styles.text,{paddingLeft: 6}]}>Número de pedido</Text>
-        <Text style={[styles.text,{color: "#000",paddingLeft: 6, fontWeight: 'bold'}]}>{pedido.id}</Text>
+        <Text style={styles.order}>Pedido {pedido.id}</Text>
+        <View style={{ alignSelf: 'flex-start' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: getBackgroundColor(), paddingHorizontal: 5, paddingVertical: 2, borderRadius: 20, alignSelf: 'flex-start' }}>
+            {pedido.estado === 'En preparación' ? (
+              <Clock size={15} color={getTextColor()} style={styles.icon}/>
+            ) : pedido.estado === 'Listo' ? (
+              <ShoppingBag size={15} color={getTextColor()} style={styles.icon}/>
+            ) : (
+              <CheckCircle size={15} color={getTextColor()} style={styles.icon}/>
+            )}
+            <Text style={[styles.status, { color: getTextColor(), marginLeft: 6 }]}>
+              {pedido.estado}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.date}>{pedido.fecha}, {pedido.hora}</Text>
       </View>
       <View style={{alignItems: 'flex-end'}}>
-        <Text style={styles.precio}>${pedido.precioFinal.toFixed(2)}</Text>
-        <Text style={styles.text}>{pedido.fecha}</Text>
+        <Text style={[styles.text,{paddingLeft: 6}]}>Número de pedido</Text>
         <Text style={styles.text}>{pedido.hora}</Text>
+        <Text style={styles.precio}>${pedido.precioFinal.toFixed(2)}</Text>
       </View>
     </Box>
   );
@@ -135,6 +149,40 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     textAlignVertical: 'center',
   },
+  order: {
+    fontSize: 14,
+    //marginBottom: 8,
+    lineHeight: 20,
+    color: "#000",
+    paddingLeft: 6, 
+    fontWeight: 'bold',
+  },
+  icon: {
+   marginVertical: 'auto',
+   borderWidth: 2,
+   borderColor: 'blue',
+   alignSelf: 'flex-start',
+  },
+  status: {
+    fontSize: 14,
+    //fontWeight: 'bold',
+    //marginBottom: 5,
+    lineHeight: 20,
+    borderRadius: 60,
+    //paddingHorizontal: 6,
+    //alignSelf: 'center',
+  },
+  date: {
+    fontSize: 14,
+    //marginBottom: 8,
+    lineHeight: 20,
+  },
+  price: {
+
+  },
+
+
+
   text: {
     fontSize: 14,
     //marginBottom: 8,
