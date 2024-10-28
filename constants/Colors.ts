@@ -12,6 +12,7 @@ const tintColorLight = '#0B818F';
 const iconColorLight = '#183542';
 const tabIconDefaultColorLight = '#139FAA';
 const tabIconSelectedColorLight = '#F07122';
+const secondaryBackgroundColorLight = '#183542';
 const borderBoxColor = '#d1d5db';
 const lightBlueColor = "#B3E1E4";
 const mediumLightBlueColor = "#49BCCE";
@@ -36,6 +37,7 @@ export const Colors = {
     icon: iconColorLight,
     tabIconDefault: tabIconDefaultColorLight,
     tabIconSelected: tabIconSelectedColorLight,
+    secondaryBackground: secondaryBackgroundColorLight,
     borderBox: borderBoxColor,
     lightBlue: lightBlueColor,
     mediumLightBlue: mediumLightBlueColor,
