@@ -7,16 +7,14 @@ import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Center } from "@/components/ui/center";
 import { useNavigation } from '@react-navigation/native';
 import { useState } from "react";
-// import platillos from '../constants/platillos';
-
 import { Heading } from "@/components/ui/heading";
 import { Input, InputField, InputSlot } from "@/components/ui/input";
 import { Box } from "@/components/ui/box";
 import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
 import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
-import Carrusel from '../components/Carrusel';
-
+import Carrusel from '@/components/Carrusel';
+import {Colors} from '@/constants/Colors';
 
 const platillos = {
   comida: [
@@ -172,7 +170,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   center: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     width: '100%',
     flex: 1,
   },
@@ -181,11 +179,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     padding: 5,
     maxWidth: '96%',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0,
     elevation: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     flex: 1,
   },
   vStack: {
@@ -204,8 +201,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    backgroundColor: 'white',
-    borderColor: '#ccc',
+    backgroundColor: Colors.light.background,
     borderWidth: 2,
     borderRadius: 10,
     paddingVertical: 2,
@@ -216,7 +212,7 @@ const styles = StyleSheet.create({
   },
   inputFieldLarge: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.light.background,
   },
   grid: {
     flexDirection: 'row',
@@ -232,7 +228,7 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   center: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     width: '100%',
     flex: 1,
   },
@@ -241,11 +237,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     padding: 5,
     maxWidth: '96%',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0,
     elevation: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     flex: 1,
   },
   vStack: {
@@ -264,8 +259,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    backgroundColor: 'white',
-    borderColor: '#ccc',
+    backgroundColor: Colors.light.background,
     borderWidth: 2,
     borderRadius: 10,
     paddingVertical: 2,
@@ -288,7 +282,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginHorizontal: 1,
     borderWidth: 0,
-    borderColor: '#ccc',
     borderRadius: 15,
     padding: 15,
     alignItems: 'center',
@@ -296,16 +289,16 @@ const styles = StyleSheet.create({
     height: 60,
   },
   activeIconContainer: {
-    backgroundColor: '#f07122',
+    backgroundColor: Colors.light.tabIconSelected,
     borderWidth: 0,
   },
   buttonText: {
-    color: '#888',
+    color: Colors.light.text,
     marginTop: 8,
     fontSize: 9,
   },
   activeButtonText: {
-    color: 'black',
+    color: Colors.light.text,
     marginTop: 8,
     fontSize: 10,
   },
@@ -332,12 +325,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#f07122',
+    color: Colors.dark.tabIconSelected,
 
   },
   addButton: {
     marginTop: 6,
-    backgroundColor: '#49bcce',
+    backgroundColor: Colors.light.tabIconDefault,
     width: 43,
     height: 43,
     borderRadius: 23,
@@ -345,7 +338,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   addButtonText: {
-    color: 'white',
+    color: Colors.dark.text,
     fontSize: 22,
     lineHeight: 30,
     fontWeight: 'black',
