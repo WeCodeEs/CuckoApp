@@ -5,7 +5,6 @@ import { Icon } from '@/components/ui/icon';
 import { Pencil } from "lucide-react-native";
 import { Pressable } from "@/components/ui/pressable";
 import { Heading } from "@/components/ui/heading";
-import { Button, ButtonText } from "@/components/ui/button";
 import { ChevronDown as ChevronDownIcon } from "lucide-react-native";
 import {
     Actionsheet,
@@ -60,7 +59,6 @@ const InputSelect: React.FC<InputSelectProps> = ({ initialValue, editable, onEdi
                     <Pressable onPress={() => setShowActionsheet(true)}>
                         <Icon style={styles.editIcon} as={Pencil} size="lg" className="text-typography-600" />
                     </Pressable>
-
                     <Actionsheet isOpen={showActionsheet} onClose={() => setShowActionsheet(false)}>
                         <ActionsheetBackdrop />
                         <ActionsheetContent>

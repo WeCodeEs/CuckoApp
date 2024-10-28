@@ -12,6 +12,7 @@ import ModalAvatar from '@/components/ModalAvatar';
 import InputInfo from '@/components/InputInfo';
 import InputSelect from '@/components/InputSelect';
 import InputPhone from '@/components/InputPhone';
+import { Colors } from '@/constants/Colors';
 
 const ProfileScreen = () => {
     const user = {
@@ -92,7 +93,7 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
-        backgroundColor: '#fff',
+        backgroundColor: Colors.light.background,
     },
     avatar_container: {
       bottom: '-45%',
@@ -101,16 +102,16 @@ const styles = StyleSheet.create({
       aspectRatio:'1/1', 
       borderWidth: 8, 
       borderRadius: 100, 
-      borderColor: '#FFF'
+      borderColor: Colors.light.background,
     },
     header_container: {
         zIndex: 1,
         width: '100%',
         height: 195,
-        backgroundColor: '#139FAA',
-    },
-    general_container: {
-        backgroundColor: '#139FAA',
+        backgroundColor: Colors.light.mediumBlue,
+      },
+      general_container: {
+        backgroundColor: Colors.light.mediumBlue,
         width: '100%',
         height: 'auto',
     },
@@ -125,8 +126,8 @@ const styles = StyleSheet.create({
     content_box: {
         padding: 20,
         borderWidth: 1,
-        borderColor: '#d1d5db',
-        backgroundColor: '#fff',
+        borderColor: Colors.light.borderBox,
+        backgroundColor: Colors.light.background,
         height: 'auto',
         width: '100%',
         borderTopLeftRadius: 30,
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     subtitle: {
         paddingTop: 30,
         paddingBottom: 15,
-        color: "#000",
+        color: Colors.light.text,
     },
     avatar_image: {
         borderRadius: 100,
@@ -151,10 +152,10 @@ const styles = StyleSheet.create({
       position: 'absolute',
       bottom: 10,
       right: 5,
-      backgroundColor: '#363837',
+      backgroundColor: Colors.light.darkBlue,
       padding: 8,
       borderRadius: 100,
-      borderColor: '#FFF',
+      borderColor: Colors.light.background,
       borderWidth: 4,
       zIndex: 99,
     },

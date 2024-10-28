@@ -7,6 +7,7 @@ import { Check, X, Pencil, Info } from "lucide-react-native";
 import { Pressable } from "@/components/ui/pressable";
 import { Heading } from "@/components/ui/heading";
 import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
+import { Colors } from '@/constants/Colors';
 
 interface InputInfoProps {
     initialValue: string;
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        borderColor: '#ccc',
+        borderColor: Colors.light.borderBox,
         borderWidth: 1,
         paddingHorizontal: 8,
         paddingVertical: 4,

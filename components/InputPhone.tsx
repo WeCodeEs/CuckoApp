@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/icon';
 import { X, Pencil, Check } from "lucide-react-native";
 import { Pressable } from "@/components/ui/pressable";
 import { Heading } from "@/components/ui/heading";
+import { Colors } from '@/constants/Colors';
 
 interface InputPhoneProps {
     initialPhone: string;
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     },
     ladaInput: {
         width: 60,
-        borderColor: '#ccc',
+        borderColor: Colors.light.borderBox,
         borderWidth: 1,
         paddingHorizontal: 8,
         paddingVertical: 4,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     },
     phoneInput: {
         flex: 1,
-        borderColor: '#ccc',
+        borderColor: Colors.light.borderBox,
         borderWidth: 1,
         paddingHorizontal: 8,
         paddingVertical: 4,

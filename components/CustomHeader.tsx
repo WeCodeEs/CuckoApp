@@ -8,6 +8,7 @@ import { Pressable } from '@/components/ui/pressable';
 import { Grid, GridItem } from '@/components/ui/grid';
 import { Box } from '@/components/ui/box';
 import { HeaderDrawer } from './HeaderDrawer';
+import { Colors } from '@/constants/Colors';
 
 export function CustomHeader() {
   const navigation = useNavigation();
@@ -76,6 +77,6 @@ const styles = StyleSheet.create({
     height: Platform.OS === 'ios' ? 130 : 115,
     paddingTop: Platform.OS === 'ios' ? 0 : 40,
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.light.background,
   },
 });
