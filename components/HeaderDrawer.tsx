@@ -55,15 +55,15 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
       <DrawerContent className="w-70 md:w-75 pt-40">
         <DrawerHeader className="justify-center flex-col gap-2">
           <Avatar size="2xl">
-            <AvatarFallbackText>User Image</AvatarFallbackText>
+            <AvatarFallbackText>Juan Pérez</AvatarFallbackText>
             <AvatarImage
-              source={{ uri: 'https://media.licdn.com/dms/image/v2/D5603AQEz4rRbs8-dEg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1718265562308?e=1732752000&v=beta&t=xhngKflrHu1ehoSQuZMhgZ8rXAvBZFzH1B_wZmLiMu4' }}
+              source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU' }}
             />
           </Avatar>
           <VStack className="justify-center items-center">
-            <Text size="lg">Carlos González</Text>
+            <Text size="lg">Juan Pérez</Text>
             <Text size="sm" className="text-typography-600">
-              cjgonz14@gmail.com
+              juan@gmail.com
             </Text>
           </VStack>
         </DrawerHeader>

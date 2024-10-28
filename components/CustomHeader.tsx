@@ -44,10 +44,10 @@ export function CustomHeader() {
         <GridItem className="flex items-start justify-center" _extra= {{ className: 'col-span-2' }}>
           <Pressable onPress={() => setShowDrawer(true)} className="h-12 w-12">
             <Avatar className="w-full h-full">
-              <AvatarFallbackText>Carlos Gonzalez</AvatarFallbackText>
+              <AvatarFallbackText>Juan Pérez</AvatarFallbackText>
               <AvatarImage
                 source={{
-                  uri: 'https://media.licdn.com/dms/image/v2/D5603AQEz4rRbs8-dEg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1718265562308?e=1732752000&v=beta&t=xhngKflrHu1ehoSQuZMhgZ8rXAvBZFzH1B_wZmLiMu4',
+                  uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU',
                 }}
               />
             </Avatar>
