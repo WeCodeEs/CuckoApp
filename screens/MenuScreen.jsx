@@ -15,6 +15,8 @@ import { Box } from "@/components/ui/box";
 import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
 import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
+import Carrusel from '../components/Carrusel';
+
 
 const platillos = {
   comida: [
@@ -58,7 +60,7 @@ const MenuScreen = () => {
             <VStack style={styles.vStack}>
               <Box style={styles.headingBox}>
                 <Heading size={"lg"} bold="false" style={styles.headingLeft}>
-                  ¿Qué te gustaría{'\n'}comer hoy?
+                  ¿Qué te gustaría comer hoy?
                 </Heading>
               </Box>
 
@@ -72,7 +74,9 @@ const MenuScreen = () => {
                 />
               </Input>
 
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+              <Carrusel />
+
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollCategoryViewContent}>
                 <HStack space="sm" style={styles.buttonRow}>
                   <VStack alignItems="center">
                     <Button onPress={() => setActiveButton("comida")} variant="link">
@@ -152,7 +156,59 @@ const MenuScreen = () => {
 export default MenuScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 0,
+  },
+  scrollCategoryViewContent: {
+    flexGrow: 1, 
+    justifyContent: 'center'
+  },
+  center: {
+    backgroundColor: 'white',
+    width: '100%',
+    flex: 1,
+  },
+  box: {
+    marginHorizontal: 5,
+    marginVertical: 5,
+    padding: 5,
+    maxWidth: '96%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0,
+    elevation: 1,
+    backgroundColor: 'white',
+    flex: 1,
+  },
+  vStack: {
+    paddingBottom: 24,
+    flex: 1,
+  },
+  headingBox: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  headingLeft: {
+    textAlign: 'left',
+    marginLeft: 5,
+    marginBottom: 15,
+    fontWeight: 'normal',
+  },
+  inputContainer: {
+    width: '100%',
+    backgroundColor: 'white',
+    borderColor: '#ccc',
+    borderWidth: 2,
+    borderRadius: 10,
+    paddingVertical: 2,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  inputFieldLarge: {
     flex: 1,
     backgroundColor: '#fff',
   },
@@ -210,7 +266,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 0,
+    marginBottom: 10,
   },
   inputFieldLarge: {
     flex: 1,
@@ -220,7 +276,7 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 20,
+    paddingVertical: 30,
     paddingHorizontal: -5,
   },
   iconContainer: {
