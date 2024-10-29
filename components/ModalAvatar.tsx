@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     },
     modal: {
         paddingTop: 300, 
-        height: '90%',
+        height: '85%',
         shadowColor: Colors.light.text,
         shadowOffset: { width: 3, height: 2 },
         shadowOpacity: 0.25,
