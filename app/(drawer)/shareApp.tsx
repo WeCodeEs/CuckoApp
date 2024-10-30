@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function Configuration() {
+export default function ShareApp() {
   return (
     <View style={styles.container}>
       <Text>Compartir Aplicación</Text>

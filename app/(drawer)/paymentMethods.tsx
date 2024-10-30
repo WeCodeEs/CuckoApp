@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function Configuration() {
+export default function PaymentMethods() {
   return (
     <View style={styles.container}>
       <Text>Métodos de Pago</Text>

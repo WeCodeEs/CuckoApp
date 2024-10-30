@@ -30,7 +30,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
     };
 
     const handleSave = () => {
-        onEditComplete(lada, phone);
+        onEditComplete(lada, maskPhoneNumber(phone));
         setIsEditing(false);
     };
 

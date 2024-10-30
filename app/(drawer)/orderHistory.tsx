@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function Configuration() {
+export default function OrderHistory() {
   return (
     <View style={styles.container}>
       <Text>Historial Pedidos</Text>
