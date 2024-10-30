@@ -16,9 +16,9 @@ import { Colors } from '@/constants/Colors';
 
 const ProfileScreen = () => {
     const user = {
-      name_first: "Carlos",
-      last_name_first: "González",
-      mail: "carlos.gonzalezba@anahuac.mx",
+      name_first: "Juan",
+      last_name_first: "Pérez",
+      mail: "juan@gmail.com",
       faculty: "Ingeniería",
       phone: "9511234567",
       lada: "52",
