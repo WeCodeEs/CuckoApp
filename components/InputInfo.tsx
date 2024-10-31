@@ -56,7 +56,7 @@ const InputInfo: React.FC<InputInfoProps> = ({ initialValue, editable, onEditCom
                     <View style={styles.editableContainer}>
                         <Input variant="underlined" style={styles.input} size="md">
                             <InputField 
-                                placeholder={inputValue}
+                                value={inputValue}
                                 onChangeText={(text) => setInputValue(text)}
                             />
                         </Input>
