@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput } from 'react-native';
 import { Text } from "@/components/ui/text";
+import { Input, InputField } from './ui/input';
 import { Button } from "@/components/ui/button";
 import { Icon } from '@/components/ui/icon';
 import { Check, X, Pencil, Info } from "lucide-react-native";
 import { Pressable } from "@/components/ui/pressable";
 import { Heading } from "@/components/ui/heading";
 import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
-import { Colors } from '@/constants/Colors';
 
 interface InputInfoProps {
     initialValue: string;
@@ -54,11 +54,12 @@ const InputInfo: React.FC<InputInfoProps> = ({ initialValue, editable, onEditCom
             {editable ? (
                 isEditing ? (
                     <View style={styles.editableContainer}>
-                        <TextInput
-                            style={styles.input}
-                            value={inputValue}
-                            onChangeText={(text) => setInputValue(text)}
-                        />
+                        <Input variant="underlined" style={styles.input} size="md">
+                            <InputField 
+                                placeholder={inputValue}
+                                onChangeText={(text) => setInputValue(text)}
+                            />
+                        </Input>
                         <View style={styles.buttonsContainer}>
                             <Button 
                                 style={styles.button}
@@ -87,14 +88,12 @@ const InputInfo: React.FC<InputInfoProps> = ({ initialValue, editable, onEditCom
                     </View>
                 )
             ) : (
-                <TextInput
-                    style={styles.input}
-                    value={value}
-                    onChangeText={(text) => {
-                        setValue(text);
-                        onEditComplete(text);
-                    }}
-                />
+                <Input variant="underlined" style={styles.input} size="md">
+                    <InputField 
+                        placeholder={"nombre@mail.com"}
+                        onChangeText={(text) => setInputValue(text)}
+                    />
+                </Input>
             )}
 
             {showAlert && (
@@ -126,11 +125,8 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
-        borderColor: Colors.light.borderBox,
-        borderWidth: 1,
         paddingHorizontal: 8,
         paddingVertical: 4,
-        borderRadius: 4,
     },
     buttonsContainer: {
         flexDirection: 'row',

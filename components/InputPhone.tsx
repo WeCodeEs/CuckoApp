@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from "@/components/ui/text";
+import { Input, InputSlot, InputField, InputIcon } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Icon } from '@/components/ui/icon';
-import { X, Pencil, Check } from "lucide-react-native";
+import { X, Pencil, Check, Plus, Info } from "lucide-react-native";
 import { Pressable } from "@/components/ui/pressable";
 import { Heading } from "@/components/ui/heading";
-import { Colors } from '@/constants/Colors';
+import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
 
 interface InputPhoneProps {
     initialPhone: string;
@@ -20,6 +21,8 @@ interface InputPhoneProps {
 const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, editable, onEditComplete, onCancelEdit, headingText }) => {
     const [lada, setLada] = useState(initialLada);
     const [phone, setPhone] = useState(initialPhone);
+    const [inputPhone, setInputPhone] = useState("");
+    const [showAlert, setShowAlert] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
     const maskPhoneNumber = (phone: string) => {
@@ -30,13 +33,21 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
     };
 
     const handleSave = () => {
-        onEditComplete(lada, maskPhoneNumber(phone));
-        setIsEditing(false);
+        if(inputPhone.length != 10)
+        {
+            setShowAlert(true);
+        }
+        else
+        {
+            setPhone(inputPhone);
+            setShowAlert(false);
+            setIsEditing(false);
+        }
     };
-
+    
     const handleCancel = () => {
-        setLada(initialLada);
-        setPhone(initialPhone);
+        setInputPhone("");
+        setShowAlert(false);
         setIsEditing(false);
         onCancelEdit();
     };
@@ -49,22 +60,20 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
                 isEditing ? (
                     <View style={styles.editableContainer}>
                         <View style={styles.ladaContainer}>
-                            <Text style={styles.plusSign}>+</Text>
-                            <TextInput
-                                style={styles.ladaInput}
-                                value={lada}
-                                onChangeText={(text) => setLada(text.replace(/[^0-9]/g, ''))}
-                                keyboardType="numeric"
-                                maxLength={3}
-                            />
+                            <Input variant="underlined" style={styles.ladaInput} size="md">
+                                <InputSlot className="pl-3">
+                                    <InputIcon as={Plus} size={'2xl'}/>
+                                </InputSlot>
+                                <InputField placeholder={lada} />
+                            </Input>
                         </View>
-                        <TextInput
-                            style={styles.phoneInput}
-                            value={phone}
-                            onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ''))}
-                            keyboardType="phone-pad"
-                            maxLength={10}
-                        />
+                        <Input variant="underlined" style={styles.phoneInput} size="md">
+                            <InputField 
+                                onChangeText={(text) => setInputPhone(text.replace(/[^0-9]/g, ''))}
+                                keyboardType="phone-pad"
+                                maxLength={10}
+                            />
+                        </Input>
                         <View style={styles.buttonsContainer}>
                             <Button 
                                 style={styles.button}
@@ -84,6 +93,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
                             </Button>
                         </View>
                     </View>
+
                 ) : (
                     <View style={styles.displayContainer}>
                         <Text>+{lada} {maskPhoneNumber(phone)}</Text>
@@ -94,7 +104,30 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
                 )
             ) : (
                 <View style={styles.displayContainer}>
-                    <Text>+{lada} {maskPhoneNumber(phone)}</Text>
+                    <View style={styles.ladaContainer}>
+                        <Input variant="underlined" style={styles.ladaInput} size="md">
+                            <InputSlot className="pl-3">
+                                <InputIcon as={Plus} size={'2xl'}/>
+                            </InputSlot>
+                            <InputField placeholder={lada} />
+                        </Input>
+                    </View>
+                    <Input variant="underlined" style={styles.phoneInput} size="md">
+                        <InputField 
+                            placeholder="9511234567"
+                            onChangeText={(text) => setInputPhone(text.replace(/[^0-9]/g, ''))}
+                            keyboardType="phone-pad"
+                            maxLength={10}
+                        />
+                    </Input>
+                </View>
+            )}
+            {showAlert && (     
+                <View style={styles.alertContainer}>
+                    <Alert action="error" variant="solid">
+                        <AlertIcon as={Info} />
+                        <AlertText>Por favor, introduce un número de teléfono válido.</AlertText>
+                    </Alert>
                 </View>
             )}
         </View>
@@ -125,20 +158,14 @@ const styles = StyleSheet.create({
         paddingRight: 5,
     },
     ladaInput: {
-        width: 60,
-        borderColor: Colors.light.borderBox,
-        borderWidth: 1,
+        width: 80,
         paddingHorizontal: 8,
         paddingVertical: 4,
-        borderRadius: 4,
     },
     phoneInput: {
         flex: 1,
-        borderColor: Colors.light.borderBox,
-        borderWidth: 1,
         paddingHorizontal: 8,
         paddingVertical: 4,
-        borderRadius: 4,
         marginLeft: 10,
     },
     buttonsContainer: {
@@ -159,4 +186,7 @@ const styles = StyleSheet.create({
     editIcon: {
         marginLeft: 8,
     },
+    alertContainer: {
+        marginTop: 10,
+    }
 });

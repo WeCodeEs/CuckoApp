@@ -70,7 +70,7 @@ const ProfileScreen = () => {
                         initialValue={user.faculty}
                         editable={true}
                         headingText="Escuela"
-                        items={["Comunicación", "Diseño", "Derecho", "Ingeniería", "Medicina", "Negocios", "Psicología", "Turismo", "Ninguna"]}
+                        items={["Comunicación", "Diseño", "Derecho", "Ingeniería", "Medicina", "Negocios", "Psicología", "Turismo"]}
                         onEditComplete={(newValue) => console.log("Opción elegida:", newValue)}
                         onCancelEdit={() => console.log("Edición cancelada")}
                     />
