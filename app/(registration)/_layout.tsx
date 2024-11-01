@@ -4,8 +4,11 @@ export default function RegistrationLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: false, 
+        headerShown: false                
       }}
-    />
+    >
+      <Stack.Screen name="registrationPhone" options={{ title: 'Registro'}} />
+      <Stack.Screen name="registartionForm" options={{ title: 'Formulario de registro'}} />
+    </Stack>
   );
 }

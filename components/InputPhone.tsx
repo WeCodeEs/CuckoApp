@@ -13,12 +13,11 @@ interface InputPhoneProps {
     initialPhone: string;
     initialLada: string;
     editable: boolean;
-    onEditComplete: (lada: string, phone: string) => void;
     onCancelEdit: () => void;
     headingText: string;
 }
 
-const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, editable, onEditComplete, onCancelEdit, headingText }) => {
+const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, editable, onCancelEdit, headingText }) => {
     const [lada, setLada] = useState(initialLada);
     const [phone, setPhone] = useState(initialPhone);
     const [inputPhone, setInputPhone] = useState("");
@@ -109,7 +108,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
                             <InputSlot className="pl-3">
                                 <InputIcon as={Plus} size={'2xl'}/>
                             </InputSlot>
-                            <InputField placeholder={lada} />
+                            <InputField placeholder={"52"} keyboardType='phone-pad'/>
                         </Input>
                     </View>
                     <Input variant="underlined" style={styles.phoneInput} size="md">

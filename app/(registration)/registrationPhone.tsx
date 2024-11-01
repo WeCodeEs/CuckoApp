@@ -1,152 +1,125 @@
 import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { View } from "@/components/ui/view";
-import { Image } from "@/components/ui/image";
 import { Text } from '@/components/ui/text';
-import { StyleSheet, ScrollView } from "react-native";
 import { Center } from "@/components/ui/center";
-import { Box } from "@/components/ui/box";
 import { Heading } from "@/components/ui/heading";
-import { Pressable } from "@/components/ui/pressable";
-import { Icon } from '@/components/ui/icon';
-import { Pencil } from "lucide-react-native";
-import ModalAvatar from '@/components/ModalAvatar';
-import InputInfo from '@/components/InputInfo';
-import InputSelect from '@/components/InputSelect';
 import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
+import { Button, ButtonText } from '@/components/ui/button';
+import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
+import {
+  Actionsheet,
+  ActionsheetBackdrop,
+  ActionsheetContent,
+  ActionsheetDragIndicator,
+  ActionsheetDragIndicatorWrapper,
+  ActionsheetItem,
+  ActionsheetItemText,
+  ActionsheetIcon,
+} from '@/components/ui/actionsheet';
+import { Box } from '@/components/ui/box';
+import { Image } from '@/components/ui/image';
+import { VStack } from '@/components/ui/vstack';
+import { HStack } from '@/components/ui/hstack';
 
 const RegistrationPhone = () => {
-    const user = {
-      name_first: "Juan",
-      last_name_first: "Pérez",
-      last_name_second: "López",
-      mail: "juan@gmail.com",
-      faculty: "Ingeniería",
-      phone: "9511234567",
-      lada: "52",
-    }
-    const [phone, setPhone] = useState(user.phone);
-    const [lada, setLada] = useState(user.lada);
-    const [mail, setMail] = useState(user.mail);
-    const [selectedAvatar, setSelectedAvatar] = useState("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU");
-    const [showModal, setShowModal] = useState(false);
-    const handleEditComplete = (newLada: string, newPhone: string) => {
-      setLada(newLada);
-      setPhone(newPhone);
-    };
+  const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
 
-  const handleCancelEdit = () => {
-      console.log("Edición cancelada");
+  const handlePressIn = () => {
+    setButtonColor(Colors.light.mediumBlue);
   };
 
+  const handlePressOut = () => {
+    setButtonColor(Colors.light.darkBlue);
+  };
 
-    return (
-    <SafeAreaView style={{backgroundColor: '#fff'}}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Center style={styles.header_container}>
-              <View style={styles.image_container}>
-                <Image style={styles.cuckoo_image} size='2xl' source={require("@/assets/images/CuckoLogoTop.png")} alt={"CuckooEats"} resizeMode='contain'/>
-              </View>
-              <Heading size='2xl'>Bienvenido</Heading>
-              <Text>Para continuar, ingresa</Text>
-              <Text>un número de celular</Text>
-            </Center>
+  const handleCancelEdit = () => {
+    console.log("Edición cancelada");
+  };
+
+  const [showActionsheet, setShowActionsheet] = React.useState(false)
+  const handleClose = () => setShowActionsheet(false)
+
+  return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView
+          style={styles.keyboardContainer}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 30 : 0}
+        >
+          <Center style={styles.header_container}>
+            <View style={styles.image_container}>
+              <CuckooIsotipo style={styles.logo} />
+            </View>
+            <Heading style={styles.title} size='2xl'>Bienvenido</Heading>
+            <Text style={styles.text}>Para continuar, ingresa un número de celular</Text>
             <Center style={styles.general_container}>
               <InputPhone
-                        initialPhone={user.phone}
-                        initialLada={user.lada}
-                        editable={false}
-                        onEditComplete={handleEditComplete}
-                        onCancelEdit={handleCancelEdit}
-                        headingText="Teléfono"
+                initialPhone={"52"}
+                initialLada={"9511234567"}
+                editable={false}
+                onCancelEdit={handleCancelEdit}
+                headingText="Teléfono"
               />
-
             </Center>
-        </ScrollView>
-    </SafeAreaView>
-    );
-}
+          </Center>
+
+          <Button
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            onPress={() => setShowActionsheet(true)}
+            style={[styles.nextButton, { backgroundColor: buttonColor }]}
+          >
+            <ButtonText>Siguiente</ButtonText>
+          </Button>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
+  );
+};
 
 export default RegistrationPhone;
 
 const styles = StyleSheet.create({
-    scrollContent: {
-        flexGrow: 1,
-        backgroundColor: Colors.light.background,
-        paddingBottom: 5000,
-    },
-    avatar_container: {
-      bottom: '-45%',
-    },
-    image_container: {
-      // borderWidth: 2,
-      width: '100%',
-      alignItems: 'center',
-      // paddingTop: 100,
-      // aspectRatio:'1/1', 
-    },
-    header_container: {
-        zIndex: 1,
-        width: '100%',
-        // borderWidth: 2,
-        // alignContent: 'center',
-        // alignItems: 'center',
-        // height: 195,
-        // backgroundColor: Colors.light.mediumBlue,
-      },
-      general_container: {
-        // backgroundColor: Colors.light.mediumBlue,
-        padding: 30,
-        width: '100%',
-        height: 'auto',
-    },
-    section_container: {
-        width: '100%',
-        height: 'auto',
-        flexDirection: 'row',
-        alignContent: 'center',
-        justifyContent: 'space-between',
-        paddingBottom: 25,
-    },
-    content_box: {
-        padding: 20,
-        // borderWidth: 1,
-        borderColor: Colors.light.borderBox,
-        backgroundColor: Colors.light.background,
-        height: 'auto',
-        width: '100%',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        borderBottomWidth: 0,
-    },
-    title: {
-        paddingTop: 76,
-        paddingBottom: 5,
-        paddingHorizontal: 50,
-        textAlign: 'center',
-    },
-    subtitle: {
-        paddingTop: 30,
-        paddingBottom: 15,
-        color: Colors.light.text,
-    },
-    cuckoo_image: {
-        // borderRadius: 100,
-        resizeMode: 'stretch',
-        // borderWidth: 2,
-        width: '50%',
-        height: '100%',
-    },
-    change_av: { 
-      position: 'absolute',
-      bottom: 10,
-      right: 5,
-      backgroundColor: Colors.light.darkBlue,
-      padding: 8,
-      borderRadius: 100,
-      borderColor: Colors.light.background,
-      borderWidth: 4,
-      zIndex: 99,
-    },
+  container: {
+    backgroundColor: Colors.light.background,
+    height: '100%',
+    flex: 1,
+  },
+  keyboardContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingBottom: 20, 
+  },
+  header_container: {
+    width: '100%',
+  },
+  image_container: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  logo: {
+    position: 'relative',
+    width: '60%',
+    aspectRatio: '1/1',
+  },
+  title: {
+    marginTop: -40,
+    paddingBottom: 10,
+  },
+  text: {
+    marginHorizontal: 20,
+    textAlign: 'center',
+  },
+  general_container: {
+    padding: 30,
+    width: '100%',
+    height: 'auto',
+  },
+  nextButton: {
+    borderRadius: 30,
+    marginHorizontal: 30,
+  },
 });
