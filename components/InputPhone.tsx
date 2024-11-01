@@ -64,7 +64,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
                                 <InputSlot className="pl-3">
                                     <InputIcon as={Plus} size={'2xl'}/>
                                 </InputSlot>
-                                <InputField placeholder={lada} />
+                                <InputField placeholder={lada} keyboardType="phone-pad"/>
                             </Input>
                         </View>
                         <Input variant="underlined" style={styles.phoneInput} size="md">
@@ -109,7 +109,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
                             <InputSlot className="pl-3">
                                 <InputIcon as={Plus} size={'2xl'}/>
                             </InputSlot>
-                            <InputField placeholder={lada} />
+                            <InputField placeholder={lada} keyboardType="phone-pad"/>
                         </Input>
                     </View>
                     <Input variant="underlined" style={styles.phoneInput} size="md">
