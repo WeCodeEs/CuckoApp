@@ -7,10 +7,10 @@ import { Colors } from '@/constants/Colors';
 const Carrusel = () => {
 
   const promociones = [
-    { image: require('@/assets/images/promo1.png') },
-    { image: require('@/assets/images/promo2.png') },
-    { image: require('@/assets/images/promo3.png') },
-    { image: require('@/assets/images/promo4.png') },
+    { image: require('@/assets/images/res_1.jpg') },
+    { image: require('@/assets/images/res_2.jpg') },
+    { image: require('@/assets/images/res_3.jpg') },
+    { image: require('@/assets/images/res_4.jpg') },
   ];
 
   return (
