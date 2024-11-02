@@ -167,7 +167,8 @@ const styles = StyleSheet.create({
   },
   scrollCategoryViewContent: {
     flexGrow: 1, 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingTop: 12,
   },
   center: {
     backgroundColor: Colors.light.background,
