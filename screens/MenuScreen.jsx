@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginHorizontal: 1,
     borderWidth: 0,
-    borderColor: '#ccc',
+    borderColor: Colors.light.background,
     borderRadius: 15,
     padding: 15,
     alignItems: 'center',
