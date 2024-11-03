@@ -3,8 +3,9 @@ import { ApiResponse, Menu, Product } from '@/constants/types';
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY ?? "";
 
-if (!API_KEY) {
-  console.error("API Key no definida.");
+if (!API_KEY || !API_URL) {
+  console.error("API Key o API URL no definidos.");
+  throw new Error("Las variables de entorno API_KEY o API_URL no están definidas.");
 }
 
 export async function fetchMenus(): Promise<Menu[]> {
