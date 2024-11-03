@@ -13,6 +13,13 @@ const iconColorLight = '#183542';
 const tabIconDefaultColorLight = '#139FAA';
 const tabIconSelectedColorLight = '#F07122';
 const secondaryBackgroundColorLight = '#183542';
+const borderBoxColor = '#d1d5db';
+const lightBlueColor = "#B3E1E4";
+const mediumLightBlueColor = "#49BCCE";
+const mediumBlueColor = "#139FAA";
+const mediumDarkBlueColor = "#0B818F";
+const darkBlueColor = "#183542";
+const ashColor = "#363837"
 
 
 const textColorDark = '#ECEDEE';
@@ -31,6 +38,13 @@ export const Colors = {
     tabIconDefault: tabIconDefaultColorLight,
     tabIconSelected: tabIconSelectedColorLight,
     secondaryBackground: secondaryBackgroundColorLight,
+    borderBox: borderBoxColor,
+    lightBlue: lightBlueColor,
+    mediumLightBlue: mediumLightBlueColor,
+    mediumBlue: mediumBlueColor,
+    mediumDarkBlue: mediumDarkBlueColor,
+    darkBlue: darkBlueColor,
+    ash: ashColor,
   },
   dark: {
     text: textColorDark,
