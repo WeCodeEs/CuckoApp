@@ -3,20 +3,18 @@ import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Image } from "@/components/ui/image";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Center } from "@/components/ui/center";
 import { useNavigation } from '@react-navigation/native';
 import { useState } from "react";
-// import platillos from '../constants/platillos';
-
 import { Heading } from "@/components/ui/heading";
 import { Input, InputField, InputSlot } from "@/components/ui/input";
 import { Box } from "@/components/ui/box";
 import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
 import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
-import Carrusel from '../components/Carrusel';
-
+import Carrusel from '@/components/Carrusel';
+import {Colors} from '@/constants/Colors';
 
 const platillos = {
   comida: [
@@ -54,101 +52,107 @@ const MenuScreen = () => {
   const [activeButton, setActiveButton] = useState("comida");
 
   return (
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <Center style={styles.center}>
-          <Box style={styles.box}>
-            <VStack style={styles.vStack}>
-              <Box style={styles.headingBox}>
-                <Heading size={"lg"} bold="false" style={styles.headingLeft}>
-                  ¿Qué te gustaría comer hoy?
-                </Heading>
-              </Box>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <Center style={styles.center}>
+        <Box style={styles.box}>
+          <VStack style={styles.vStack}>
+            <Box style={styles.headingBox}>
+              <Heading size={"lg"} bold="false" style={styles.headingLeft}>
+                ¿Qué te gustaría comer hoy?
+              </Heading>
+            </Box>
 
-              <Input size="xl" style={styles.inputContainer}>
-                <InputSlot>
-                  <Icon as={Search} size="md" />
-                </InputSlot>
-                <InputField
-                    style={styles.inputFieldLarge}
-                    placeholder="Buscar"
-                />
-              </Input>
+            <Input size="xl" style={styles.inputContainer}>
+              <InputSlot>
+                <Icon as={Search} size="md" />
+              </InputSlot>
+              <InputField
+                  style={styles.inputFieldLarge}
+                  placeholder="Buscar"
+              />
+            </Input>
 
-              <Carrusel />
+            <Carrusel />
 
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollCategoryViewContent}>
-                <HStack space="sm" style={styles.buttonRow}>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("comida")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "comida" && styles.activeIconContainer]}>
-                        <Icon as={ChefHat} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Comida</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("snacks")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "snacks" && styles.activeIconContainer]}>
-                        <Icon as={Sandwich} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Snacks</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("ensaladas")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "ensaladas" && styles.activeIconContainer]}>
-                        <Icon as={Salad} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Ensaladas</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("platillos")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "platillos" && styles.activeIconContainer]}>
-                        <Icon as={ForkKnife} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Platillos</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("cafe")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "cafe" && styles.activeIconContainer]}>
-                        <Icon as={Coffee} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Café</Text>
-                  </VStack>
-                  <VStack alignItems="center">
-                    <Button onPress={() => setActiveButton("limonadas")} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === "limonadas" && styles.activeIconContainer]}>
-                        <Icon as={GlassWater} size="20" />
-                      </Box>
-                    </Button>
-                    <Text style={styles.activeButtonText}>Limonadas</Text>
-                  </VStack>
-                </HStack>
-              </ScrollView>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollCategoryViewContent}>
+              <HStack space="sm" style={styles.buttonRow}>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("comida")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "comida" && styles.activeIconContainer]}>
+                      <Icon as={ChefHat} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Comida</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("snacks")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "snacks" && styles.activeIconContainer]}>
+                      <Icon as={Sandwich} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Snacks</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("ensaladas")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "ensaladas" && styles.activeIconContainer]}>
+                      <Icon as={Salad} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Ensaladas</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("platillos")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "platillos" && styles.activeIconContainer]}>
+                      <Icon as={ForkKnife} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Platillos</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("cafe")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "cafe" && styles.activeIconContainer]}>
+                      <Icon as={Coffee} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Café</Text>
+                </VStack>
+                <VStack alignItems="center">
+                  <Button onPress={() => setActiveButton("limonadas")} variant="link">
+                    <Box style={[styles.iconContainer, activeButton === "limonadas" && styles.activeIconContainer]}>
+                      <Icon as={GlassWater} size="20" />
+                    </Box>
+                  </Button>
+                  <Text style={styles.activeButtonText}>Limonadas</Text>
+                </VStack>
+              </HStack>
+            </ScrollView>
 
-              <View style={styles.grid}>
-                {platillos[activeButton].map(platillo => (
-                    <VStack key={platillo.id}  style={styles.vStackItem}>
-                      <Image size="xl" source={platillo.imagen} alt={platillo.nombre} style={styles.image} />
-                      <Text size="lg" bold="true" style={styles.itemText}>{platillo.nombre}</Text>
-                      <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.price}</Text>
-                      <Button
-                          size="sm"
-                          style={styles.addButton}
-                          onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}
-                      >
-                        <ButtonText style={styles.addButtonText}>+</ButtonText>
-                      </Button>
-                    </VStack>
-                ))}
-              </View>
-            </VStack>
-          </Box>
-        </Center>
-      </ScrollView>
+            <View style={styles.grid}>
+              {platillos[activeButton].map(platillo => (
+                <VStack key={platillo.id} style={styles.vStackItem}>
+                  <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })} style={styles.TouchableOpacity}>
+
+                    <Image size="xl" source={platillo.imagen} alt={platillo.nombre} style={styles.image} />
+                    <Text size="lg" bold="true" style={styles.itemText}>{platillo.nombre}</Text>
+                    <Text size="lg" bold="true" style={styles.itemPrice}>{platillo.price}</Text>
+
+                  </TouchableOpacity>
+
+                  <Button
+                    size="sm"
+                    style={styles.addButton}
+                    onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}
+                  >
+                    <Text style={styles.addButtonText}>+</Text>
+                  </Button>
+
+                </VStack>
+              ))}
+            </View>
+          </VStack>
+        </Box>
+      </Center>
+    </ScrollView>
 
   );
 };
@@ -163,10 +167,11 @@ const styles = StyleSheet.create({
   },
   scrollCategoryViewContent: {
     flexGrow: 1, 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingTop: 12,
   },
   center: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     width: '100%',
     flex: 1,
   },
@@ -175,11 +180,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     padding: 5,
     maxWidth: '96%',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0,
     elevation: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     flex: 1,
   },
   vStack: {
@@ -198,8 +202,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    backgroundColor: 'white',
-    borderColor: '#ccc',
+    backgroundColor: Colors.light.background,
     borderWidth: 2,
     borderRadius: 10,
     paddingVertical: 2,
@@ -210,7 +213,7 @@ const styles = StyleSheet.create({
   },
   inputFieldLarge: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.light.background,
   },
   grid: {
     flexDirection: 'row',
@@ -226,7 +229,7 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   center: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     width: '100%',
     flex: 1,
   },
@@ -235,11 +238,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     padding: 5,
     maxWidth: '96%',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0,
     elevation: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     flex: 1,
   },
   vStack: {
@@ -258,8 +260,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    backgroundColor: 'white',
-    borderColor: '#ccc',
+    backgroundColor: Colors.light.background,
     borderWidth: 2,
     borderRadius: 10,
     paddingVertical: 2,
@@ -282,7 +283,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginHorizontal: 1,
     borderWidth: 0,
-    borderColor: '#ccc',
+    borderColor: Colors.light.background,
     borderRadius: 15,
     padding: 15,
     alignItems: 'center',
@@ -290,16 +291,16 @@ const styles = StyleSheet.create({
     height: 60,
   },
   activeIconContainer: {
-    backgroundColor: '#f07122',
+    backgroundColor: Colors.light.tabIconSelected,
     borderWidth: 0,
   },
   buttonText: {
-    color: '#888',
+    color: Colors.light.text,
     marginTop: 8,
     fontSize: 9,
   },
   activeButtonText: {
-    color: 'black',
+    color: Colors.light.text,
     marginTop: 8,
     fontSize: 10,
   },
@@ -308,6 +309,10 @@ const styles = StyleSheet.create({
     width: '50%',
     marginBottom: 16,
   },
+  TouchableOpacity: {
+    width: '100%', 
+    alignItems: 'center',
+  },
   image: {
     width: 96,
     height: 96,
@@ -315,27 +320,30 @@ const styles = StyleSheet.create({
   },
   itemText: {
     marginTop: 8,
-    fontSize: 12,
+    fontSize: 15,
   },
   itemPrice: {
     marginTop: 3,
+    marginBottom: 6,
+    fontSize: 17,
     fontWeight: 'bold',
-    color: '#f07122',
+    color: Colors.dark.tabIconSelected,
+
   },
   addButton: {
     marginTop: 6,
-    backgroundColor: '#49bcce',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    backgroundColor: Colors.light.tabIconDefault,
+    width: 43,
+    height: 43,
+    borderRadius: 23,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 0,
   },
   addButtonText: {
-    color: 'white',
-    fontSize: 24,
+    color: Colors.dark.text,
+    fontSize: 22,
     lineHeight: 30,
-    fontWeight: 'normal',
+    fontWeight: 'black',
+    textAlign: 'center',
   },
 });
