@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import RegistrationPhone from '../(registration)/registrationPhone';
 
 export default function Configuration() {
   return (

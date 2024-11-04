@@ -8,23 +8,13 @@ import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
 import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
-import {
-  Actionsheet,
-  ActionsheetBackdrop,
-  ActionsheetContent,
-  ActionsheetDragIndicator,
-  ActionsheetDragIndicatorWrapper,
-  ActionsheetItem,
-  ActionsheetItemText,
-  ActionsheetIcon,
-} from '@/components/ui/actionsheet';
-import { Box } from '@/components/ui/box';
-import { Image } from '@/components/ui/image';
-import { VStack } from '@/components/ui/vstack';
-import { HStack } from '@/components/ui/hstack';
+import RegistrationActionSheet from '@/components/RegistrationActionSheet';
+
 
 const RegistrationPhone = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
+  const [showActionsheet, setShowActionsheet] = useState(false);
+
 
   const handlePressIn = () => {
     setButtonColor(Colors.light.mediumBlue);
@@ -37,9 +27,6 @@ const RegistrationPhone = () => {
   const handleCancelEdit = () => {
     console.log("Edición cancelada");
   };
-
-  const [showActionsheet, setShowActionsheet] = React.useState(false)
-  const handleClose = () => setShowActionsheet(false)
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -74,6 +61,10 @@ const RegistrationPhone = () => {
           >
             <ButtonText>Siguiente</ButtonText>
           </Button>
+          <RegistrationActionSheet
+            isOpen={showActionsheet}
+            onClose={() => setShowActionsheet(false)}
+          />
         </KeyboardAvoidingView>
       </SafeAreaView>
     </TouchableWithoutFeedback>

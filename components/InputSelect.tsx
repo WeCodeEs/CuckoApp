@@ -76,7 +76,7 @@ const InputSelect: React.FC<InputSelectProps> = ({ initialValue, editable, onEdi
             ) : (
                 <View style={styles.editableContainer}>
                     <Select onValueChange={handleSelectChange}>
-                        <SelectTrigger variant="outline" size="md" style={styles.selectTrigger}>
+                        <SelectTrigger variant="underlined" size="md" style={styles.selectTrigger}>
                             <SelectComponentInput placeholder="Selecciona una opción" />
                             <SelectIcon className="mr-3" as={ChevronDownIcon} />
                         </SelectTrigger>
