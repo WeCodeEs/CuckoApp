@@ -167,7 +167,8 @@ const styles = StyleSheet.create({
   },
   scrollCategoryViewContent: {
     flexGrow: 1, 
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingTop: 12,
   },
   center: {
     backgroundColor: Colors.light.background,
@@ -282,6 +283,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginHorizontal: 1,
     borderWidth: 0,
+    borderColor: Colors.light.background,
     borderRadius: 15,
     padding: 15,
     alignItems: 'center',
