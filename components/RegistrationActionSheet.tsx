@@ -19,9 +19,11 @@ import { useRouter } from "expo-router";
 interface RegistrationActionSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  lada: string;
+  phone: string;
 }
 
-const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpen, onClose }) => {
+const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpen, onClose, lada, phone }) => {
   const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const inputRefs = [useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null)];
@@ -44,6 +46,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
 
   type RegistrationRoutes = 
   | '/(registration)/registrationPhone'
+  | '/(registration)/registrationName'
   | '/(registration)/registrationForm';
 
   const handleNavigation = (route: RegistrationRoutes) => {
@@ -67,7 +70,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
           </ActionsheetDragIndicatorWrapper>
           <Center style={styles.centerContent}>
             <Heading style={styles.title} size='xl'>Código de verificación</Heading>
-            <Text>Se ha enviado un código de verificación a </Text>
+            <Text style={styles.text}>Se ha enviado un código de verificación a +{lada} {phone}</Text>
             <HStack style={styles.hStack}>
               {inputRefs.map((inputRef, index) => (
                 <TextInput
@@ -89,7 +92,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
             <Button
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
-              onPress={() => handleNavigation('/(registration)/registrationForm')}
+              onPress={() => handleNavigation('/(registration)/registrationName')}
               style={[styles.nextButton, { backgroundColor: buttonColor }]}
             >
               <ButtonText>Siguiente</ButtonText>
@@ -107,6 +110,10 @@ const styles = StyleSheet.create({
   title: {
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  text: {
+    paddingBottom: 10,
+    textAlign: 'center'
   },
   keyboardAvoidingView: {
     position: 'relative',

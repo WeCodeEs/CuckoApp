@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View } from "@/components/ui/view";
 import { Image } from "@/components/ui/image";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { Center } from "@/components/ui/center";
 import { Box } from "@/components/ui/box";
 import { Heading } from "@/components/ui/heading";
@@ -28,17 +28,15 @@ const ProfileScreen = () => {
     const [mail, setMail] = useState(user.mail);
     const [selectedAvatar, setSelectedAvatar] = useState("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU");
     const [showModal, setShowModal] = useState(false);
-    const handleEditComplete = (newLada: string, newPhone: string) => {
-      setLada(newLada);
-      setPhone(newPhone);
-    };
 
-  const handleCancelEdit = () => {
-      console.log("Edición cancelada");
-  };
-
+    const handleLadaChange = (newLada: string) => setLada(newLada);
+    const handlePhoneChange = (newPhone: string) => setPhone(newPhone);
 
     return (
+      <KeyboardAvoidingView
+      style={styles.keyboardContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <ScrollView contentContainerStyle={styles.scrollContent}>
             <Center style={styles.header_container}>
                 <Pressable onPress={() => setShowModal(true)} style={styles.avatar_container}>
@@ -75,22 +73,28 @@ const ProfileScreen = () => {
                         onCancelEdit={() => console.log("Edición cancelada")}
                     />
                     <InputPhone
-                        initialPhone={user.phone}
-                        initialLada={user.lada}
+                        lada={user.lada}
+                        phone={user.phone}
+                        onLadaChange={handleLadaChange}
+                        onPhoneChange={handlePhoneChange}
                         editable={true}
-                        onEditComplete={handleEditComplete}
-                        onCancelEdit={handleCancelEdit}
                         headingText="Teléfono"
                     />
                 </Box>
             </Center>
         </ScrollView>
+      </KeyboardAvoidingView>
     );
 }
 
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
+    keyboardContainer: {
+      flex: 1,
+      justifyContent: 'space-between',
+      paddingBottom: 20, 
+    },
     scrollContent: {
         flexGrow: 1,
         backgroundColor: Colors.light.background,

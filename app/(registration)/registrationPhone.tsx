@@ -14,15 +14,11 @@ import RegistrationActionSheet from '@/components/RegistrationActionSheet';
 const RegistrationPhone = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
   const [showActionsheet, setShowActionsheet] = useState(false);
+  const [lada, setLada] = useState("52");
+  const [phone, setPhone] = useState("9511234567");
 
-
-  const handlePressIn = () => {
-    setButtonColor(Colors.light.mediumBlue);
-  };
-
-  const handlePressOut = () => {
-    setButtonColor(Colors.light.darkBlue);
-  };
+  const handleLadaChange = (newLada: string) => setLada(newLada);
+  const handlePhoneChange = (newPhone: string) => setPhone(newPhone);
 
   const handleCancelEdit = () => {
     console.log("Edición cancelada");
@@ -44,18 +40,19 @@ const RegistrationPhone = () => {
             <Text style={styles.text}>Para continuar, ingresa un número de celular</Text>
             <Center style={styles.general_container}>
               <InputPhone
-                initialPhone={"52"}
-                initialLada={"9511234567"}
+                lada={lada}
+                phone={phone}
+                onLadaChange={handleLadaChange}
+                onPhoneChange={handlePhoneChange}
                 editable={false}
-                onCancelEdit={handleCancelEdit}
                 headingText="Teléfono"
               />
             </Center>
           </Center>
 
           <Button
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
+            onPressIn={() => setButtonColor(Colors.light.mediumBlue)}
+            onPressOut={() => setButtonColor(Colors.light.darkBlue)}
             onPress={() => setShowActionsheet(true)}
             style={[styles.nextButton, { backgroundColor: buttonColor }]}
           >
@@ -64,6 +61,8 @@ const RegistrationPhone = () => {
           <RegistrationActionSheet
             isOpen={showActionsheet}
             onClose={() => setShowActionsheet(false)}
+            lada={lada}
+            phone={phone}
           />
         </KeyboardAvoidingView>
       </SafeAreaView>

@@ -8,13 +8,16 @@ import { Input, InputField } from '@/components/ui/input';
 import { Colors } from '@/constants/Colors';
 import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
-import InputSelect from '@/components/InputSelect';
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 
-const RegistrationForm = () => {
+
+
+const RegistrationName = () => {
   const router = useRouter();
-  const {name} = useLocalSearchParams();
   const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+
 
   const handlePressIn = () => {
     setButtonColor(Colors.light.mediumBlue);
@@ -22,6 +25,14 @@ const RegistrationForm = () => {
 
   const handlePressOut = () => {
     setButtonColor(Colors.light.darkBlue);
+  };
+
+  const handleCancelEdit = () => {
+    console.log("Edición cancelada");
+  };
+
+  const handleChangeName = (inputName: string) => {
+    setName(inputName);
   };
 
   return (
@@ -37,25 +48,24 @@ const RegistrationForm = () => {
               <View style={styles.image_container}>
                 <CuckooIsotipo style={styles.logo} />
               </View>
-              <Heading size={"2xl"} style={styles.title}>¡Hola {name}!</Heading>
-              <Text style={styles.text}>Ya estamos en la recta final :)</Text>
+              <Heading style={styles.title} size='2xl'>¡Genial!</Heading>
+              <Text style={styles.text}>Ahora, dinos como te llamas...</Text>
               <View style={styles.field_container}>
-                <Heading style={styles.subtitle} size={"lg"}>Correo</Heading>
+                <Heading style={styles.subtitle} size={"lg"}>Nombre</Heading>
                 <Input variant="underlined" size="md" isDisabled={false} isInvalid={false} isReadOnly={false} >
                   <InputField
-                    placeholder='alguien@mail.com'
+                    placeholder='Juan'
+                    onChangeText={(text) => handleChangeName(text)}
                   />
                 </Input>
               </View>
-              <View style={[styles.field_container, {marginTop: 10}]}>
-                <InputSelect 
-                          initialValue={"Selecciona una opción..."}
-                          editable={false}
-                          headingText="Escuela"
-                          items={["Comunicación", "Diseño", "Derecho", "Ingeniería", "Medicina", "Negocios", "Psicología", "Turismo"]}
-                          onEditComplete={(newValue) => console.log("Opción elegida:", newValue)}
-                          onCancelEdit={() => console.log("Edición cancelada")}
-                />
+              <View style={styles.field_container}>
+                <Heading style={styles.subtitle} size={"lg"}>Apellidos</Heading>
+                <Input variant="underlined" size="md" isDisabled={false} isInvalid={false} isReadOnly={false} >
+                  <InputField
+                    placeholder='Pérez'
+                  />
+                </Input>
               </View>
             </Center>
 
@@ -64,10 +74,10 @@ const RegistrationForm = () => {
           <Button
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
-            onPress={() => router.replace("/(tabs)/(home)")}
+            onPress={() => router.push({pathname: "/(registration)/registrationForm", params: {name: name}})}
             style={[styles.nextButton, { backgroundColor: buttonColor }]}
           >
-            <ButtonText>Finalizar</ButtonText>
+            <ButtonText>Continuar</ButtonText>
           </Button>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -75,7 +85,7 @@ const RegistrationForm = () => {
   );
 };
 
-export default RegistrationForm;
+export default RegistrationName;
 
 const styles = StyleSheet.create({
   container: {
@@ -119,6 +129,7 @@ const styles = StyleSheet.create({
   field_container: {
     paddingHorizontal: 30,
     paddingBottom: 10,
+    marginBottom: 10,
     width: '100%',
     height: 'auto',
   },
