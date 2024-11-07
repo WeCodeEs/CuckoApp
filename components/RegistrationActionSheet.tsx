@@ -61,6 +61,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     <Actionsheet isOpen={isOpen} onClose={onClose} snapPoints={[36]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'position' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? -30 : 0}
         style={styles.keyboardAvoidingView}
       >
         <ActionsheetBackdrop />
