@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, TextInput } from 'react-native';
 import {
   Actionsheet,
@@ -29,6 +29,16 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   const inputRefs = [useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null)];
   const navigation = useNavigation();
   const router = useRouter();
+
+  useEffect(() => {
+    if (isOpen) {
+      const focusTimeout = setTimeout(() => {
+        inputRefs[0].current?.focus();
+      }, 100);
+
+      return () => clearTimeout(focusTimeout);
+    }
+  }, [isOpen]);
 
   const handleChange = (text: string, index: number) => {
     if (text.length === 1 && index < inputRefs.length - 1 && inputRefs[index + 1].current) {
