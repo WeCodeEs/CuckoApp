@@ -78,7 +78,7 @@ const InputSelect: React.FC<InputSelectProps> = ({ initialValue, editable, onEdi
                     <Select onValueChange={handleSelectChange} style={styles.select}>
                         <SelectTrigger variant="underlined" size="md" style={styles.selectTrigger}>
                             <SelectComponentInput placeholder="Selecciona una opción" />
-                            <SelectIcon className="mr-3" as={ChevronDownIcon} style={styles.SelectIcon}/>
+                            <SelectIcon className="mr-3" as={ChevronDownIcon}/>
                         </SelectTrigger>
                         <SelectPortal>
                             <SelectBackdrop />
@@ -129,10 +129,6 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         justifyContent: 'space-between',
-    },
-    SelectIcon: {
-        flex: 1,
-        // width: '100%',
     },
     selectContent: {
         paddingBottom: 20,
