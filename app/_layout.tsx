@@ -1,8 +1,3 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import "@/global.css";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import { useFonts } from "expo-font";
@@ -10,12 +5,21 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-
+import { ThemeProvider, DefaultTheme, DarkTheme } from "@react-navigation/native";
+import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const CuckoTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: Colors.light.background,
+    },
+  };
+
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     PoppinsBold: require("../assets/fonts/Poppins/Poppins-ExtraBold.ttf"),
@@ -35,12 +39,12 @@ export default function RootLayout() {
 
   return (
     <GluestackUIProvider mode="light">
-      <ThemeProvider value={colorScheme === "light" ? DefaultTheme : DarkTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <ThemeProvider value={colorScheme === "light" ? CuckoTheme : DarkTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
       </ThemeProvider>
     </GluestackUIProvider>
   );
