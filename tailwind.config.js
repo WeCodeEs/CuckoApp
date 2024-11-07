@@ -172,8 +172,7 @@ module.exports = {
       fontFamily: {
         heading: ["PoppinsBold"],
         body: ["PoppinsRegular"],
-        mono: ["PoppinsRegular"],
-        roboto: ['Roboto', 'sans-serif'],
+        mono: ["PoppinsMedium"],
       },
       fontWeight: {
         extrablack: '950',

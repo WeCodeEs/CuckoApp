@@ -36,32 +36,32 @@ interface PlatillosData {
 
 const platillos: PlatillosData = {
   comida: [
-    { id: 1, nombre: "Ensalada Cajún", price: "$ 55.00", imagen: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
-    { id: 2, nombre: "Ensalada Curry", price: "$ 65.00", imagen: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
-    { id: 3, nombre: "Baguette", price: "$ 45.00", imagen: require('@/assets/images/baguette.png'), alt: 'Baguette' },
-    { id: 4, nombre: "Croissant", price: "$ 25.00", imagen: require('@/assets/images/croissant.png'), alt: 'Croissant' },
-    { id: 5, nombre: "Tlayuda", price: "$ 65.00", imagen: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
-    { id: 6, nombre: "Hamburguesa", price: "$ 50.00", imagen: require('@/assets/images/hamburguesa.png'), alt: 'Hamburguesa' },
+    { id: 1, name: "Ensalada Cajún", price: 55.00, image: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
+    { id: 2, name: "Ensalada Curry", price: 65.00, image: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
+    { id: 3, name: "Baguette", price: 45.00, image: require('@/assets/images/baguette.png'), alt: 'Baguette' },
+    { id: 4, name: "Croissant", price: 25.00, image: require('@/assets/images/croissant.png'), alt: 'Croissant' },
+    { id: 5, name: "Tlayuda", price: 65.00, image: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
+    { id: 6, name: "Hamburguesa", price: 50.00, image: require('@/assets/images/hamburguesa.png'), alt: 'Hamburguesa' },
   ],
   snacks: [
-    { id: 7, nombre: "Prueba1", price: "$ 00.00", imagen: require('@/assets/images/baguette.png'), alt: 'Baguette' },
-    { id: 8, nombre: "Hamburguesa", price: "$ 50.00", imagen: require('@/assets/images/hamburguesa.png'), alt: 'Baguette' },
+    { id: 7, name: "Prueba1", price: 10.00, image: require('@/assets/images/baguette.png'), alt: 'Baguette' },
+    { id: 8, name: "Hamburguesa", price: 50.00, image: require('@/assets/images/hamburguesa.png'), alt: 'Baguette' },
   ],
   ensaladas: [
-    { id: 9, nombre: "Prueba2", price: "$ 00.00", imagen: require('@/assets/images/croissant.png'), alt: 'Prueba' },
-    { id: 10, nombre: "Ensalada Cajún", price: "$ 55.00", imagen: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
+    { id: 9, name: "Prueba2", price: 10.00, image: require('@/assets/images/croissant.png'), alt: 'Prueba' },
+    { id: 10, name: "Ensalada Cajún", price: 55.00, image: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
   ],
   platillos: [
-    { id: 11, nombre: "Prueba3", price: "$ 00.00", imagen: require('@/assets/images/baguette.png'), alt: 'Prueba'  },
-    { id: 12, nombre: "Tlayuda", price: "$ 65.00", imagen: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
+    { id: 11, name: "Prueba3", price: 10.00, image: require('@/assets/images/baguette.png'), alt: 'Prueba'  },
+    { id: 12, name: "Tlayuda", price: 65.00, image: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
   ],
   cafe: [
-    { id: 13, nombre: "Prueba4", price: "$ 00.00", imagen: require('@/assets/images/croissant.png'), alt: 'Prueba' },
-    { id: 14, nombre: "Baguette", price: "$ 45.00", imagen: require('@/assets/images/baguette.png'), alt: 'Baguette' },
+    { id: 13, name: "Prueba4", price: 10.00, image: require('@/assets/images/croissant.png'), alt: 'Prueba' },
+    { id: 14, name: "Baguette", price: 45.00, image: require('@/assets/images/baguette.png'), alt: 'Baguette' },
   ],
   limonadas: [
-    { id: 15, nombre: "Prueba5", price: "$ 00.00", imagen: require('@/assets/images/baguette.png'), alt: 'Prueba' },
-    { id: 16, nombre: "Ensalada Curry", price: "$ 65.00", imagen: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
+    { id: 15, name: "Prueba5", price: 10.00, image: require('@/assets/images/baguette.png'), alt: 'Prueba' },
+    { id: 16, name: "Ensalada Curry", price: 65.00, image: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
   ],
 };
 
@@ -118,9 +118,11 @@ const MenuScreen = () => {
               {platillos[activeButton].map((platillo) => (
                 <VStack key={platillo.id} style={styles.vStackItem}>
                   <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })} style={styles.TouchableOpacity}>
-                    <Image size="xl" source={platillo.imagen} alt={platillo.alt} style={styles.image} />
-                    <Text size="lg" bold={true} style={styles.itemText}>{platillo.nombre}</Text>
-                    <Text size="lg" bold={true} style={styles.itemPrice}>{platillo.price}</Text>
+
+                    <Image size="xl" source={platillo.image} alt={platillo.name} style={styles.image} />
+                    <Text size="lg" bold="true" style={styles.itemText}>{platillo.name}</Text>
+                    <Text size="lg" bold="true" style={styles.itemPrice}>$ {platillo.price.toFixed(2)}</Text>
+
                   </TouchableOpacity>
 
                   <Button
