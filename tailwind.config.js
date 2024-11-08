@@ -8,7 +8,7 @@ module.exports = {
   safelist: [
     {
       pattern:
-        /(bg|border|text|stroke|fill)-(primary|secondary|tertiary|error|success|warning|info|typography|outline|background)-(0|50|100|200|300|400|500|600|700|800|900|950|white|gray|black|error|warning|muted|success|info|light|dark)/,
+        /(bg|border|text|stroke|fill)-(primary|secondary|tertiary|error|success|warning|info|typography|outline|background|cucko)-(0|50|100|200|300|400|500|600|700|800|900|950|white|gray|black|error|warning|muted|success|info|light|dark|darkBlue|teal|cyan|skyBlue|paleCyan|orange)/,
     },
   ],
   theme: {
@@ -168,6 +168,15 @@ module.exports = {
           info: 'rgb(var(--color-indicator-info)/<alpha-value>)',
           error: 'rgb(var(--color-indicator-error)/<alpha-value>)',
         },
+        cucko: { 
+          black: 'rgb(var(--color-cucko-black)/<alpha-value>)',
+          darkBlue: 'rgb(var(--color-cucko-dark-blue)/<alpha-value>)',
+          teal: 'rgb(var(--color-cucko-teal)/<alpha-value>)',
+          cyan: 'rgb(var(--color-cucko-cyan)/<alpha-value>)',
+          skyBlue: 'rgb(var(--color-cucko-sky-blue)/<alpha-value>)',
+          paleCyan: 'rgb(var(--color-cucko-pale-cyan)/<alpha-value>)',
+          orange: 'rgb(var(--color-cucko-orange)/<alpha-value>)'
+        }
       },
       fontFamily: {
         heading: ["PoppinsBold"],
