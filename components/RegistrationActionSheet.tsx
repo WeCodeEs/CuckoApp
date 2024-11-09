@@ -26,7 +26,13 @@ interface RegistrationActionSheetProps {
 const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpen, onClose, lada, phone }) => {
   const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
-  const inputRefs = [useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null)];
+  const inputRefs = [
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+    useRef<TextInput>(null),
+  ];
+  const [code, setCode] = useState(['', '', '', '']);
   const navigation = useNavigation();
   const router = useRouter();
 
@@ -41,8 +47,45 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   }, [isOpen]);
 
   const handleChange = (text: string, index: number) => {
-    if (text.length === 1 && index < inputRefs.length - 1 && inputRefs[index + 1].current) {
-      inputRefs[index + 1].current!.focus();
+    const newCode = [...code];
+    newCode[index] = text;
+    setCode(newCode);
+
+    if (text.length === 1) {
+      if (index < inputRefs.length - 1) {
+        inputRefs[index + 1].current?.focus();
+      } else {
+        inputRefs[index].current?.blur();
+      }
+    }
+
+    if (text.length > 1) {
+      const digits = text.split('').slice(0, 4);
+      const updatedCode = [...code];
+
+      digits.forEach((digit, idx) => {
+        updatedCode[idx] = digit;
+        inputRefs[idx].current?.setNativeProps({ text: digit });
+      });
+
+      setCode(updatedCode);
+
+      if (digits.length === 4) {
+        inputRefs[3].current?.blur();
+      } else {
+        inputRefs[digits.length]?.current?.focus();
+      }
+    }
+  };
+
+  const handleKeyPress = (e: any, index: number) => {
+    if (e.nativeEvent.key === 'Backspace' && code[index] === '') {
+      if (index > 0) {
+        inputRefs[index - 1].current?.focus();
+        const newCode = [...code];
+        newCode[index - 1] = '';
+        setCode(newCode);
+      }
     }
   };
 
@@ -54,21 +97,36 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     setButtonColor(Colors.light.darkBlue);
   };
 
-  type RegistrationRoutes = 
+  type RegistrationRoutes =
   | '/(registration)/registrationPhone'
   | '/(registration)/registrationName'
   | '/(registration)/registrationForm';
 
   const handleNavigation = (route: RegistrationRoutes) => {
-    router.push(route);
 
-    setTimeout(() => {
-      onClose();
-    }, 300); 
-  }
+    const fullCode = code.join('');
+    
+    if (true) { // TODO: Agregar validacion de codigo OTP
+      setCode(['', '', '', '']); 
+
+      inputRefs.forEach((ref) => {
+        ref.current?.clear();
+      });
+      router.push(route);
+
+      setTimeout(() => {
+        onClose();
+      }, 300);
+    } else {
+      // TODO: Mensaje de error y limpieza
+      setCode(['', '', '', '']);
+      inputRefs[0].current?.focus();
+    }
+  };
 
   return (
-    <Actionsheet isOpen={isOpen} onClose={onClose} snapPoints={[36]}>
+    // TODO: Cuando el usuario pegue el codigo completo, o que lo pegue desde el teclado por ios, se pegue en cada recuadro
+    <Actionsheet isOpen={isOpen} onClose={onClose} snapPoints={ Platform.OS === 'ios' ? [35] : [55] }>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'position' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? -30 : 0}
@@ -93,10 +151,13 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
                     focusedIndex === index && { borderColor: Colors.light.mediumBlue }
                   ]}
                   maxLength={1}
-                  keyboardType="number-pad"
+                  keyboardType= {Platform.OS === 'ios' ? 'number-pad' : 'phone-pad'}
+                  autoComplete={index === 0 ? 'one-time-code' : 'off'}
+                  value={code[index]}
                   onFocus={() => setFocusedIndex(index)}
                   onBlur={() => setFocusedIndex(null)}
                   onChangeText={(text) => handleChange(text, index)}
+                  onKeyPress={(e) => handleKeyPress(e, index)}
                 />
               ))}
             </HStack>
@@ -124,7 +185,7 @@ const styles = StyleSheet.create({
   },
   text: {
     paddingBottom: 10,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   keyboardAvoidingView: {
     position: 'relative',
@@ -132,7 +193,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   centerContent: {
-    paddingBottom: 20, 
+    paddingBottom: 20,
   },
   hStack: {
     justifyContent: 'center',
@@ -140,10 +201,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   otpInput: {
-    width: 60, 
+    width: 60,
     height: 60,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: Colors.light.borderBox,
     borderRadius: 4,
     textAlign: 'center',
     fontSize: 20,

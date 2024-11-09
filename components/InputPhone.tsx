@@ -137,8 +137,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
                     </View>
                     <Input variant="underlined" style={styles.phoneInput} size="md">
                         <InputField 
-                            placeholder="9511234567"
-                            // onChangeText={(text) => setInputPhone(text.replace(/[^0-9]/g, ''))}
+                            placeholder="951 123 4567"
                             onChangeText={handlePhoneChange}
                             keyboardType="phone-pad"
                             maxLength={10}
