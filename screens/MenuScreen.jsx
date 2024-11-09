@@ -13,7 +13,7 @@ import { Box } from "@/components/ui/box";
 import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
 import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
-import Carrusel from '@/components/Carrusel';
+import Carrousel from '@/components/Carrousel';
 import {Colors} from '@/constants/Colors';
 
 const platillos = {
@@ -72,7 +72,7 @@ const MenuScreen = () => {
               />
             </Input>
 
-            <Carrusel />
+            <Carrousel />
 
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollCategoryViewContent}>
               <HStack space="sm" style={styles.buttonRow}>

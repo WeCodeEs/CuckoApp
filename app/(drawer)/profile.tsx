@@ -44,7 +44,7 @@ const ProfileScreen = () => {
                     <Image className="rounded-full" style={styles.avatar_image} size="1.5xl" source={selectedAvatar} alt={"Avatar"}/>
                   </View>
                   <View style={styles.change_av}>
-                    <Icon as={Pencil} size="xl" className="text-typography-600 text-white"/>
+                    <Icon as={Pencil} size="xl" className="text-white"/>
                   </View>
                 </Pressable>
             </Center>
