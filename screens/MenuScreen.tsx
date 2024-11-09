@@ -19,9 +19,9 @@ import SearchProducts from '@/components/SearchProducts';
 
 interface Platillo {
   id: number;
-  nombre: string;
-  price: string;
-  imagen: any; // Cambiar el tipo si tienes una tipificación específica para las imágenes
+  name: string;
+  price: number;
+  image: any;
   alt: string;
 }
 
@@ -37,7 +37,7 @@ interface PlatillosData {
 const platillos: PlatillosData = {
   comida: [
     { id: 1, name: "Ensalada Cajún", price: 55.00, image: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
-    { id: 2, name: "Ensalada Curry", price: 65.00, image: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
+    { id: 2, name: "Ensalada Curry", price: 65.0, image: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
     { id: 3, name: "Baguette", price: 45.00, image: require('@/assets/images/baguette.png'), alt: 'Baguette' },
     { id: 4, name: "Croissant", price: 25.00, image: require('@/assets/images/croissant.png'), alt: 'Croissant' },
     { id: 5, name: "Tlayuda", price: 65.00, image: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
@@ -47,6 +47,7 @@ const platillos: PlatillosData = {
     { id: 7, name: "Prueba1", price: 10.00, image: require('@/assets/images/baguette.png'), alt: 'Baguette' },
     { id: 8, name: "Hamburguesa", price: 50.00, image: require('@/assets/images/hamburguesa.png'), alt: 'Baguette' },
   ],
+  
   ensaladas: [
     { id: 9, name: "Prueba2", price: 10.00, image: require('@/assets/images/croissant.png'), alt: 'Prueba' },
     { id: 10, name: "Ensalada Cajún", price: 55.00, image: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
