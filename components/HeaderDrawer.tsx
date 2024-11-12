@@ -26,12 +26,19 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
     share: 'transparent',
   });
 
+  const [variant, setVariant] = useState<"outline" | "link" | "solid">("outline");
+
+
   type DrawerRoutes = 
   | '/(drawer)/profile'
   | '/(drawer)/configuration'
   | '/(drawer)/paymentMethods'
   | '/(drawer)/orderHistory'
   | '/(drawer)/shareApp';
+
+  type RegistrationRoutes = 
+  | '/(registration)/registrationPhone'
+  | '/(registration)/registrationForm';
 
   const handlePressIn = (key: string) => {
     setBgColor(prev => ({ ...prev, [key]: '#f0f0f0' }));
@@ -41,8 +48,24 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
     setBgColor(prev => ({ ...prev, [key]: 'transparent' }));
   };
 
+  const handlePressInButton = () => {
+    setVariant("solid");
+  };
+
+  const handlePressOutButton = () => {
+    setVariant("outline");
+  };
+
   const handleNavigation = (route: DrawerRoutes) => {
     router.push(route);
+
+    setTimeout(() => {
+      onClose();
+    }, 300); 
+  }
+
+  const handleNavigationButton = (route: RegistrationRoutes) => {
+    router.replace(route);
 
     setTimeout(() => {
       onClose();
@@ -118,7 +141,7 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
             onPressOut={() => handlePressOut('share')}
             onPress={() => handleNavigation('/(drawer)/shareApp')}  
             style={[styles.pressable, { backgroundColor: bgColor.share }]}
-          >
+            >
             <View style={styles.row}>
               <Icon as={Share} size="lg" className="text-typography-600" />
               <Text>Compartir App</Text>
@@ -126,7 +149,14 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
           </Pressable>
         </DrawerBody>
         <DrawerFooter className="justify-center">
-          <Button className="w-2/3 gap-2 rounded-full" variant="outline" action="secondary">
+          <Button 
+            className="w-2/3 gap-2 rounded-full" 
+            variant={variant} 
+            onPressIn={() => handlePressInButton()}
+            onPressOut={() => handlePressOutButton()}
+            onPress={() => handleNavigationButton('/(registration)/registrationPhone')}  
+            action="secondary"
+          >
             <ButtonText>Cerrar sesión</ButtonText>
           </Button>
         </DrawerFooter>
