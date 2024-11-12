@@ -1,18 +1,18 @@
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button} from "@/components/ui/button";
 import { Image } from "@/components/ui/image";
-import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Center } from "@/components/ui/center";
-import { useNavigation } from '@react-navigation/native';
-import { useState } from "react";
 import { Heading } from "@/components/ui/heading";
-import { Input, InputField, InputSlot } from "@/components/ui/input";
 import { Box } from "@/components/ui/box";
-import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
 import { Icon } from '@/components/ui/icon';
 import { HStack } from '@/components/ui/hstack';
+import { Input, InputField, InputSlot } from "@/components/ui/input";
+import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { useNavigation } from '@react-navigation/native';
+import { useState } from "react";
+import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
 import Carrusel from '@/components/Carrusel';
 import { Colors } from '@/constants/Colors';
 import SearchProducts from '@/components/SearchProducts';
@@ -67,7 +67,7 @@ const platillos: PlatillosData = {
 };
 
 const MenuScreen = () => {
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
   const [activeButton, setActiveButton] = useState<keyof PlatillosData>("comida");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -121,8 +121,8 @@ const MenuScreen = () => {
                   <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })} style={styles.TouchableOpacity}>
 
                     <Image size="xl" source={platillo.image} alt={platillo.name} style={styles.image} />
-                    <Text size="lg" bold="true" style={styles.itemText}>{platillo.name}</Text>
-                    <Text size="lg" bold="true" style={styles.itemPrice}>$ {platillo.price.toFixed(2)}</Text>
+                    <Text size="lg" bold= {true} style={styles.itemText}>{platillo.name}</Text>
+                    <Text size="lg" bold= {true} style={styles.itemPrice}>$ {platillo.price.toFixed(2)}</Text>
 
                   </TouchableOpacity>
 
@@ -177,7 +177,8 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     flex: 1,
-    position: 'relative',
+    position: 'static',
+    zIndex: 1000,
   },
   headingBox: {
     flexDirection: 'row',
@@ -199,6 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 5,
+    zIndex: 10,  // Asegura que el input se muestre encima
   },
   inputFieldLarge: {
     flex: 1,

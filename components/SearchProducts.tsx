@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, View, Image, StyleSheet, Animated } from 'react-native';
+import { View, ScrollView, StyleSheet, Animated, Dimensions, Keyboard } from 'react-native';
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { Image } from "@/components/ui/image";
+import { Box } from "@/components/ui/box";
 import menus from '@/constants/Productos.json';
+import { Colors } from '@/constants/Colors';
 
 type Product = {
   id: number;
@@ -17,17 +22,18 @@ type SearchProductsProps = {
 
 const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm, setSearchTerm }) => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const fadeAnim = useState(new Animated.Value(0))[0]; // Valor animado para opacidad
+  const fadeAnim = useState(new Animated.Value(0))[0];
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
-      // Cuando se borra el texto, hacer que se desvanezca
       Animated.timing(fadeAnim, {
-        toValue: 0, // Opacidad a 0
-        duration: 300, // Duración de la animación
-        useNativeDriver: true, // Usa el controlador nativo para un mejor rendimiento
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
       }).start(() => {
-        setFilteredProducts([]); // Resetea la lista de productos después de que se desvanezca
+        setFilteredProducts([]);
+        setIsVisible(false);
       });
     } else {
       const products = menus.menus.flatMap(menu =>
@@ -38,11 +44,12 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm, setSearchTe
         )
       );
       setFilteredProducts(products);
-      // Iniciar la animación de desvanecimiento hacia adentro
+      setIsVisible(true);
+
       Animated.timing(fadeAnim, {
-        toValue: 1, // Opacidad a 1
-        duration: 300, // Duración de la animación
-        useNativeDriver: true, // Usa el controlador nativo para un mejor rendimiento
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
       }).start();
     }
   }, [searchTerm]);
@@ -56,20 +63,29 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm, setSearchTe
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.resultsList, { opacity: fadeAnim }]}>
-        <ScrollView>
+      {isVisible && (
+        <Animated.View style={[styles.resultsList, { opacity: fadeAnim }]}>
           {filteredProducts.length === 0 ? (
             renderEmptyComponent()
           ) : (
-            filteredProducts.map(item => (
-              <View key={item.id} style={styles.productContainer}>
-                <Image source={{ uri: item.image }} style={styles.image} />
-                <Text style={styles.productName}>{item.name}</Text>
-              </View>
-            ))
+            <ScrollView
+              style={styles.scrollContainer}
+              contentContainerStyle={styles.scrollContent}
+              nestedScrollEnabled={true}
+              showsVerticalScrollIndicator={true}
+            >
+              {filteredProducts.slice(0, 10).map(item => (
+                <Box key={item.id} style={styles.productContainer}>
+                  <Image source={{ uri: item.image }} style={styles.image} alt={item.name}/>
+                  <VStack style={styles.textContainer}>
+                    <Text bold={true} style={styles.productName}>{item.name}</Text>
+                  </VStack>
+                </Box>
+              ))}
+            </ScrollView>
           )}
-        </ScrollView>
-      </Animated.View>
+        </Animated.View>
+      )}
     </View>
   );
 };
@@ -78,38 +94,45 @@ export default SearchProducts;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 4,
     flex: 1,
     position: 'relative',
-    zIndex: 10,
+    zIndex: 1000,
   },
   resultsList: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
+    maxHeight: Dimensions.get('window').height * 0.54,
     backgroundColor: 'white',
-    zIndex: 20,
-    overflow: 'visible',
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: Colors.light.text,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.5,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 10, 
+  },
+  scrollContainer: {
+    flexGrow: 0,
+  },
+  scrollContent: {
+    paddingBottom: 10,
   },
   productContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
+    borderBottomWidth: 2,
+    borderColor: Colors.light.borderBox,
   },
   image: {
     width: 60,
     height: 60,
     marginRight: 10,
     marginLeft: 10,
+  },
+  textContainer: {
+    justifyContent: 'center',
   },
   productName: {
     fontSize: 16,
@@ -119,7 +142,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#888',
+    color: Colors.light.borderBox,
     marginTop: 10,
     marginBottom: 10,
   },
