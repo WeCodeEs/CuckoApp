@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 5,
-    zIndex: 10,  // Asegura que el input se muestre encima
+    zIndex: 10,
   },
   inputFieldLarge: {
     flex: 1,
