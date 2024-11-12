@@ -8,6 +8,7 @@ import { Pressable } from '@/components/ui/pressable';
 import { Clock, ChevronRight, CheckCircle, ShoppingBag } from 'lucide-react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import { Colors } from '@/constants/Colors';
 
 type RootStackParamList = {
   order_details: { pedido: Pedido };
@@ -57,26 +58,26 @@ const PedidoCard: React.FC<{ pedido: Pedido }> = ({ pedido }) => {
   const getBackgroundColor = () => {
     switch (pedido.estado) {
       case 'En preparación':
-        return '#FFCA99';
+        return Colors.light.preparingBackground;
       case 'Listo':
-        return '#FFECAD';
+        return Colors.light.readyBackground;
       case 'Entregado':
-        return '#DBFAE1';
+        return Colors.light.deliveredBackground;
       default:
-        return '#F08080';
+        return Colors.light.errorBackground;
     }
   };
 
   const getTextColor = () => {
     switch (pedido.estado) {
       case 'En preparación':
-        return '#E06C00';
+        return Colors.light.preparing;
       case 'Listo':
-        return '#CC9C00';
+        return Colors.light.ready;
       case 'Entregado':
-        return '#13902A';
+        return Colors.light.delivered;
       default:
-        return '#8B0000';
+        return Colors.light.errorText;
     }
   };
 
@@ -101,7 +102,7 @@ const PedidoCard: React.FC<{ pedido: Pedido }> = ({ pedido }) => {
         <Text style={styles.date}>{pedido.fecha}</Text>
       </View>
       <View style={{height: 'auto', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-end', maxWidth: '35%'}}>
-        <ChevronRight size={30} color="#183542"/>
+        <ChevronRight size={30} color={Colors.light.darkBlue}/>
         <Heading size='lg' style={styles.price}>${pedido.precioFinal.toFixed(2)}</Heading>
       </View>
     </Pressable>
@@ -124,13 +125,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.background,
     borderRadius: 15,
     padding: 16,
-    shadowColor: '#000',
+    shadowColor: Colors.light.text,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
   order: {
-    color: "#183542",
+    color:  Colors.light.darkBlue,
     padding: 2,
     paddingLeft: 6, 
     fontWeight: 'normal',
@@ -167,14 +168,13 @@ const styles = StyleSheet.create({
     paddingLeft: 6, 
     fontSize: 12,
     lineHeight: 20,
+    color: Colors.light.ash,
   },
   price: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: 'normal',
-    color: "#183542",
-    borderWidth: 0, 
-    borderColor: 'blue',
+    color:  Colors.light.darkBlue,
   },
 });
 

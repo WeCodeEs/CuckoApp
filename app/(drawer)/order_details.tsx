@@ -7,6 +7,8 @@ import { View } from "@/components/ui/view";
 import { VStack } from '@/components/ui/vstack';
 import { Clock, CheckCircle, ShoppingBag } from 'lucide-react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { Center } from '@/components/ui/center';
+import { Colors } from '@/constants/Colors';
 
 type RootStackParamList = {
     order_details: { pedido: Pedido };
@@ -24,26 +26,26 @@ interface Pedido {
 const getBackgroundColor = (estado: string) => {
   switch (estado) {
     case 'En preparación':
-      return '#FFCA99';
+      return Colors.light.preparingBackground;
     case 'Listo':
-      return '#FFECAD';
+      return Colors.light.readyBackground;
     case 'Entregado':
-      return '#DBFAE1';
+      return Colors.light.deliveredBackground;
     default:
-      return '#F08080';
+      return Colors.light.errorBackground;
   }
 };
 
 const getTextColor = (estado: string) => {
   switch (estado) {
     case 'En preparación':
-      return '#E06C00'; 
+      return Colors.light.preparing;
     case 'Listo':
-      return '#CC9C00'; 
+      return Colors.light.ready; 
     case 'Entregado':
-      return '#13902A'; 
+      return Colors.light.delivered; 
     default:
-      return '#8B0000'; 
+      return Colors.light.errorText;
   }
 };
 
@@ -62,7 +64,7 @@ const OrderDetailsScreen: React.FC = () => {
       <Heading size={"2xl"} style={styles.order_id}> Pedido {pedido.id} </Heading>
       <Text size={"md"} style={styles.date}> {pedido.fecha}, {pedido.hora} </Text>
       <View style={{ alignSelf: 'center' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: getBackgroundColor(pedido.estado), paddingHorizontal: 8, paddingVertical: 2, borderRadius: 20, marginBottom: 18, alignSelf: 'flex-start' }}>
+          <View style={[styles.statusContainer,{backgroundColor: getBackgroundColor(pedido.estado)}]}>
           {pedido.estado === 'En preparación' ? (
             <Clock size={16} color={getTextColor(pedido.estado)}/>
           ) : pedido.estado === 'Listo' ? (
@@ -76,7 +78,7 @@ const OrderDetailsScreen: React.FC = () => {
         </View>
       </View>
       <View style={[styles.subtitle_container, {marginHorizontal: 30}]}>
-        <Soup size={30} color="#183542" style={styles.icon}/>
+        <Soup size={30} color={Colors.light.darkBlue} style={styles.icon}/>
         <Heading  size={"xl"} style={styles.subtitle}> Productos ordenados </Heading>
       </View>
       
@@ -101,7 +103,7 @@ const OrderDetailsScreen: React.FC = () => {
 
       <View style={[styles.details_row, {alignItems: 'center'}]}>
         <View style={styles.subtitle_container}>
-          <ClipboardList size={27} color="#183542" style={styles.icon}/>
+          <ClipboardList size={27} color={Colors.light.darkBlue} style={styles.icon}/>
           <Heading  size={"xl"} style={styles.subtitle}> Total </Heading>
         </View>
         <View>
@@ -115,10 +117,10 @@ const OrderDetailsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.light.background,
   },
   order_id: {
-    color: '#183542',
+    color: Colors.light.darkBlue,
     paddingTop: 20,
     alignSelf: 'center',
     fontWeight: 'normal',
@@ -127,6 +129,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
     fontSize: 16,
+    color:  Colors.light.ash,
+  },
+  statusContainer: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingHorizontal: 8, 
+    paddingVertical: 2, 
+    borderRadius: 20, 
+    marginBottom: 18, 
+    alignSelf: 'flex-start' 
   },
   status: {
     borderRadius: 60,
@@ -144,7 +156,7 @@ const styles = StyleSheet.create({
   },  
   subtitle: {
     fontWeight: 'normal',
-    color: '#183542',
+    color:  Colors.light.darkBlue,
     paddingLeft: 6,
     textAlignVertical: 'bottom',
     paddingTop: 5,
@@ -157,22 +169,21 @@ const styles = StyleSheet.create({
   count: {
     alignSelf: 'flex-start',
     borderRadius: 5,
-    color: '#fff',
+    color: Colors.light.background,
     height: 25,
     width: '7%',
     textAlign: 'center',
     textAlignVertical: 'center',
-    borderWidth: 0,
-    borderColor: '#49BCCE',
-    backgroundColor: '#139FAA',
+    backgroundColor: Colors.light.mediumBlue,
   },
   dish: {
     paddingLeft: 6,
     width: '65%',
     textAlignVertical: 'center',
+    color: Colors.light.ash,
   },
   dish_price: {
-    color: '#000',
+    color: Colors.light.ash,
     height: 30,
     width: '25%',
     textAlign: 'right',
