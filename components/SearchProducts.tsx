@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, Animated, Dimensions, Keyboard } from 'react-native';
+import { View, Animated, Dimensions, StyleSheet, FlatList } from 'react-native';
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { Image } from "@/components/ui/image";
@@ -68,21 +68,18 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm, setSearchTe
           {filteredProducts.length === 0 ? (
             renderEmptyComponent()
           ) : (
-            <ScrollView
-              style={styles.scrollContainer}
-              contentContainerStyle={styles.scrollContent}
-              nestedScrollEnabled={true}
-              showsVerticalScrollIndicator={true}
-            >
-              {filteredProducts.slice(0, 10).map(item => (
-                <Box key={item.id} style={styles.productContainer}>
-                  <Image source={{ uri: item.image }} style={styles.image} alt={item.name}/>
+            <FlatList
+              data={filteredProducts.slice(0, 10)}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <Box style={styles.productContainer}>
+                  <Image source={{ uri: item.image }} style={styles.image} alt={item.name} />
                   <VStack style={styles.textContainer}>
                     <Text bold={true} style={styles.productName}>{item.name}</Text>
                   </VStack>
                 </Box>
-              ))}
-            </ScrollView>
+              )}
+            />
           )}
         </Animated.View>
       )}
@@ -96,7 +93,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    zIndex: 1000,
+    zIndex: 1,
   },
   resultsList: {
     position: 'absolute',
@@ -110,13 +107,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 4,
-    elevation: 10, 
-  },
-  scrollContainer: {
-    flexGrow: 0,
-  },
-  scrollContent: {
-    paddingBottom: 10,
+    elevation: 10,
+    zIndex: 2,
   },
   productContainer: {
     flexDirection: 'row',

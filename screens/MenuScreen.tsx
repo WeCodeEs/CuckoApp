@@ -199,8 +199,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
-    zIndex: 10,
+    marginBottom: 10,
+    zIndex: 100,
   },
   inputFieldLarge: {
     flex: 1,
