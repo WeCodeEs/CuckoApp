@@ -1,11 +1,33 @@
 export interface Product {
     id: number;
+    categoryId: number;
     name: string;
     description: string;
-    price: number;
+    basePrice: number;
     image: string;
-    customizableIngredients?: { id: number; ingredientName: string; extraPrice: number; }[];
+    active: boolean;
 }
+
+export interface Variant {
+    id: number;
+    productId: number;
+    name: string;
+    additionalPrice: number;
+  }
+  
+  export interface CustomizableIngredient {
+    id: number;
+    productId: number;
+    ingredientId: number;
+    customizationType: string;
+    info?: Ingredient;
+  }
+  
+  export interface Ingredient {
+    id: number;
+    name: string;
+    additionalPrice: number;
+  }
 
 export interface Category {
     name: string;

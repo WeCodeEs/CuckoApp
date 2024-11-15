@@ -1,0 +1,219 @@
+{
+    "menus": [
+    { "id": 1, "name": "Desayunos", "description": "Desayunos variados", "status": "Activo" },
+    { "id": 2, "name": "Antojitos", "description": "Snacks y antojos típicos", "status": "Activo" },
+    { "id": 3, "name": "Platillos", "description": "Platillos principales", "status": "Activo" },
+    { "id": 4, "name": "Ensaladas", "description": "Ensaladas frescas", "status": "Activo" },
+    { "id": 5, "name": "Café", "description": "Bebidas a base de café", "status": "Activo" },
+    { "id": 6, "name": "Bebidas", "description": "Alternativas al café", "status": "Activo" },
+    { "id": 7, "name": "Grab and Go", "description": "Rápido para llevar", "status": "Activo" }
+    ],
+    "categories": [
+    { "id": 1, "menuId": 1, "name": "Huevos", "description": "Platos con huevos" },
+    { "id": 2, "menuId": 1, "name": "Maíz", "description": "Platillos con maíz" },
+    { "id": 3, "menuId": 1, "name": "Dulce", "description": "Desayunos dulces" },
+    { "id": 4, "menuId": 1, "name": "Pan", "description": "Variedades de pan" },
+    { "id": 5, "menuId": 1, "name": "Bebidas", "description": "Bebidas para desayunos" },
+
+    { "id": 6, "menuId": 2, "name": "Rincón Oaxaqueño", "description": "Antojitos oaxaqueños" },
+    { "id": 7, "menuId": 2, "name": "Tortas", "description": "Tortas clásicas" },
+    { "id": 8, "menuId": 2, "name": "Tortas Especiales", "description": "Tortas gourmet" },
+    { "id": 9, "menuId": 2, "name": "Snacks", "description": "Snacks rápidos" },
+
+    { "id": 10, "menuId": 3, "name": "Carnes", "description": "Platos con carne" },
+    { "id": 11, "menuId": 3, "name": "Pastas", "description": "Platos de pasta" },
+    { "id": 12, "menuId": 3, "name": "Alambres", "description": "Platillos alambres" },
+    { "id": 13, "menuId": 3, "name": "Milanesas Cuckoo", "description": "Milanesas especiales" },
+    { "id": 14, "menuId": 3, "name": "Ensaladas", "description": "Ensaladas como plato principal" },
+    { "id": 15, "menuId": 3, "name": "Queso fundido", "description": "Platos de queso fundido" },
+
+    { "id": 16, "menuId": 4, "name": "Ensaladas", "description": "Ensaladas variadas" },
+
+    { "id": 17, "menuId": 5, "name": "Bebidas Calientes", "description": "Café y bebidas calientes" },
+    { "id": 18, "menuId": 5, "name": "Bebidas Heladas", "description": "Café frío y bebidas heladas" },
+    { "id": 19, "menuId": 5, "name": "Bebidas Frappé", "description": "Frappés de café" },
+
+    { "id": 20, "menuId": 6, "name": "Bebidas Calientes", "description": "Otras bebidas calientes" },
+    { "id": 21, "menuId": 6, "name": "Bebidas Heladas", "description": "Otras bebidas frías" },
+    { "id": 22, "menuId": 6, "name": "Limonadas Cuckoo", "description": "Limonadas especiales" },
+    { "id": 23, "menuId": 6, "name": "Sodas Italianas", "description": "Bebidas gaseosas italianas" },
+    { "id": 24, "menuId": 6, "name": "Smoothies de Fruta", "description": "Smoothies naturales" },
+
+    { "id": 25, "menuId": 7, "name": "Salados", "description": "Productos salados para llevar" },
+    { "id": 26, "menuId": 7, "name": "Dulces", "description": "Productos dulces para llevar" }
+    ],
+    "products": [
+    { "id": 1, "categoryId": 1, "name": "Huevos Rancheros", "description": "Estrellados sobre tortilla y jamón bañados en salsa roja o verde acompañados de frijoles refritos", "basePrice": 49.00, "image": "https://i.ibb.co/nCHkkvx/huevos-rancheros.png", "active": true },
+    { "id": 2, "categoryId": 2, "name": "Entomatadas", "description": "Tortillas de maíz sofritas bañadas en salsa de tomate rojo o verde", "basePrice": 40.00, "image": "https://i.ibb.co/tsmyHNc/entomatadas.png", "active": true },
+    { "id": 3, "categoryId": 2, "name": "Enchiladas Suizas", "description": "Enchiladas con salsa suiza", "basePrice": 55.00, "image": "https://i.ibb.co/JB2sPK6/enchiladas-suizas.png", "active": true },
+    
+    { "id": 4, "categoryId": 9, "name": "Hamburguesa Clásica", "description": "Carne, queso americano, lechuga, tomate, cebolla, chiles jalapeños, catsup y mostaza, mayonesa acompañada de papas chips", "basePrice": 45.00, "image": "https://i.ibb.co/Df8Qxrr/hamburguesa.png", "active": true },
+    { "id": 5, "categoryId": 8, "name": "Torta Cubana", "description": "Pierna, jamón y queso manchego", "basePrice": 40.00, "image": "https://i.ibb.co/Q8Rc41r/torta-cubana.png", "active": true },
+    
+    { "id": 6, "categoryId": 25, "name": "Baguette", "description": "Baguette con ingredientes variados", "basePrice": 45.00, "image": "https://i.ibb.co/t3YXQZX/baguette.png", "active": true },
+    { "id": 7, "categoryId": 25, "name": "Croissant", "description": "Croissant salado relleno", "basePrice": 30.00, "image": "https://i.ibb.co/47jp2GN/croissant.png", "active": true },
+
+    { "id": 8, "categoryId": 10, "name": "Tampiqueña de Res", "description": "Servida con mini taquitos dorados, nopal y queso asado", "basePrice": 72.00, "image": "https://i.ibb.co/Qcxckxh/tampiquena.png", "active": true },
+    { "id": 9, "categoryId": 13, "name": "Milanesa Napolitana", "description": "Queso manchego + jamón y salsa italiana", "basePrice": 68.00, "image": "https://i.ibb.co/Xj4c88v/milanesa-napolitana.png", "active": true },
+    
+    { "id": 10, "categoryId": 16, "name": "Ensalada Grill Chicken", "description": "Mezcla de lechugas, zanahoria, col morada y tortilla frita. Pechuga de pollo a la plancha", "basePrice": 60.00, "image": "https://i.ibb.co/GFQ6sCc/ensalada-pollo.png", "active": true },
+    { "id": 11, "categoryId": 16, "name": "Ensalada Vegana", "description": "Mezcla de lechugas, zanahoria, tomate, pepino, granos de elote, aceitunas y croutones", "basePrice": 50.00, "image": "https://i.ibb.co/nj1GKm3/ensalada-vegana.png", "active": true },
+    
+    { "id": 12, "categoryId": 17, "name": "Capuchino", "description": "Café espresso con leche espumosa", "basePrice": 35.00, "image": "https://i.ibb.co/yPh7TvZ/capuchino.png", "active": true },
+    { "id": 13, "categoryId": 17, "name": "Caramel Macchiato", "description": "Café con caramelo y leche", "basePrice": 52.00, "image": "https://i.ibb.co/zRHNdg7/caramel-machiatto.png", "active": true },
+    
+    { "id": 14, "categoryId": 18, "name": "Mocha Helado", "description": "Café frío con chocolate", "basePrice": 48.00, "image": "https://i.ibb.co/ryJ3FqZ/mocha-helado.png", "active": true },
+    { "id": 15, "categoryId": 18, "name": "Vainilla Cold Brew", "description": "Café frío infusionado con vainilla", "basePrice": 45.00, "image": "https://i.ibb.co/K91Gsr8/vanilla-cold-brew.png", "active": true },
+
+    { "id": 16, "categoryId": 19, "name": "Frappé Original", "description": "Frappé de café tradicional", "basePrice": 60.00, "image": "https://i.ibb.co/HdPHgpt/frappe.png", "active": true },
+
+    { "id": 17, "categoryId": 20, "name": "Green Matcha Latte", "description": "Latte con té matcha", "basePrice": 49.00, "image": "https://i.ibb.co/gtgvD5h/matcha-latte.png", "active": true },
+
+    { "id": 18, "categoryId": 21, "name": "Tisana", "description": "Infusión de frutas variadas", "basePrice": 33.00, "image": "https://i.ibb.co/qdxqHPM/tisana.png", "active": true },
+
+    { "id": 19, "categoryId": 22, "name": "Limonada Original", "description": "Limonada fresca", "basePrice": 42.00, "image": "https://i.ibb.co/vBDGMcr/limonada-clasica.png", "active": true },
+    { "id": 20, "categoryId": 22, "name": "Limonada con Fresas", "description": "Limonada con fresas frescas", "basePrice": 45.00, "image": "https://i.ibb.co/wKFzW2M/limonada-fresa.png", "active": true }
+    ],
+    "variants": [
+    { "id": 1, "productId": 2, "name": "Con huevo", "additionalPrice": 5.0 },
+    { "id": 2, "productId": 2, "name": "Con cecina", "additionalPrice": 12.0 },
+    { "id": 3, "productId": 2, "name": "Con chorizo", "additionalPrice": 12.0 },
+    { "id": 4, "productId": 2, "name": "Con pollo", "additionalPrice": 12.0 },
+    { "id": 5, "productId": 2, "name": "Con tasajo", "additionalPrice": 18.0 },
+
+    { "id": 6, "productId": 12, "name": "Leche de Almendra", "additionalPrice": 5.0 },
+    { "id": 7, "productId": 12, "name": "Leche Deslactosada", "additionalPrice": 5.0 },
+    { "id": 8, "productId": 13, "name": "Leche de Coco", "additionalPrice": 8.0 },
+    { "id": 9, "productId": 13, "name": "Extra Shot de Espresso", "additionalPrice": 10.0 },
+
+    { "id": 10, "productId": 18, "name": "Tango Mango", "additionalPrice": 0.00 },
+    { "id": 11, "productId": 18, "name": "Moras de la Selva", "additionalPrice": 0.00 },
+    { "id": 12, "productId": 18, "name": "Fruta del Dragón", "additionalPrice": 0.00 },
+    { "id": 13, "productId": 18, "name": "Ponche de Guayaba", "additionalPrice": 0.00 },
+    { "id": 14, "productId": 18, "name": "Manzana Arándano", "additionalPrice": 0.00 },
+    { "id": 15, "productId": 18, "name": "Cherry Banana Maracuyá", "additionalPrice": 0.00 },
+    { "id": 16, "productId": 18, "name": "Frutas Tropicales", "additionalPrice": 0.00 },
+    { "id": 17, "productId": 18, "name": "Blue Dream", "additionalPrice": 0.00 }
+    ],
+    "ingredients": [
+    { "id": 1, "name": "Cebolla", "additionalPrice": 0.0 },
+    { "id": 2, "name": "Tomate", "additionalPrice": 0.0 },
+    { "id": 3, "name": "Jalapeños", "additionalPrice": 0.0 },
+    { "id": 4, "name": "Mayonesa", "additionalPrice": 0.0 },
+    { "id": 5, "name": "Lechuga", "additionalPrice": 0.0 },
+    { "id": 6, "name": "Queso", "additionalPrice": 5.0 },
+
+    { "id": 7, "name": "Croutones", "additionalPrice": 0.0 },
+    { "id": 8, "name": "Aceitunas", "additionalPrice": 0.0 },
+    { "id": 9, "name": "Pepino", "additionalPrice": 0.0 },
+    { "id": 10, "name": "Aderezo César", "additionalPrice": 5.0 },
+    { "id": 11, "name": "Miel", "additionalPrice": 3.0 },
+    { "id": 12, "name": "Canela", "additionalPrice": 2.0 },
+    { "id": 13, "name": "Caramelo", "additionalPrice": 3.0 },
+
+    { "id": 14, "name": "Leche de Coco", "additionalPrice": 8.0 },
+    { "id": 15, "name": "Leche de Almendra", "additionalPrice": 5.0 },
+    { "id": 16, "name": "Sirope de Vainilla", "additionalPrice": 4.0 },
+    { "id": 17, "name": "Sirope de Caramelo", "additionalPrice": 4.0 },
+    { "id": 18, "name": "Espuma de Leche", "additionalPrice": 5.0 },
+    { "id": 19, "name": "Fresas Naturales", "additionalPrice": 6.0 }
+    ],
+    "customizableIngredients": [
+    { "id": 1, "productId": 4, "ingredientId": 1, "customizationType": "Removable" },
+    { "id": 2, "productId": 4, "ingredientId": 2, "customizationType": "Removable" },
+    { "id": 3, "productId": 4, "ingredientId": 3, "customizationType": "Addable" },
+    { "id": 4, "productId": 4, "ingredientId": 4, "customizationType": "Addable" },
+    { "id": 5, "productId": 4, "ingredientId": 5, "customizationType": "Addable" },
+    { "id": 6, "productId": 4, "ingredientId": 6, "customizationType": "Addable" },
+    
+    { "id": 7, "productId": 5, "ingredientId": 1, "customizationType": "Removable" },
+    { "id": 8, "productId": 5, "ingredientId": 2, "customizationType": "Removable" },
+    { "id": 9, "productId": 5, "ingredientId": 4, "customizationType": "Addable" },
+
+    { "id": 10, "productId": 10, "ingredientId": 7, "customizationType": "Addable" },
+    { "id": 11, "productId": 10, "ingredientId": 8, "customizationType": "Addable" },
+    { "id": 12, "productId": 11, "ingredientId": 9, "customizationType": "Removable" },
+    { "id": 13, "productId": 11, "ingredientId": 10, "customizationType": "Addable" },
+    { "id": 14, "productId": 12, "ingredientId": 11, "customizationType": "Addable" },
+    { "id": 15, "productId": 12, "ingredientId": 12, "customizationType": "Addable" },
+    { "id": 16, "productId": 13, "ingredientId": 13, "customizationType": "Addable" },
+
+    { "id": 18, "productId": 14, "ingredientId": 14, "customizationType": "Addable" },
+    { "id": 19, "productId": 14, "ingredientId": 15, "customizationType": "Addable" },
+    { "id": 20, "productId": 15, "ingredientId": 16, "customizationType": "Addable" },
+    { "id": 21, "productId": 15, "ingredientId": 17, "customizationType": "Addable" },
+    { "id": 22, "productId": 16, "ingredientId": 18, "customizationType": "Addable" },
+    { "id": 23, "productId": 20, "ingredientId": 19, "customizationType": "Addable" }
+    ],
+    "orders": [
+        {
+        "id": 1,
+        "userId": 1,
+        "creationDate": "2024-11-13T10:00:00Z",
+        "status": "Preparing",
+        "total": 120.0,
+        "scheduledDeliveryTime": "2024-11-13T11:00:00Z"
+        },
+        {
+        "id": 2,
+        "userId": 2,
+        "creationDate": "2024-11-12T15:30:00Z",
+        "status": "Delivered",
+        "total": 200.0,
+        "scheduledDeliveryTime": "2024-11-12T16:30:00Z"
+        }
+    ],
+    "orderDetails": [
+        {
+        "id": 1,
+        "orderId": 1,
+        "productId": 1,
+        "variantId": 2,
+        "quantity": 2,
+        "unitPrice": 40.0,
+        "totalPrice": 80.0
+        },
+        {
+        "id": 2,
+        "orderId": 1,
+        "productId": 2,
+        "variantId": null,
+        "quantity": 1,
+        "unitPrice": 40.0,
+        "totalPrice": 40.0
+        }
+    ],
+    "users": [
+        {
+        "id": 1,
+        "firstName": "Juan",
+        "lastName": "Pérez",
+        "email": "juan.perez@example.com",
+        "phone": "555-1234",
+        "role": "Student",
+        "facultyId": 1,
+        "creationDate": "2023-05-15T08:00:00Z"
+        },
+        {
+        "id": 2,
+        "firstName": "María",
+        "lastName": "García",
+        "email": "maria.garcia@example.com",
+        "phone": "555-5678",
+        "role": "Administrator",
+        "facultyId": null,
+        "creationDate": "2022-11-20T09:00:00Z"
+        }
+    ],
+    "faculties": [
+        {
+        "id": 1,
+        "name": "Facultad de Ingeniería"
+        },
+        {
+        "id": 2,
+        "name": "Facultad de Ciencias"
+        }
+    ]
+}
+  
