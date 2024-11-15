@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import menus from '@/constants/Productos.json';
 import { Animated, StyleSheet } from 'react-native';
-import { VStack } from "@/components/ui/vstack";
+import { View } from "@/components/ui/view";
 import { Text } from "@/components/ui/text";
 import { Image } from "@/components/ui/image";
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import menus from '@/constants/Productos.json';
 import { Colors } from '@/constants/Colors';
 import { ActionsheetVirtualizedList } from "@/components/ui/actionsheet";
 import { Pressable } from '@/components/ui/pressable';
@@ -72,10 +72,16 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
                   <Pressable
                     style={styles.productContainer}
                     onPress={() => navigation.navigate('detail_product', { productId: product.id })}>
-                      <Image source={{ uri: product.image }} style={styles.image} alt={product.name} />
-                        <VStack style={styles.textContainer}>
-                          <Text bold={true} style={styles.productName}>{product.name}</Text>
-                        </VStack>
+                      <View style={styles.productContent}>
+                        <Image
+                          source={{ uri: product.image }}
+                          style={styles.image}
+                          alt={product.name}
+                        />
+                        <View style={styles.textContainer}>
+                          <Text style={styles.productName}>{product.name}</Text>
+                        </View>
+                      </View>
                     </Pressable>
                 );
               }}
@@ -102,34 +108,36 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 20,
   },
+  emptyText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.light.darkBlue,
+    marginTop: 10,
+    marginBottom: 10,
+  },
   productContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.borderBox,
+    backgroundColor: Colors.light.background,
+  },
+  productContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderColor: Colors.light.borderBox,
-    paddingHorizontal: 15,
   },
   image: {
     width: 60,
     height: 60,
-    marginRight: 15,
+    borderRadius: 5,
   },
   textContainer: {
     flex: 1,
+    marginLeft: 15,
+    justifyContent: 'center',
   },
   productName: {
     fontSize: 16,
-    fontWeight: 'bold',
-  },
-  productPrice: {
-    marginTop: 5,
-    color: Colors.dark.tabIconSelected,
-  },
-  emptyText: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: Colors.light.borderBox,
-    marginTop: 20,
+    color: Colors.light.darkBlue,
   },
 });
