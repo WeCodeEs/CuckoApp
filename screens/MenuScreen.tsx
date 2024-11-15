@@ -13,7 +13,7 @@ import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { useState } from "react";
 import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
-import Carrusel from '@/components/Carrusel';
+import Carrusel from '@/components/Carrousel';
 import { Colors } from '@/constants/Colors';
 import SearchProducts from '@/components/SearchProducts';
 
