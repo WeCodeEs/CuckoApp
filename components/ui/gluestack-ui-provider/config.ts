@@ -153,6 +153,15 @@ export const config = {
     '--color-indicator-primary': '55 55 55',
     '--color-indicator-info': '83 153 236',
     '--color-indicator-error': '185 28 28',
+
+    /* Cucko Custom Colors*/
+    '--color-cucko-black': '0 0 0',
+    '--color-cucko-dark-blue': '24 53 66',
+    '--color-cucko-teal': '11 129 143',
+    '--color-cucko-cyan': '19 159 170',
+    '--color-cucko-sky-blue': '73 188 206',
+    '--color-cucko-pale-cyan': '179 225 228',
+    '--color-cucko-orange': '240 113 34',
   }),
   dark: vars({
     '--color-primary-0': '130 130 130',

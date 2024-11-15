@@ -10,18 +10,33 @@ import { Heading } from "@/components/ui/heading";
 import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
 
 interface InputPhoneProps {
-    initialPhone: string;
-    initialLada: string;
+    lada: string;
+    phone: string;
+    onLadaChange: (newLada: string) => void;
+    onPhoneChange: (newPhone: string) => void;
     editable: boolean;
-    onEditComplete: (lada: string, phone: string) => void;
-    onCancelEdit: () => void;
     headingText: string;
 }
 
-const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, editable, onEditComplete, onCancelEdit, headingText }) => {
-    const [lada, setLada] = useState(initialLada);
-    const [phone, setPhone] = useState(initialPhone);
-    const [inputPhone, setInputPhone] = useState("");
+const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPhoneChange, editable, headingText }) => {
+    const [inputPhone, setInputPhone] = useState(phone);
+    const [inputLada, setInputLada] = useState(lada);
+    const [finalPhone, setFinalPhone] = useState(phone);
+    const [finalLada, setFinalLada] = useState(lada);
+
+    const handlePhoneChange = (text: string) => {
+        const newPhone = text.replace(/[^0-9]/g, '');
+        setInputPhone(newPhone);
+        onPhoneChange(newPhone);
+    };
+    
+    const handleLadaChange = (text: string) => {
+        const newLada = text.replace(/[^0-9]/g, '');
+        console.log(newLada);
+        setInputLada(newLada);
+        onLadaChange(newLada);
+      };
+
     const [showAlert, setShowAlert] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -39,17 +54,20 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
         }
         else
         {
-            setPhone(inputPhone);
+            setFinalLada(inputLada);
+            setFinalPhone(inputPhone);
+            onPhoneChange(finalPhone);
+            onLadaChange(finalLada);
             setShowAlert(false);
             setIsEditing(false);
         }
     };
     
     const handleCancel = () => {
-        setInputPhone("");
+        setInputPhone(maskPhoneNumber(finalPhone));
+        setInputLada(finalLada);
         setShowAlert(false);
         setIsEditing(false);
-        onCancelEdit();
     };
 
     return (
@@ -64,7 +82,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
                                 <InputSlot className="pl-3">
                                     <InputIcon as={Plus} size={'2xl'}/>
                                 </InputSlot>
-                                <InputField placeholder={lada} keyboardType="phone-pad"/>
+                                <InputField placeholder={lada} />
                             </Input>
                         </View>
                         <Input variant="underlined" style={styles.phoneInput} size="md">
@@ -96,7 +114,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
 
                 ) : (
                     <View style={styles.displayContainer}>
-                        <Text>+{lada} {maskPhoneNumber(phone)}</Text>
+                        <Text>+{inputLada} {maskPhoneNumber(inputPhone)}</Text>
                         <Pressable onPress={() => setIsEditing(true)}>
                             <Icon style={styles.editIcon} as={Pencil} size="lg" className="text-typography-600"/>
                         </Pressable>
@@ -109,13 +127,18 @@ const InputPhone: React.FC<InputPhoneProps> = ({ initialPhone, initialLada, edit
                             <InputSlot className="pl-3">
                                 <InputIcon as={Plus} size={'2xl'}/>
                             </InputSlot>
-                            <InputField placeholder={lada} keyboardType="phone-pad"/>
+                            <InputField 
+                                placeholder={"52"} 
+                                onChangeText={handleLadaChange}
+                                keyboardType='phone-pad'
+                                maxLength={3}
+                            />
                         </Input>
                     </View>
                     <Input variant="underlined" style={styles.phoneInput} size="md">
                         <InputField 
-                            placeholder="9511234567"
-                            onChangeText={(text) => setInputPhone(text.replace(/[^0-9]/g, ''))}
+                            placeholder="951 123 4567"
+                            onChangeText={handlePhoneChange}
                             keyboardType="phone-pad"
                             maxLength={10}
                         />

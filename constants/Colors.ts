@@ -29,6 +29,16 @@ const iconColorDark = '#9BA1A6';
 const tabIconDefaultColorDark = '#9BA1A6';
 const tabIconSelectedColorDark = '#F07122';
 
+const preparingText = '#E06C00';
+const readyText = '#CC9C00';
+const deliveredText = '#13902A';
+const errorText = '#8B0000';
+const preparingBackground = '#FFCA99';
+const readyBackground = '#FFECAD';
+const deliveredBackground = '#DBFAE1';
+const errorBackground = '#F08080';
+ 
+
 export const Colors = {
   light: {
     text: textColorLight,
@@ -45,6 +55,14 @@ export const Colors = {
     mediumDarkBlue: mediumDarkBlueColor,
     darkBlue: darkBlueColor,
     ash: ashColor,
+    preparing: preparingText,
+    ready: readyText,
+    delivered: deliveredText,
+    errorText: errorText,
+    preparingBackground: preparingBackground,
+    readyBackground: readyBackground,
+    deliveredBackground: deliveredBackground,
+    errorBackground: errorBackground,
   },
   dark: {
     text: textColorDark,
