@@ -1,141 +1,135 @@
 import React, { useEffect, useState } from 'react';
-import { View, Animated, Dimensions, StyleSheet, FlatList } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { Image } from "@/components/ui/image";
-import { Box } from "@/components/ui/box";
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import menus from '@/constants/Productos.json';
 import { Colors } from '@/constants/Colors';
+import { ActionsheetVirtualizedList } from "@/components/ui/actionsheet";
+import { Pressable } from '@/components/ui/pressable';
 
-type Product = {
+interface Product {
   id: number;
   name: string;
   description: string;
   price: number;
   image: string;
-};
+}
 
-type SearchProductsProps = {
+interface SearchProductsProps {
   searchTerm: string;
-  setSearchTerm: (text: string) => void;
-};
+}
 
-const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm, setSearchTerm }) => {
+const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const fadeAnim = useState(new Animated.Value(0))[0];
-  const [isVisible, setIsVisible] = useState(false);
+  const navigation = useNavigation<NavigationProp<any>>();
 
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        setFilteredProducts([]);
-        setIsVisible(false);
-      });
-    } else {
-      const products = menus.menus.flatMap(menu =>
-        menu.categories.flatMap(category =>
-          category.products.filter(product =>
+    if (searchTerm.trim() !== '') {
+      const products: Product[] = menus.menus.flatMap((menu: any) =>
+        menu.categories.flatMap((category: any) =>
+          category.products.filter((product: Product) =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
           )
         )
       );
       setFilteredProducts(products);
-      setIsVisible(true);
 
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 300,
         useNativeDriver: true,
       }).start();
+    } else {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setFilteredProducts([]);
+      });
     }
   }, [searchTerm]);
 
-  const renderEmptyComponent = () => {
-    if (searchTerm.trim() !== '') {
-      return <Text style={styles.emptyText}>No se encontraron productos</Text>;
-    }
-    return null;
-  };
+  const getItem = (data: Product[], index: number): Product => data[index];
+  const getItemCount = (data: Product[]): number => data.length;
 
-  return (
-    <View style={styles.container}>
-      {isVisible && (
-        <Animated.View style={[styles.resultsList, { opacity: fadeAnim }]}>
+    return (
+        <Animated.View style={[styles.viewContainer, { opacity: fadeAnim }]}>
           {filteredProducts.length === 0 ? (
-            renderEmptyComponent()
+            <Text style={styles.emptyText}>No se encontraron productos</Text>
           ) : (
-            <FlatList
-              data={filteredProducts.slice(0, 10)}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <Box style={styles.productContainer}>
-                  <Image source={{ uri: item.image }} style={styles.image} alt={item.name} />
-                  <VStack style={styles.textContainer}>
-                    <Text bold={true} style={styles.productName}>{item.name}</Text>
-                  </VStack>
-                </Box>
-              )}
+            <ActionsheetVirtualizedList
+              data={filteredProducts}
+              keyExtractor={(item) => (item as Product).id.toString()}
+              getItem={getItem}
+              getItemCount={getItemCount}
+              renderItem={({ item }) => {
+                const product = item as Product;
+                return (
+                  <Pressable
+                    style={styles.productContainer}
+                    onPress={() => navigation.navigate('detail_product', { productId: product.id })}>
+                      <Image source={{ uri: product.image }} style={styles.image} alt={product.name} />
+                        <VStack style={styles.textContainer}>
+                          <Text bold={true} style={styles.productName}>{product.name}</Text>
+                        </VStack>
+                    </Pressable>
+                );
+              }}
+              contentContainerStyle={styles.listContent}
             />
           )}
         </Animated.View>
-      )}
-    </View>
-  );
+      );
+  
 };
 
 export default SearchProducts;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-    zIndex: 1,
-  },
-  resultsList: {
+  viewContainer: {
     position: 'absolute',
-    top: 0,
+    top: 100, 
     left: 0,
     right: 0,
-    maxHeight: Dimensions.get('window').height * 0.54,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    shadowColor: Colors.light.text,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 10,
+    bottom: 0,
+    backgroundColor: Colors.light.background,
     zIndex: 2,
+  },
+  listContent: {
+    paddingBottom: 20,
   },
   productContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderColor: Colors.light.borderBox,
+    paddingHorizontal: 15,
   },
   image: {
     width: 60,
     height: 60,
-    marginRight: 10,
-    marginLeft: 10,
+    marginRight: 15,
   },
   textContainer: {
-    justifyContent: 'center',
+    flex: 1,
   },
   productName: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 15,
+  },
+  productPrice: {
+    marginTop: 5,
+    color: Colors.dark.tabIconSelected,
   },
   emptyText: {
     fontSize: 16,
     textAlign: 'center',
     color: Colors.light.borderBox,
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 20,
   },
 });

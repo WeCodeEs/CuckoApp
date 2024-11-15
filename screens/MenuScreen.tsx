@@ -72,6 +72,10 @@ const MenuScreen = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   return (
+    <View style={styles.container}>
+      {searchTerm.trim() !== '' && (
+        <SearchProducts searchTerm={searchTerm} />
+      )}
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <Center style={styles.center}>
         <Box style={styles.box}>
@@ -94,9 +98,6 @@ const MenuScreen = () => {
                   onChangeText={(text) => setSearchTerm(text)}
                 />
               </Input>
-
-              <SearchProducts searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
               <Carrusel />
             </View>
 
@@ -140,14 +141,17 @@ const MenuScreen = () => {
         </Box>
       </Center>
     </ScrollView>
+    </View>
   );
 };
 
 export default MenuScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   scrollViewContent: {
-    flexGrow: 1,
     padding: 0,
   },
   scrollCategoryViewContent: {
@@ -191,12 +195,9 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
   },
   inputContainer: {
-    width: '100%',
     backgroundColor: Colors.light.background,
-    borderWidth: 2,
     borderRadius: 10,
-    paddingVertical: 2,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
