@@ -1,0 +1,345 @@
+{
+    "menus": [
+      {
+        "id": 1,
+        "name": "Comida",
+        "description": "Desayunos y más",
+        "status": true,
+        "categories": [
+          {
+            "name": "Desayunos",
+            "products": [
+              {
+                "id": 101,
+                "name": "Huevos Rancheros",
+                "description": "Estrellados sobre tortilla y jamón bañados en salsa roja o verde acompañados de frijoles refritos",
+                "price": 49,
+                "image": "https://i.ibb.co/nCHkkvx/huevos-rancheros.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 102,
+                "name": "Entomatadas",
+                "description": "Tortillas de maíz sofritas bañadas en salsa de tomate rojo o verde",
+                "price": 40,
+                "image": "https://i.ibb.co/tsmyHNc/entomatadas.png",
+                "customizableIngredients": [],
+                "variants": [
+                  {
+                    "variantName": "Con huevo",
+                    "extraPrice": 5
+                  },
+                  {
+                    "variantName": "Con cecina",
+                    "extraPrice": 12
+                  },
+                  {
+                    "variantName": "Con chorizo",
+                    "extraPrice": 12
+                  },
+                  {
+                    "variantName": "Con pollo",
+                    "extraPrice": 12
+                  },
+                  {
+                    "variantName": "Con tasajo",
+                    "extraPrice": 18
+                  }
+                ]
+              },
+              {
+                "id": 103,
+                "name": "Enchiladas Suizas",
+                "description": "Tortillas sofritas rellenas de pollo bañadas en salsa verde gratinadas con queso manchego, crema, cebolla y perejil",
+                "price": 55,
+                "image": "https://i.ibb.co/8rpTh0Z/enchiladas-suizas.png",
+                "customizableIngredients": [
+                  {
+                    "ingredientName": "Crema",
+                    "extraPrice": 0
+                  },
+                  {
+                    "ingredientName": "Cebolla",
+                    "extraPrice": 0
+                  }
+                ],
+                "variants": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Snacks",
+        "description": "Menú de antojitos y alimentos rápidos",
+        "status": true,
+        "categories": [
+          {
+            "name": "Antojitos",
+            "products": [
+              {
+                "id": 201,
+                "name": "Hamburguesa clásica",
+                "description": "Carne, queso americano, lechuga, tomate, cebolla, chiles jalapeños, tomate, catsup y mostaza, mayonesa acompañada de papas chips",
+                "price": 45,
+                "image": "https://i.ibb.co/Df8Qxrr/hamburguesa.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 202,
+                "name": "Torta cubana",
+                "description": "Pierna, jamón y queso manchego",
+                "price": 40,
+                "image": "https://i.ibb.co/Q8Rc41r/torta-cubana.png",
+                "customizableIngredients": [],
+                "variants": []
+              }
+            ]
+          },
+          {
+            "name": "Grab and Go",
+            "products": [
+              {
+                "id": 203,
+                "name": "Baguette",
+                "description": "",
+                "price": 45,
+                "image": "https://i.ibb.co/t3YXQZX/baguette.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 204,
+                "name": "Croissant",
+                "description": "",
+                "price": 30,
+                "image": "https://i.ibb.co/47jp2GN/croissant.png",
+                "customizableIngredients": [],
+                "variants": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Platillos",
+        "description": "Menú de platillos principales",
+        "status": true,
+        "categories": [
+          {
+            "name": "Platillos",
+            "products": [
+              {
+                "id": 301,
+                "name": "Tampiqueña de res",
+                "description": "Servida con mini taquitos dorados, nopal y queso asado",
+                "price": 72,
+                "image": "https://i.ibb.co/Qcxckxh/tampiquena.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 302,
+                "name": "Milanesa napolitana",
+                "description": "Queso manchego + jamón y salsa italiana",
+                "price": 68,
+                "image": "https://i.ibb.co/Xj4c88v/milanesa-napolitana.png",
+                "customizableIngredients": [],
+                "variants": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Ensaladas",
+        "description": "Menú de ensaladas",
+        "status": true,
+        "categories": [
+          {
+            "name": "Ensaladas",
+            "products": [
+              {
+                "id": 401,
+                "name": "Ensalada Grill Chicken",
+                "description": "Mezcla de lechugas, zanahoria, col morada y tortilla frita. Pechuga de pollo a la plancha",
+                "price": 60,
+                "image": "https://i.ibb.co/GFQ6sCc/ensalada-pollo.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 402,
+                "name": "Ensalada vegana",
+                "description": "Mezcla de lechugas, zanahoria, tomate, pepino, granos de elote, aceitunas y croutones",
+                "price": 50,
+                "image": "https://i.ibb.co/nj1GKm3/ensalada-vegana.png",
+                "customizableIngredients": [],
+                "variants": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Café",
+        "description": "Menú de café y bebidas alternativas",
+        "status": true,
+        "categories": [
+          {
+            "name": "Café caliente",
+            "products": [
+              {
+                "id": 501,
+                "name": "Capuchino",
+                "description": "",
+                "price": 35,
+                "image": "https://i.ibb.co/yPh7TvZ/capuchino.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 502,
+                "name": "Caramel Machiatto",
+                "description": "",
+                "price": 52,
+                "image": "https://i.ibb.co/zRHNdg7/caramel-machiatto.png",
+                "customizableIngredients": [],
+                "variants": []
+              }
+            ]
+          },
+          {
+            "name": "Café frío",
+            "products": [
+              {
+                "id": 503,
+                "name": "Mocha Helado",
+                "description": "",
+                "price": 48,
+                "image": "https://i.ibb.co/ryJ3FqZ/mocha-helado.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 504,
+                "name": "Vainilla Cold Brew",
+                "description": "",
+                "price": 45,
+                "image": "https://i.ibb.co/K91Gsr8/vanilla-cold-brew.png",
+                "customizableIngredients": [],
+                "variants": []
+              }
+            ]
+          },
+          {
+            "name": "Frappé",
+            "products": [
+              {
+                "id": 505,
+                "name": "Frappé Original",
+                "description": "",
+                "price": 60,
+                "image": "https://i.ibb.co/HdPHgpt/frappe.png",
+                "customizableIngredients": [],
+                "variants": []
+              }
+            ]
+          },
+          {
+            "name": "Alternativas al café",
+            "products": [
+              {
+                "id": 506,
+                "name": "Green Matcha Latte",
+                "description": "",
+                "price": 49,
+                "image": "https://i.ibb.co/gtgvD5h/matcha-latte.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 507,
+                "name": "Tisana",
+                "description": "",
+                "price": 33,
+                "image": "https://i.ibb.co/qdxqHPM/tisana.png",
+                "customizableIngredients": [],
+                "variants": [
+                  {
+                    "variantName": "Tango Mango",
+                    "extraPrice": 0
+                  },
+                  {
+                    "variantName": "Moras de la Selva",
+                    "extraPrice": 0
+                  },
+                  {
+                    "variantName": "Fruta del Dragón",
+                    "extraPrice": 0
+                  },
+                  {
+                    "variantName": "Ponche de Guayaba",
+                    "extraPrice": 0
+                  },
+                  {
+                    "variantName": "Manzana Arándano ",
+                    "extraPrice": 0
+                  },
+                  {
+                    "variantName": "Cherry Banana Maracuyá",
+                    "extraPrice": 0
+                  },
+                  {
+                    "variantName": "Frutas Tropicales ",
+                    "extraPrice": 0
+                  },
+                  {
+                    "variantName": "Blue Dream",
+                    "extraPrice": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "name": "Limonadas",
+        "description": "Limonadas de distintos sabores",
+        "status": true,
+        "categories": [
+          {
+            "name": "Limonadas",
+            "products": [
+              {
+                "id": 601,
+                "name": "Limonada Original",
+                "description": "",
+                "price": 42,
+                "image": "https://i.ibb.co/vBDGMcr/limonada-clasica.png",
+                "customizableIngredients": [],
+                "variants": []
+              },
+              {
+                "id": 602,
+                "name": "Limonada con Fresas",
+                "description": "",
+                "price": 45,
+                "image": "https://i.ibb.co/wKFzW2M/limonada-fresa.png",
+                "customizableIngredients": [],
+                "variants": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
