@@ -15,6 +15,7 @@ import { Button, ButtonText } from './ui/button';
 import { Colors } from '@/constants/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from "expo-router";
+import { isPhoneNumberRegistered } from '@/constants/api';
 
 interface RegistrationActionSheetProps {
   isOpen: boolean;
@@ -97,12 +98,17 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     setButtonColor(Colors.light.darkBlue);
   };
 
-  type RegistrationRoutes =
-  | '/(registration)/registrationPhone'
-  | '/(registration)/registrationName'
-  | '/(registration)/registrationForm';
+  const fetchPhone = async (): Promise<boolean> => {
+    try {
+      const fetchedPhone = await isPhoneNumberRegistered(phone);
+      return fetchedPhone;
+    } catch (err) {
+      return false; 
+    }
+  };
+  
 
-  const handleNavigation = (route: RegistrationRoutes) => {
+  const handleNavigation = async () => {
 
     const fullCode = code.join('');
     
@@ -112,11 +118,21 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
       inputRefs.forEach((ref) => {
         ref.current?.clear();
       });
-      router.push(route);
 
-      setTimeout(() => {
-        onClose();
-      }, 300);
+      try {
+        const phoneExists = await fetchPhone();
+        if (phoneExists) {
+          router.replace("/(tabs)/(home)");
+        } else {
+          router.push('/(registration)/registrationName');
+        }
+  
+        setTimeout(() => {
+          onClose();
+        }, 300);
+      } catch (err) {
+        console.error("Error al verificar el teléfono:", err);
+      }
     } else {
       // TODO: Mensaje de error y limpieza
       setCode(['', '', '', '']);
@@ -164,7 +180,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
             <Button
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
-              onPress={() => handleNavigation('/(registration)/registrationName')}
+              onPress={() => handleNavigation()}
               style={[styles.nextButton, { backgroundColor: buttonColor }]}
             >
               <ButtonText>Siguiente</ButtonText>
