@@ -20,6 +20,7 @@ const mediumBlueColor = "#139FAA";
 const mediumDarkBlueColor = "#0B818F";
 const darkBlueColor = "#183542";
 const ashColor = "#363837"
+const lightGray = '#F4F5F6'
 
 
 const textColorDark = '#ECEDEE';
@@ -63,6 +64,7 @@ export const Colors = {
     readyBackground: readyBackground,
     deliveredBackground: deliveredBackground,
     errorBackground: errorBackground,
+    lightGray: lightGray,
   },
   dark: {
     text: textColorDark,
