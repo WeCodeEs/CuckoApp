@@ -1,27 +1,62 @@
 export interface Product {
     id: number;
+    categoryId: number;
     name: string;
     description: string;
-    price: number;
+    basePrice: number;
     image: string;
-    customizableIngredients?: { id: number; ingredientName: string; extraPrice: number; }[];
-}
-
-export interface Category {
+    active: boolean;
+  }
+  
+  export interface Variant {
+    id: number;
+    productId: number;
     name: string;
-    products: Product[];
-}
-
-export interface Menu {
+    additionalPrice: number;
+  }
+  
+  export interface CustomizableIngredient {
+    id: number;
+    productId: number;
+    ingredientId: number;
+    customizationType: string;
+    info?: Ingredient;
+  }
+  
+  export interface Ingredient {
+    id: number;
+    name: string;
+    additionalPrice: number;
+  }
+  
+  export interface User {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    lada: string;
+    phone: string;
+    role: string;
+    facultyId: number | null;
+    creationDate: string;
+  }
+  
+  export interface Faculty {
+    id: number;
+    name: string;
+  }
+  
+  
+  export interface Category {
+    id: number;
+    menuId: number;
+    name: string;
+    description: string;
+  }
+  
+  export interface Menu {
     id: number;
     name: string;
     description: string;
-    status: boolean;
-    categories: Category[];
-}
-
-export interface ApiResponse {
-    record: {
-        menus: Menu[];
-    };
-}
+    status: 'Activo' | 'Inactivo';
+  }
