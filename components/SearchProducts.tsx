@@ -75,7 +75,7 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
               <Pressable
                 style={styles.productContainer}
                 onPress={() =>
-                  navigation.navigate("detail_product", { productId: product.id })
+                  navigation.navigate("detail_product", { platilloId: product.id })
                 }
               >
                 <View style={styles.productContent}>

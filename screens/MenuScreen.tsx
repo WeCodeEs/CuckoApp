@@ -127,9 +127,8 @@ const MenuScreen = () => {
                   <VStack key={product.id} style={styles.vStackItem}>
                     <Pressable
                       onPress={() =>
-                        navigation.navigate("detail_product", {
-                          productId: product.id,
-                        })
+                        navigation.navigate("detail_product", { platilloId: product.id })
+
                       }
                       style={styles.TouchableOpacity} >
                       <Image
