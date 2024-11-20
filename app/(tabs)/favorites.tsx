@@ -17,6 +17,7 @@
 // });
 
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
@@ -24,18 +25,20 @@ import { Image } from "@/components/ui/image";
 import { fetchProductById } from '@/constants/api';
 import { Product } from '@/constants/types'; 
 import { VStack } from '@/components/ui/vstack';
+import { Pressable } from '@/components/ui/pressable';
 import { Modal, ModalBackdrop, ModalContent, ModalBody, ModalFooter, ModalHeader } from '@/components/ui/modal';
 import { Box } from '@/components/ui/box';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
-import { TrashIcon } from 'lucide-react-native';
+import { TrashIcon, Heart } from 'lucide-react-native';
 import { HStack } from '@/components/ui/hstack';
 import { Colors } from '@/constants/Colors';
 
-const favoriteProductIds: number[] = [1, 2, 3, 4, 5];
+const favoriteProductIds: number[] = [ 2, 3, 4, 5, 6];
 
 const FavoritesScreen: React.FC = () => {
+  const navigation: any = useNavigation();
   const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -77,16 +80,22 @@ const FavoritesScreen: React.FC = () => {
   };
 
   const renderProductCard = (product: Product) => (
-    <View key={product.id} style={styles.card}>
-      <Image  size="md" source={{ uri: product.image }} alt={product.name}/>
-      <VStack space="xs">
-        <Text className="font-semibold text-lg">{product.name}</Text>
-        <Text className="text-sm text-gray-500">${product.basePrice.toFixed(2)}</Text>
-      </VStack>
-      <Button onPress={() => handleRemoveFavorite(product.id)}>
-        <Text className="text-red-600">❤️</Text>
-      </Button>
-    </View>
+    <Pressable key={product.id} onPress={() => navigation.navigate('detail_product', { platilloId: product.id })}>
+      <View style={styles.card}>
+        <Image  size="md" source={{ uri: product.image }} alt={product.name}/>
+        <View style={{justifyContent: 'center', alignContent: 'flex-start', width: '60%'}}>
+          <VStack space="xs" style={{paddingLeft: 10}}>
+            <Heading size='md' style={{fontWeight: 'normal',}}>{product.name}</Heading>
+            <Text size='md'>${product.basePrice.toFixed(2)}</Text>
+          </VStack>
+        </View>
+        <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+          <Button style={styles.fav_btn} onPress={() => handleRemoveFavorite(product.id)}>
+            <Heart size={20} color={Colors.light.background} fill={Colors.light.background} />
+          </Button>
+        </View>
+      </View>
+    </Pressable>
   );
 
   return (
@@ -100,14 +109,14 @@ const FavoritesScreen: React.FC = () => {
         onClose={() => setShowModal(false)}
       >
         <ModalBackdrop />
-        <ModalContent className="max-w-[305px] items-center">
+        <ModalContent  style={{borderRadius: 30}} className="max-w-[305px] items-center">
           <ModalHeader>
-            <Box className="w-[56px] h-[56px] rounded-full bg-background-error items-center justify-center">
-              <Icon as={TrashIcon} className="stroke-error-600" size="xl" />
+            <Box style={{backgroundColor: Colors.light.lightBlue}} className="w-[56px] h-[56px] rounded-full items-center justify-center">
+              <Icon as={TrashIcon} stroke={Colors.light.darkBlue} size="xl" />
             </Box>
           </ModalHeader>
           <ModalBody className="mt-0 mb-4">
-            <Heading size="md" className="text-typography-950 mb-2 text-center">
+            <Heading size="md" style={{fontWeight: 'normal', paddingTop: 10}} className="text-typography-950 mb-2 text-center">
               Eliminar de favoritos
             </Heading>
             <Text size="sm" className="text-typography-500 text-center">
@@ -121,15 +130,17 @@ const FavoritesScreen: React.FC = () => {
               size="sm"
               onPress={() => setShowModal(false)}
               className="flex-grow"
+              style={{borderRadius: 30}}
             >
-              <Text>Cancelar</Text>
+              <Text style={{}}>Cancelar</Text>
             </Button>
             <Button
               onPress={confirmRemoveFavorite}
               size="sm"
               className="flex-grow"
+              style={{borderRadius: 30, backgroundColor: Colors.light.darkBlue,}}
             >
-              <Text>Eliminar</Text>
+              <Text style={{color: Colors.light.background}}>Eliminar</Text>
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -175,6 +186,11 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 14,
     color: '#888',
+  },
+  fav_btn: {
+    aspectRatio: '1/1',
+    borderRadius: 100,
+    backgroundColor: Colors.light.mediumLightBlue,
   },
   heartIcon: {
     fontSize: 18,
