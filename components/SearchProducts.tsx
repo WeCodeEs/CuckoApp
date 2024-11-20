@@ -1,43 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Animated, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { Animated, StyleSheet } from "react-native";
 import { View } from "@/components/ui/view";
 import { Text } from "@/components/ui/text";
 import { Image } from "@/components/ui/image";
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { Colors } from '@/constants/Colors';
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { Colors } from "@/constants/Colors";
 import { ActionsheetVirtualizedList } from "@/components/ui/actionsheet";
-import { Pressable } from '@/components/ui/pressable';
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  basePrice: number;
-  image: string;
-}
+import { Pressable } from "@/components/ui/pressable";
+import { Product } from "@/constants/types";
+import { fetchAllProducts } from '@/constants/api';
 
 interface SearchProductsProps {
   searchTerm: string;
 }
-
-const API_URL = 'https://api.jsonbin.io/v3/b/673600e7e41b4d34e454545e';
-const API_KEY = '$2a$10$BjeoYTJyrlDGX.e.gpcmj.PU.DQY80BJKMO9eqGE03lENZtL5N8QS';
-
-const fetchProducts = async (): Promise<Product[]> => {
-  try {
-    const response = await fetch(API_URL, {
-      method: 'GET',
-      headers: {
-        'X-Master-Key': API_KEY,
-      },
-    });
-    const data = await response.json();
-    return data.record.products || [];
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    return [];
-  }
-};
 
 const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -47,15 +22,19 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
 
   useEffect(() => {
     const loadProducts = async () => {
-      const apiProducts = await fetchProducts();
-      setProducts(apiProducts);
+      try {
+        const apiProducts = await fetchAllProducts();
+        setProducts(apiProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
     };
 
     loadProducts();
   }, []);
 
   useEffect(() => {
-    if (searchTerm.trim() !== '') {
+    if (searchTerm.trim() !== "") {
       const filtered = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -95,7 +74,9 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
             return (
               <Pressable
                 style={styles.productContainer}
-                onPress={() => navigation.navigate('detail_product', { productId: product.id })}
+                onPress={() =>
+                  navigation.navigate("detail_product", { productId: product.id })
+                }
               >
                 <View style={styles.productContent}>
                   <Image
@@ -121,7 +102,7 @@ export default SearchProducts;
 
 const styles = StyleSheet.create({
   viewContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 100,
     left: 0,
     right: 0,
@@ -134,7 +115,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
     color: Colors.light.darkBlue,
     marginTop: 10,
     marginBottom: 10,
@@ -147,8 +128,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   productContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   image: {
     width: 60,
@@ -158,7 +139,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     marginLeft: 15,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   productName: {
     fontSize: 16,
