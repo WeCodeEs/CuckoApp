@@ -164,6 +164,8 @@ const Detail_product = () => {
                             </Button>
                         </Center>
                     </Center>
+                    <Text size={"xl"} style={styles.subtitle}>Descripción</Text>
+                    <Text size={"sm"} style={{ justifyContent: 'flex-end', textAlign: 'left' }}>{product.description}</Text>
 
                     {variants.length > 0 && (
                         <>
@@ -233,9 +235,6 @@ const Detail_product = () => {
                             </View>
                         </>
                     )}
-
-                    <Text size={"xl"} style={styles.subtitle}>Descripción</Text>
-                    <Text size={"sm"} style={{ justifyContent: 'flex-end', textAlign: 'left' }}>{product.description}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Button size="sm" style={[styles.cart_btn, { width: '85%', marginRight: 15 }]}>
                             <ButtonText>AGREGAR AL CARRITO</ButtonText>
