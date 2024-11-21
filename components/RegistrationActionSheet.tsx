@@ -15,7 +15,7 @@ import { Button, ButtonText } from './ui/button';
 import { Colors } from '@/constants/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from "expo-router";
-import { isPhoneNumberRegistered } from '@/constants/api';
+import { checkPhoneNumberRegistration } from '@/constants/api';
 
 interface RegistrationActionSheetProps {
   isOpen: boolean;
@@ -98,10 +98,19 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     setButtonColor(Colors.light.darkBlue);
   };
 
-  const fetchPhone = async (): Promise<boolean> => {
+  const checkUserRegistration = async (): Promise<boolean> => {
     try {
-      const fetchedPhone = await isPhoneNumberRegistered(phone);
-      return fetchedPhone;
+      //TODO: Validar que todos los campos contengan información
+      const isPhoneNumberRegistered = await checkPhoneNumberRegistration(phone);
+      if(isPhoneNumberRegistered){
+        // const userData = await fetchUserByPhoneNumber(phone);
+        // setUser(userData); 
+      }else{
+        //TODO: La primera de múltiples llamadas al back para rellenar la información del usuario
+        // await insertUserPhoneNumber({ lada, phone });
+        // setUser({ lada, phone }); 
+      }
+      return isPhoneNumberRegistered;
     } catch (err) {
       return false; 
     }
@@ -120,8 +129,8 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
       });
 
       try {
-        const phoneExists = await fetchPhone();
-        if (phoneExists) {
+        const isUserRegistered = await checkUserRegistration();
+        if (isUserRegistered) {
           router.replace("/(tabs)/(home)");
         } else {
           router.push('/(registration)/registrationName');

@@ -163,11 +163,11 @@ export async function fetchIngredientInfo(ingredientId: number) {
   }
 }
 
-export async function isPhoneNumberRegistered(phoneNumber: string): Promise<boolean> {
+export async function checkPhoneNumberRegistration(phoneNumber: string): Promise<boolean> {
   try {
     const users = await fetchAllUsers();
-    const user = users.some((user) => user.phone === phoneNumber);
-    return user;
+    const isPhoneNumberRegistered = users.some((user) => user.phone === phoneNumber);
+    return isPhoneNumberRegistered;
   } catch (error) {
     console.error("Error al validar el número de teléfono:", error);
     return false;
