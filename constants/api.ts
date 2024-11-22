@@ -31,7 +31,7 @@ export async function fetchAllMenus(): Promise<Menu[]> {
   }
 }
 
-async function fetchAllCategories(): Promise<Category[]> {
+export async function fetchAllCategories(): Promise<Category[]> {
   const response = await fetch(API_URL, {
     headers: {
       "X-Master-Key": API_KEY

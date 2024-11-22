@@ -1,146 +1,166 @@
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
-import { Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Image } from "@/components/ui/image";
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
 import { Box } from "@/components/ui/box";
-import { Icon } from '@/components/ui/icon';
-import { HStack } from '@/components/ui/hstack';
+import { Icon } from "@/components/ui/icon";
+import { HStack } from "@/components/ui/hstack";
 import { Input, InputField, InputSlot } from "@/components/ui/input";
-import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { useState } from "react";
-import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater} from "lucide-react-native";
-import Carrusel from '@/components/Carrousel';
-import { Colors } from '@/constants/Colors';
-import SearchProducts from '@/components/SearchProducts';
-
-interface Platillo {
-  id: number;
-  name: string;
-  price: number;
-  image: any;
-  alt: string;
-}
-
-interface PlatillosData {
-  comida: Platillo[];
-  snacks: Platillo[];
-  ensaladas: Platillo[];
-  platillos: Platillo[];
-  cafe: Platillo[];
-  limonadas: Platillo[];
-}
-
-const platillos: PlatillosData = {
-  comida: [
-    { id: 1, name: "Ensalada Cajún", price: 55.00, image: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
-    { id: 2, name: "Ensalada Curry", price: 65.0, image: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
-    { id: 3, name: "Baguette", price: 45.00, image: require('@/assets/images/baguette.png'), alt: 'Baguette' },
-    { id: 4, name: "Croissant", price: 25.00, image: require('@/assets/images/croissant.png'), alt: 'Croissant' },
-    { id: 5, name: "Tlayuda", price: 65.00, image: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
-    { id: 6, name: "Hamburguesa", price: 50.00, image: require('@/assets/images/hamburguesa.png'), alt: 'Hamburguesa' },
-  ],
-  snacks: [
-    { id: 7, name: "Prueba1", price: 10.00, image: require('@/assets/images/baguette.png'), alt: 'Baguette' },
-    { id: 8, name: "Hamburguesa", price: 50.00, image: require('@/assets/images/hamburguesa.png'), alt: 'Baguette' },
-  ],
-  
-  ensaladas: [
-    { id: 9, name: "Prueba2", price: 10.00, image: require('@/assets/images/croissant.png'), alt: 'Prueba' },
-    { id: 10, name: "Ensalada Cajún", price: 55.00, image: require('@/assets/images/ensalada1.png'), alt: 'Ensalada Cajun' },
-  ],
-  platillos: [
-    { id: 11, name: "Prueba3", price: 10.00, image: require('@/assets/images/baguette.png'), alt: 'Prueba'  },
-    { id: 12, name: "Tlayuda", price: 65.00, image: require('@/assets/images/tlayuda.png'), alt: 'Tlayuda' },
-  ],
-  cafe: [
-    { id: 13, name: "Prueba4", price: 10.00, image: require('@/assets/images/croissant.png'), alt: 'Prueba' },
-    { id: 14, name: "Baguette", price: 45.00, image: require('@/assets/images/baguette.png'), alt: 'Baguette' },
-  ],
-  limonadas: [
-    { id: 15, name: "Prueba5", price: 10.00, image: require('@/assets/images/baguette.png'), alt: 'Prueba' },
-    { id: 16, name: "Ensalada Curry", price: 65.00, image: require('@/assets/images/ensalada2.png'), alt: 'Ensalada Curry' },
-  ],
-};
+import { ActionsheetScrollView } from "@/components/ui/actionsheet";
+import { Pressable } from "@/components/ui/pressable";
+import { StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useState, useEffect } from "react";
+import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater, Croissant } from "lucide-react-native";
+import { Colors } from "@/constants/Colors";
+import { fetchAllProducts, fetchAllCategories, fetchAllMenus } from '@/constants/api';
+import { Product, Menu } from "@/constants/types";
+import Carrusel from "@/components/Carrousel";
+import SearchProducts from "@/components/SearchProducts";
 
 const MenuScreen = () => {
   const navigation: any = useNavigation();
-  const [activeButton, setActiveButton] = useState<keyof PlatillosData>("comida");
+  const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [menus, setMenus] = useState<Menu[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const menusData = await fetchAllMenus();
+        const categoriesData = await fetchAllCategories();
+        const productsData = await fetchAllProducts();
+
+        setMenus(menusData);
+        setCategories(categoriesData);
+        setProducts(productsData);
+
+        if (menusData.length > 0) {
+          setActiveMenuId(menusData[0].id);
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const filteredProducts =
+    activeMenuId !== null
+      ? products.filter((product) =>
+          categories.some(
+            (category) =>
+              category.menuId === activeMenuId &&
+              category.id === product.categoryId
+          )
+        )
+      : [];
 
   return (
     <View style={styles.container}>
-      {searchTerm.trim() !== '' && (
-        <SearchProducts searchTerm={searchTerm} />
-      )}
-    <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      <Center style={styles.center}>
-        <Box style={styles.box}>
-          <VStack style={styles.vStack}>
-            <View style={styles.menuContainer}>
-              <Box style={styles.headingBox}>
-                <Heading size={"lg"} bold={false} style={styles.headingLeft}>
-                  ¿Qué te gustaría comer hoy?
-                </Heading>
-              </Box>
+      {searchTerm.trim() !== "" && <SearchProducts searchTerm={searchTerm} />}
+      <ActionsheetScrollView contentContainerStyle={styles.scrollViewContent}>
+        <Center style={styles.center}>
+          <Box style={styles.box}>
+            <VStack style={styles.vStack}>
+              <View style={styles.menuContainer}>
+                <Box style={styles.headingBox}>
+                  <Heading size={"lg"} bold={false} style={styles.headingLeft}>
+                    ¿Qué te gustaría comer hoy?
+                  </Heading>
+                </Box>
 
-              <Input size="xl" style={styles.inputContainer}>
-                <InputSlot>
-                  <Icon as={Search} size="xl" />
-                </InputSlot>
-                <InputField
-                  style={styles.inputFieldLarge}
-                  placeholder="Buscar"
-                  value={searchTerm}
-                  onChangeText={(text) => setSearchTerm(text)}
-                />
-              </Input>
-              <Carrusel />
-            </View>
+                <Input size="xl" style={styles.inputContainer}>
+                  <InputSlot>
+                    <Icon as={Search} size="xl" />
+                  </InputSlot>
+                  <InputField
+                    style={styles.inputFieldLarge}
+                    placeholder="Buscar"
+                    value={searchTerm}
+                    onChangeText={(text) => setSearchTerm(text)}
+                  />
+                </Input>
+                <Carrusel />
+              </View>
 
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollCategoryViewContent}>
-              <HStack space="sm" style={styles.buttonRow}>
-                {Object.keys(platillos).map((key) => (
-                  <VStack key={key} style={{ alignItems: 'center' }}>
-                    <Button onPress={() => setActiveButton(key as keyof PlatillosData)} variant="link">
-                      <Box style={[styles.iconContainer, activeButton === key && styles.activeIconContainer]}>
-                        <Icon as={key === 'comida' ? ChefHat : key === 'snacks' ? Sandwich : key === 'ensaladas' ? Salad : key === 'platillos' ? ForkKnife : key === 'cafe' ? Coffee : GlassWater} size='xl' />
-                      </Box>
+              <ActionsheetScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.scrollCategoryViewContent}
+              >
+                <HStack space="sm" style={styles.buttonRow}>
+                  {menus.map((menu) => (
+                    <VStack key={menu.id} style={{ alignItems: "center" }}>
+                      <Button
+                        onPress={() => setActiveMenuId(menu.id)}
+                        variant="link">
+                        <Box
+                          style={[styles.iconContainer, activeMenuId === menu.id && styles.activeIconContainer]}>
+                          <Icon
+                            as={
+                              menu.name.includes("Desayunos") ? ChefHat
+                              : menu.name.includes("Antojitos") ? Sandwich
+                              : menu.name.includes("Café") ? Coffee
+                              : menu.name.includes("Ensaladas") ? Salad
+                              : menu.name.includes("Platillos") ? ForkKnife
+                              : menu.name.includes("Bebidas") ? GlassWater
+                              : Croissant
+                            } size="xl"
+                          />
+                        </Box>
+                      </Button>
+                      <Text style={styles.activeButtonText}>{menu.name}</Text>
+                    </VStack>
+                  ))}
+                </HStack>
+              </ActionsheetScrollView>
+
+              <View style={styles.grid}>
+                {filteredProducts.map((product) => (
+                  <VStack key={product.id} style={styles.vStackItem}>
+                    <Pressable
+                      onPress={() =>
+                        navigation.navigate("detail_product", { platilloId: product.id })
+
+                      }
+                      style={styles.TouchableOpacity} >
+                      <Image
+                        size="xl"
+                        source={{ uri: product.image }}
+                        alt={product.name}
+                        style={styles.image}/>
+                      <Text size="lg" bold={true} style={styles.itemText}>
+                        {product.name}
+                      </Text>
+                      <Text size="lg" bold={true} style={styles.itemPrice}>
+                        $ {product.basePrice.toFixed(2)}
+                      </Text>
+                    </Pressable>
+
+                    <Button
+                      size="sm"
+                      style={styles.addButton}
+                      onPress={() =>
+                        navigation.navigate("detail_product", {
+                          productId: product.id,
+                        })
+                      }>
+                      <Text style={styles.addButtonText}>+</Text>
                     </Button>
-                    <Text style={styles.activeButtonText}>{key.charAt(0).toUpperCase() + key.slice(1)}</Text>
                   </VStack>
                 ))}
-              </HStack>
-            </ScrollView>
-
-            <View style={styles.grid}>
-              {platillos[activeButton].map((platillo) => (
-                <VStack key={platillo.id} style={styles.vStackItem}>
-                  <TouchableOpacity onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })} style={styles.TouchableOpacity}>
-
-                    <Image size="xl" source={platillo.image} alt={platillo.name} style={styles.image} />
-                    <Text size="lg" bold= {true} style={styles.itemText}>{platillo.name}</Text>
-                    <Text size="lg" bold= {true} style={styles.itemPrice}>$ {platillo.price.toFixed(2)}</Text>
-
-                  </TouchableOpacity>
-
-                  <Button
-                    size="sm"
-                    style={styles.addButton}
-                    onPress={() => navigation.navigate('detail_product', { platilloId: platillo.id })}
-                  >
-                    <Text style={styles.addButtonText}>+</Text>
-                  </Button>
-                </VStack>
-              ))}
-            </View>
-          </VStack>
-        </Box>
-      </Center>
-    </ScrollView>
+              </View>
+            </VStack>
+          </Box>
+        </Center>
+      </ActionsheetScrollView>
     </View>
   );
 };
@@ -155,20 +175,20 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   scrollCategoryViewContent: {
-    flexGrow: 1, 
-    justifyContent: 'center',
+    flexGrow: 1,
+    justifyContent: "center",
     paddingTop: 12,
   },
   center: {
     backgroundColor: Colors.light.background,
-    width: '100%',
+    width: "100%",
     flex: 1,
   },
   box: {
     marginHorizontal: 5,
     marginVertical: 5,
     padding: 5,
-    maxWidth: '96%',
+    maxWidth: "96%",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0,
     elevation: 1,
@@ -181,26 +201,26 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     flex: 1,
-    position: 'static',
+    position: "static",
     zIndex: 1000,
   },
   headingBox: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "flex-start",
   },
   headingLeft: {
-    textAlign: 'left',
+    textAlign: "left",
     marginLeft: 5,
     marginBottom: 15,
-    fontWeight: 'normal',
+    fontWeight: "normal",
   },
   inputContainer: {
     backgroundColor: Colors.light.background,
     borderRadius: 10,
     paddingHorizontal: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
     zIndex: 100,
   },
   inputFieldLarge: {
@@ -210,8 +230,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingVertical: 20,
     paddingHorizontal: -5,
   },
@@ -220,12 +240,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.light.background,
     borderRadius: 15,
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     width: 50,
     height: 50,
   },
   activeIconContainer: {
-    backgroundColor: Colors.dark.tabIconSelected ,
+    backgroundColor: Colors.dark.tabIconSelected,
   },
   activeButtonText: {
     color: Colors.light.text,
@@ -233,27 +253,27 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     paddingVertical: 1,
   },
   vStackItem: {
-    width: '45%',
+    width: "45%",
     marginBottom: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   TouchableOpacity: {
-    alignItems: 'center',
-    width: '100%',
+    alignItems: "center",
+    width: "100%",
   },
   image: {
     width: 100,
     height: 100,
   },
   itemText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
+    textAlign: "center",
+    fontWeight: "bold",
     marginTop: 10,
     fontSize: 16,
   },
@@ -261,7 +281,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginBottom: 6,
     fontSize: 17,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Colors.dark.tabIconSelected,
   },
   addButton: {
@@ -270,14 +290,14 @@ const styles = StyleSheet.create({
     height: 43,
     borderRadius: 23,
     backgroundColor: Colors.light.mediumBlue,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   addButtonText: {
     color: Colors.dark.text,
     fontSize: 22,
     lineHeight: 30,
-    fontWeight: 'black',
-    textAlign: 'center',
+    fontWeight: "black",
+    textAlign: "center",
   },
 });
