@@ -15,6 +15,8 @@ import { Product, Variant, CustomizableIngredient } from '@/constants/types';
 import { fetchProductById, fetchVariantsByProductId, fetchCustomizableIngredientsByProductId, fetchIngredientInfo } from '@/constants/api';
 import { Radio, RadioGroup, RadioIndicator, RadioLabel, RadioIcon } from '@/components/ui/radio';
 import { Colors } from '@/constants/Colors';
+import { addFavoriteProductId, removeFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
+import FavoriteModal from '@/components/RemoveFavoriteModal';
 
 const Detail_product = () => {
     const searchParams = useSearchParams();
@@ -27,10 +29,12 @@ const Detail_product = () => {
     const [additionalVariantPrice, setAdditionalVariantPrice] = useState<number>(0);
     const [additionalIngredientsPrice, setAdditionalIngredientsPrice] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
-
-    const [isFavourite, setIsFavourite] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [totalPrice, setTotalPrice] = useState<number>(0);
+    const [isFavourite, setIsFavourite] = useState(
+        getFavoriteProductIds().includes(platilloId)
+      );
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const fetchProductData = async () => {
@@ -115,8 +119,31 @@ const Detail_product = () => {
     };
 
     const handlePress = () => {
-        setIsFavourite(!isFavourite);
-    };
+        if (isFavourite) {
+          setShowModal(true);
+        } else {
+          addFavoriteProductId(platilloId);
+          setIsFavourite(true);
+          console.log("Producto agregado a favoritos", platilloId);
+          console.log("Lista actual de favoritos ", favoriteProductIds);
+        }
+      };
+      
+      const confirmRemoveFavorite = () => {
+        const index = favoriteProductIds.indexOf(platilloId);
+        if (index > -1) {
+          favoriteProductIds.splice(index, 1);
+          console.log(`Producto eliminado de favoritos (desde detail_product): ${platilloId}`);
+        }
+        setIsFavourite(false);
+        setShowModal(false);
+        console.log("Lista actual de favoritos después de eliminación: ", favoriteProductIds);
+      };
+      
+      
+      const handleCancelRemoveFavorite = () => {
+        setShowModal(false);
+      };
 
     if (error) {
         return (
@@ -239,6 +266,11 @@ const Detail_product = () => {
                     </View>
                 </Box>
             </Center>
+            <FavoriteModal
+                isVisible={showModal}
+                onClose={handleCancelRemoveFavorite}
+                onConfirm={confirmRemoveFavorite}
+            />
         </ScrollView>
     );
 }

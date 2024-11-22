@@ -1,22 +1,5 @@
-// import { View, Text, StyleSheet } from 'react-native';
-
-// export default function FavoritesScreen() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Favorites</Text>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-// });
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from "expo-router";
 import { StyleSheet, ScrollView } from 'react-native';
 import { Text } from "@/components/ui/text";
@@ -33,8 +16,10 @@ import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { TrashIcon, Heart } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+import { getFavoriteProductIds, removeFavoriteProductId } from '@/constants/favoriteProducts';
+import FavoriteModal from '@/components/RemoveFavoriteModal';
 
-const favoriteProductIds: number[] = [ 2, 3, 4, 5, 6];
+const favoriteProductIds = getFavoriteProductIds();
 
 const FavoritesScreen: React.FC = () => {
   const router: any = useRouter();
@@ -42,24 +27,25 @@ const FavoritesScreen: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
-  const fetchFavoriteProducts = async () => {
-    try {
-      const products: Product[] = [];
-      for (const id of favoriteProductIds) {
-        const product = await fetchProductById(id);
-        if (product) {
-          products.push(product);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchFavorites = async () => {
+        try {
+          const products = await Promise.all(
+            favoriteProductIds.map((id) => fetchProductById(id))
+          );
+          setFavoriteProducts(products.filter((product) => product !== undefined) as Product[]);
+          console.log('Renderizando favoritos', favoriteProductIds);
+        } catch (error) {
+          console.error('Error al cargar favoritos:', error);
         }
-      }
-      setFavoriteProducts(products);
-    } catch (error) {
-      console.error('Error al obtener los productos favoritos:', error);
-    }
-  };
+      };
+  
+      fetchFavorites();
+    }, [favoriteProductIds])
+  );
+  
 
-  useEffect(() => {
-    fetchFavoriteProducts();
-  }, []);
 
   const handleCardClick = (productId: number) => {
     router.push(`/detail_product?id=${productId}`);
@@ -75,8 +61,11 @@ const FavoritesScreen: React.FC = () => {
       const index = favoriteProductIds.indexOf(selectedProductId);
       if (index > -1) {
         favoriteProductIds.splice(index, 1);
-        setFavoriteProducts(favoriteProducts.filter(p => p.id !== selectedProductId));
+        console.log('Producto eliminado de favoritos (desde favorites) ', selectedProductId);
       }
+      setFavoriteProducts((prevProducts) =>
+        prevProducts.filter((product) => product.id !== selectedProductId)
+      );
       setShowModal(false);
       setSelectedProductId(null);
     }
@@ -102,52 +91,21 @@ const FavoritesScreen: React.FC = () => {
   );
 
   return (
-    <ScrollView className="flex-1 p-4">
-      <VStack space="lg">
-        {favoriteProducts.map((product) => renderProductCard(product))}
-      </VStack>
-
-      <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-      >
-        <ModalBackdrop />
-        <ModalContent  style={{borderRadius: 30}} className="max-w-[305px] items-center">
-          <ModalHeader>
-            <Box style={{backgroundColor: Colors.light.lightBlue}} className="w-[56px] h-[56px] rounded-full items-center justify-center">
-              <Icon as={TrashIcon} stroke={Colors.light.darkBlue} size="xl" />
-            </Box>
-          </ModalHeader>
-          <ModalBody className="mt-0 mb-4">
-            <Heading size="md" style={{fontWeight: 'normal', paddingTop: 10}} className="text-typography-950 mb-2 text-center">
-              Eliminar de favoritos
-            </Heading>
-            <Text size="sm" className="text-typography-500 text-center">
-              ¿Deseas eliminar este producto de tus favoritos?
-            </Text>
-          </ModalBody>
-          <ModalFooter className="w-full flex-row space-x-2">
-            <Button
-              variant="outline"
-              action="secondary"
-              size="sm"
-              onPress={() => setShowModal(false)}
-              className="flex-grow"
-              style={{borderRadius: 30}}
-            >
-              <Text style={{}}>Cancelar</Text>
-            </Button>
-            <Button
-              onPress={confirmRemoveFavorite}
-              size="sm"
-              className="flex-grow"
-              style={{borderRadius: 30, backgroundColor: Colors.light.darkBlue,}}
-            >
-              <Text style={{color: Colors.light.background}}>Eliminar</Text>
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+    <ScrollView className="flex-1 p-4" contentContainerStyle={styles.scrollContent}>
+      {favoriteProducts.length > 0 ? (
+        <VStack space="lg" style={{ paddingBottom: 50 }}>
+          {favoriteProducts.map((product) => renderProductCard(product))}
+        </VStack>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Aún no tienes productos favoritos. ¡Comienza a agregar!</Text>
+        </View>
+      )}
+      <FavoriteModal
+      isVisible={showModal}
+      onClose={() => setShowModal(false)}
+      onConfirm={confirmRemoveFavorite}
+      />
     </ScrollView>
   );
 };
@@ -159,6 +117,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 10,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    backgroundColor: Colors.light.background,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    paddingHorizontal: 20,
+    color: Colors.light.text,
+    textAlign: 'center',
   },
   card: {
     backgroundColor: Colors.light.background,
@@ -198,18 +170,5 @@ const styles = StyleSheet.create({
   heartIcon: {
     fontSize: 18,
     color: 'red',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: 300,
-    padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    alignItems: 'center',
   },
 });
