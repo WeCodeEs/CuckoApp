@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flex: 1,
         paddingLeft: 15,
-        flexDirection: 'row', 
+        flexDirection: 'row',
         justifyContent: 'space-between'
     },
     additionalPrice: {
