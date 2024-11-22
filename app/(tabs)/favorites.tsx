@@ -17,8 +17,8 @@
 // });
 
 import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useRouter } from "expo-router";
+import { StyleSheet, ScrollView } from 'react-native';
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
 import { Image } from "@/components/ui/image";
@@ -32,13 +32,12 @@ import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { TrashIcon, Heart } from 'lucide-react-native';
-import { HStack } from '@/components/ui/hstack';
 import { Colors } from '@/constants/Colors';
 
 const favoriteProductIds: number[] = [ 2, 3, 4, 5, 6];
 
 const FavoritesScreen: React.FC = () => {
-  const navigation: any = useNavigation();
+  const router: any = useRouter();
   const [favoriteProducts, setFavoriteProducts] = useState<Product[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
@@ -62,6 +61,10 @@ const FavoritesScreen: React.FC = () => {
     fetchFavoriteProducts();
   }, []);
 
+  const handleCardClick = (productId: number) => {
+    router.push(`/detail_product?id=${productId}`);
+  };
+
   const handleRemoveFavorite = (productId: number) => {
     setSelectedProductId(productId);
     setShowModal(true);
@@ -80,7 +83,7 @@ const FavoritesScreen: React.FC = () => {
   };
 
   const renderProductCard = (product: Product) => (
-    <Pressable key={product.id} onPress={() => navigation.navigate('detail_product', { platilloId: product.id })}>
+    <Pressable key={product.id} onPress={() => handleCardClick(product.id)}>
       <View style={styles.card}>
         <Image  size="md" source={{ uri: product.image }} alt={product.name}/>
         <View style={{justifyContent: 'center', alignContent: 'flex-start', width: '60%'}}>
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
   fav_btn: {
     aspectRatio: '1/1',
     borderRadius: 100,
-    backgroundColor: Colors.light.mediumLightBlue,
+    backgroundColor: Colors.light.mediumBlue,
   },
   heartIcon: {
     fontSize: 18,

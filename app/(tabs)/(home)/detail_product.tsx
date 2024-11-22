@@ -9,23 +9,16 @@ import { Center } from "@/components/ui/center";
 import { Box } from "@/components/ui/box";
 import Constants from 'expo-constants';
 import { Checkbox, CheckboxIcon, CheckboxLabel, CheckboxIndicator } from "@/components/ui/checkbox";
-import { RouteProp } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';
+import { useSearchParams } from 'expo-router/build/hooks';
 import { Heart } from "lucide-react-native";
-import { Product, Variant, CustomizableIngredient, Ingredient } from '@/constants/types';
+import { Product, Variant, CustomizableIngredient } from '@/constants/types';
 import { fetchProductById, fetchVariantsByProductId, fetchCustomizableIngredientsByProductId, fetchIngredientInfo } from '@/constants/api';
 import { Radio, RadioGroup, RadioIndicator, RadioLabel, RadioIcon } from '@/components/ui/radio';
 import { Colors } from '@/constants/Colors';
 
-type RootStackParamList = {
-    Detail_product: { platilloId: number };
-};
-
-type DetailProductRouteProp = RouteProp<RootStackParamList, 'Detail_product'>;
-
 const Detail_product = () => {
-    const route = useRoute<DetailProductRouteProp>();
-    const { platilloId } = route.params;
+    const searchParams = useSearchParams();
+    const platilloId = Number(searchParams.get('id'));
 
     const [product, setProduct] = useState<Product | null>(null);
     const [variants, setVariants] = useState<Variant[]>([]);
