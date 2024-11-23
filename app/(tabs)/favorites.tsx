@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from "expo-router";
 import { StyleSheet, ScrollView } from 'react-native';
@@ -9,14 +9,11 @@ import { fetchProductById } from '@/constants/api';
 import { Product } from '@/constants/types'; 
 import { VStack } from '@/components/ui/vstack';
 import { Pressable } from '@/components/ui/pressable';
-import { Modal, ModalBackdrop, ModalContent, ModalBody, ModalFooter, ModalHeader } from '@/components/ui/modal';
-import { Box } from '@/components/ui/box';
-import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
-import { TrashIcon, Heart } from 'lucide-react-native';
+import { Heart } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { getFavoriteProductIds, removeFavoriteProductId } from '@/constants/favoriteProducts';
+import { getFavoriteProductIds } from '@/constants/favoriteProducts';
 import FavoriteModal from '@/components/RemoveFavoriteModal';
 
 const favoriteProductIds = getFavoriteProductIds();
@@ -44,8 +41,6 @@ const FavoritesScreen: React.FC = () => {
       fetchFavorites();
     }, [favoriteProductIds])
   );
-  
-
 
   const handleCardClick = (productId: number) => {
     router.push(`/detail_product?id=${productId}`);
@@ -61,7 +56,7 @@ const FavoritesScreen: React.FC = () => {
       const index = favoriteProductIds.indexOf(selectedProductId);
       if (index > -1) {
         favoriteProductIds.splice(index, 1);
-        console.log('Producto eliminado de favoritos (desde favorites) ', selectedProductId);
+        console.log('Producto eliminado de favoritos ', selectedProductId);
       }
       setFavoriteProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== selectedProductId)
@@ -77,7 +72,7 @@ const FavoritesScreen: React.FC = () => {
         <Image  size="md" source={{ uri: product.image }} alt={product.name}/>
         <View style={{justifyContent: 'center', alignContent: 'flex-start', width: '60%'}}>
           <VStack space="xs" style={{paddingLeft: 10}}>
-            <Heading size='md' style={{fontWeight: 'normal',}}>{product.name}</Heading>
+            <Heading size='md' style={{fontWeight: 'normal'}}>{product.name}</Heading>
             <Text size='md'>${product.basePrice.toFixed(2)}</Text>
           </VStack>
         </View>
@@ -91,9 +86,9 @@ const FavoritesScreen: React.FC = () => {
   );
 
   return (
-    <ScrollView className="flex-1 p-4" contentContainerStyle={styles.scrollContent}>
+    <ScrollView contentContainerStyle={styles.scrollContent}>
       {favoriteProducts.length > 0 ? (
-        <VStack space="lg" style={{ paddingBottom: 50 }}>
+        <VStack space="lg">
           {favoriteProducts.map((product) => renderProductCard(product))}
         </VStack>
       ) : (
@@ -115,12 +110,13 @@ export default FavoritesScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.light.background,
     padding: 10,
   },
   scrollContent: {
     flexGrow: 1,
     backgroundColor: Colors.light.background,
+    padding: 10,
   },
   emptyContainer: {
     flex: 1,
@@ -160,15 +156,11 @@ const styles = StyleSheet.create({
   },
   productPrice: {
     fontSize: 14,
-    color: '#888',
+    color: Colors.light.ash,
   },
   fav_btn: {
     aspectRatio: '1/1',
     borderRadius: 100,
     backgroundColor: Colors.light.mediumBlue,
-  },
-  heartIcon: {
-    fontSize: 18,
-    color: 'red',
-  },
+  }
 });

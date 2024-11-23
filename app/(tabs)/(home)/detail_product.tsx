@@ -15,7 +15,7 @@ import { Product, Variant, CustomizableIngredient } from '@/constants/types';
 import { fetchProductById, fetchVariantsByProductId, fetchCustomizableIngredientsByProductId, fetchIngredientInfo } from '@/constants/api';
 import { Radio, RadioGroup, RadioIndicator, RadioLabel, RadioIcon } from '@/components/ui/radio';
 import { Colors } from '@/constants/Colors';
-import { addFavoriteProductId, removeFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
+import { addFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
 import FavoriteModal from '@/components/RemoveFavoriteModal';
 
 const Detail_product = () => {
@@ -124,8 +124,6 @@ const Detail_product = () => {
         } else {
           addFavoriteProductId(platilloId);
           setIsFavourite(true);
-          console.log("Producto agregado a favoritos", platilloId);
-          console.log("Lista actual de favoritos ", favoriteProductIds);
         }
       };
       
@@ -133,11 +131,10 @@ const Detail_product = () => {
         const index = favoriteProductIds.indexOf(platilloId);
         if (index > -1) {
           favoriteProductIds.splice(index, 1);
-          console.log(`Producto eliminado de favoritos (desde detail_product): ${platilloId}`);
+          console.log(`Producto eliminado de favoritos: ${platilloId}`);
         }
         setIsFavourite(false);
         setShowModal(false);
-        console.log("Lista actual de favoritos después de eliminación: ", favoriteProductIds);
       };
       
       

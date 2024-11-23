@@ -5,7 +5,7 @@ import { Box } from '@/components/ui/box';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
-import { TrashIcon, Heart } from 'lucide-react-native';
+import { TrashIcon } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
 interface FavoriteModalProps {
