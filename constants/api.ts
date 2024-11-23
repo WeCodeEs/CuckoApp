@@ -23,7 +23,7 @@ export async function fetchAllMenus(): Promise<Menu[]> {
       return menus;
     } else {
       console.error("La respuesta no contiene un arreglo de menús:", data);
-      return []; 
+      return [];
     }
   } catch (error) {
     console.error("Error al obtener los menús:", error);
@@ -38,12 +38,12 @@ export async function fetchAllCategories(): Promise<Category[]> {
     }
   });
   const data = await response.json();
-  return data.record.categories; 
+  return data.record.categories;
 }
 
 export async function fetchMenuById(menuId: number): Promise<Menu | null> {
   try {
-    const menus: Menu[] = await fetchAllMenus(); 
+    const menus: Menu[] = await fetchAllMenus();
 
     if (!menus || menus.length === 0) {
       console.error("No se encontraron menús o la respuesta está vacía.");
@@ -101,7 +101,7 @@ export async function fetchAllProducts(): Promise<Product[]> {
       throw error;
     }
   }
-  
+
 export async function fetchProductById(productId: number): Promise<Product | undefined> {
     try {
       const products = await fetchAllProducts();
@@ -161,13 +161,13 @@ export async function fetchIngredientInfo(ingredientId: number) {
     console.error("Error al obtener información del ingrediente:", error);
     return null;
   }
-}  
+}
 
-export async function isPhoneNumberRegistered(phoneNumber: string): Promise<boolean> {
+export async function checkPhoneNumberRegistration(phoneNumber: string): Promise<boolean> {
   try {
     const users = await fetchAllUsers();
-    const user = users.some((user) => user.phone === phoneNumber);
-    return user;
+    const isPhoneNumberRegistered = users.some((user) => user.phone === phoneNumber);
+    return isPhoneNumberRegistered;
   } catch (error) {
     console.error("Error al validar el número de teléfono:", error);
     return false;
@@ -192,9 +192,9 @@ export async function fetchAllUsers(): Promise<any[]> {
 export async function fetchUserByPhoneNumber(phoneNumber: string): Promise<User | undefined> {
   try {
     const users = await fetchAllUsers();
-    
+
     const user = users.find((user) => user.phone === phoneNumber);
-    
+
     return user;
   } catch (error) {
     console.error("Error al obtener el usuario por número de teléfono:", error);
@@ -210,7 +210,7 @@ export async function fetchAllFaculties(): Promise<any[]> {
       }
     });
     const data = await response.json();
-    return data.record.faculties; 
+    return data.record.faculties;
   } catch (error) {
     console.error("Error al obtener todas las facultades:", error);
     return [];
@@ -220,7 +220,7 @@ export async function fetchAllFaculties(): Promise<any[]> {
 
 export async function fetchFacultyById(facultyId: number): Promise<Faculty | undefined> {
   try {
-    const faculties = await fetchAllFaculties(); 
+    const faculties = await fetchAllFaculties();
     const faculty = faculties.find((faculty) => faculty.id === facultyId);
     return faculty;
   } catch (error) {
