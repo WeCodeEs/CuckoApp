@@ -9,23 +9,18 @@ import { Center } from "@/components/ui/center";
 import { Box } from "@/components/ui/box";
 import Constants from 'expo-constants';
 import { Checkbox, CheckboxIcon, CheckboxLabel, CheckboxIndicator } from "@/components/ui/checkbox";
-import { RouteProp } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';
+import { useSearchParams } from 'expo-router/build/hooks';
 import { Heart } from "lucide-react-native";
-import { Product, Variant, CustomizableIngredient, Ingredient } from '@/constants/types';
+import { Product, Variant, CustomizableIngredient } from '@/constants/types';
 import { fetchProductById, fetchVariantsByProductId, fetchCustomizableIngredientsByProductId, fetchIngredientInfo } from '@/constants/api';
 import { Radio, RadioGroup, RadioIndicator, RadioLabel, RadioIcon } from '@/components/ui/radio';
 import { Colors } from '@/constants/Colors';
-
-type RootStackParamList = {
-    Detail_product: { platilloId: number };
-};
-
-type DetailProductRouteProp = RouteProp<RootStackParamList, 'Detail_product'>;
+import { addFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
+import FavoriteModal from '@/components/RemoveFavoriteModal';
 
 const Detail_product = () => {
-    const route = useRoute<DetailProductRouteProp>();
-    const { platilloId } = route.params;
+    const searchParams = useSearchParams();
+    const platilloId = Number(searchParams.get('id'));
 
     const [product, setProduct] = useState<Product | null>(null);
     const [variants, setVariants] = useState<Variant[]>([]);
@@ -34,10 +29,12 @@ const Detail_product = () => {
     const [additionalVariantPrice, setAdditionalVariantPrice] = useState<number>(0);
     const [additionalIngredientsPrice, setAdditionalIngredientsPrice] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
-
-    const [isFavourite, setIsFavourite] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [totalPrice, setTotalPrice] = useState<number>(0);
+    const [isFavourite, setIsFavourite] = useState(
+        getFavoriteProductIds().includes(platilloId)
+      );
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const fetchProductData = async () => {
@@ -122,8 +119,28 @@ const Detail_product = () => {
     };
 
     const handlePress = () => {
-        setIsFavourite(!isFavourite);
-    };
+        if (isFavourite) {
+          setShowModal(true);
+        } else {
+          addFavoriteProductId(platilloId);
+          setIsFavourite(true);
+        }
+      };
+      
+      const confirmRemoveFavorite = () => {
+        const index = favoriteProductIds.indexOf(platilloId);
+        if (index > -1) {
+          favoriteProductIds.splice(index, 1);
+          console.log(`Producto eliminado de favoritos: ${platilloId}`);
+        }
+        setIsFavourite(false);
+        setShowModal(false);
+      };
+      
+      
+      const handleCancelRemoveFavorite = () => {
+        setShowModal(false);
+      };
 
     if (error) {
         return (
@@ -166,7 +183,7 @@ const Detail_product = () => {
                     </Center>
                     <Text size={"xl"} style={styles.subtitle}>Descripción</Text>
                     <Text size={"sm"} style={{ justifyContent: 'flex-end', textAlign: 'left' }}>{product.description}</Text>
-
+                    
                     {variants.length > 0 && (
                         <>
                             <Text size={"xl"} style={styles.subtitle}>Variantes</Text>
@@ -235,16 +252,22 @@ const Detail_product = () => {
                             </View>
                         </>
                     )}
+
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Button size="sm" style={[styles.cart_btn, { width: '85%', marginRight: 15 }]}>
                             <ButtonText>AGREGAR AL CARRITO</ButtonText>
                         </Button>
                         <Button size="lg" style={[styles.fav_btn, { backgroundColor: Colors.light.tabIconSelected }]} onPress={handlePress}>
-                            <Heart size={20} color={Colors.light.background} fill={isFavourite ? Colors.light.background : 'none'} />
+                            <Heart key={isFavourite ? "filled" : "empty"} size={20} color={Colors.light.background} fill={isFavourite ? Colors.light.background : 'none'} />
                         </Button>
                     </View>
                 </Box>
             </Center>
+            <FavoriteModal
+                isVisible={showModal}
+                onClose={handleCancelRemoveFavorite}
+                onConfirm={confirmRemoveFavorite}
+            />
         </ScrollView>
     );
 }
