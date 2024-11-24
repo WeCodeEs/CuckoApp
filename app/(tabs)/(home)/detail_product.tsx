@@ -181,7 +181,9 @@ const Detail_product = () => {
                             </Button>
                         </Center>
                     </Center>
-
+                    <Text size={"xl"} style={styles.subtitle}>Descripción</Text>
+                    <Text size={"sm"} style={{ justifyContent: 'flex-end', textAlign: 'left' }}>{product.description}</Text>
+                    
                     {variants.length > 0 && (
                         <>
                             <Text size={"xl"} style={styles.subtitle}>Variantes</Text>
@@ -251,14 +253,12 @@ const Detail_product = () => {
                         </>
                     )}
 
-                    <Text size={"xl"} style={styles.subtitle}>Descripción</Text>
-                    <Text size={"sm"} style={{ justifyContent: 'flex-end', textAlign: 'left' }}>{product.description}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Button size="sm" style={[styles.cart_btn, { width: '85%', marginRight: 15 }]}>
                             <ButtonText>AGREGAR AL CARRITO</ButtonText>
                         </Button>
                         <Button size="lg" style={[styles.fav_btn, { backgroundColor: Colors.light.tabIconSelected }]} onPress={handlePress}>
-                            <Heart size={20} color={Colors.light.background} fill={isFavourite ? Colors.light.background : 'none'} />
+                            <Heart key={isFavourite ? "filled" : "empty"} size={20} color={Colors.light.background} fill={isFavourite ? Colors.light.background : 'none'} />
                         </Button>
                     </View>
                 </Box>
