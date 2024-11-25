@@ -12,7 +12,7 @@ import { Input, InputField, InputSlot } from "@/components/ui/input";
 import { ActionsheetScrollView } from "@/components/ui/actionsheet";
 import { Pressable } from "@/components/ui/pressable";
 import { StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { useState, useEffect } from "react";
 import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater, Croissant } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
@@ -22,7 +22,7 @@ import Carrusel from "@/components/Carrousel";
 import SearchProducts from "@/components/SearchProducts";
 
 const MenuScreen = () => {
-  const navigation: any = useNavigation();
+  const router: any = useRouter();
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [menus, setMenus] = useState<Menu[]>([]);
@@ -50,6 +50,10 @@ const MenuScreen = () => {
 
     loadData();
   }, []);
+
+  const handleNavigation = (productId: number) => {
+    router.push(`/detail_product?id=${productId}`);
+  };
 
   const filteredProducts =
     activeMenuId !== null
@@ -126,10 +130,7 @@ const MenuScreen = () => {
                 {filteredProducts.map((product) => (
                   <VStack key={product.id} style={styles.vStackItem}>
                     <Pressable
-                      onPress={() =>
-                        navigation.navigate("detail_product", { platilloId: product.id })
-
-                      }
+                      onPress={() => handleNavigation(product.id)}
                       style={styles.TouchableOpacity} >
                       <Image
                         size="xl"
@@ -147,11 +148,7 @@ const MenuScreen = () => {
                     <Button
                       size="sm"
                       style={styles.addButton}
-                      onPress={() =>
-                        navigation.navigate("detail_product", {
-                          productId: product.id,
-                        })
-                      }>
+                      onPress={() => handleNavigation(product.id)}>
                       <Text style={styles.addButtonText}>+</Text>
                     </Button>
                   </VStack>
