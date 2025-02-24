@@ -24,7 +24,7 @@ const CartScreen: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const items = getcartItems();
+      const items = [...getcartItems()];
       setCartItems(items);
       console.log('Cart items updated:', items);
     }, [])
