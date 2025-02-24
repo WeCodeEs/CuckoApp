@@ -11,14 +11,14 @@ import Constants from 'expo-constants';
 import { Checkbox, CheckboxIcon, CheckboxLabel, CheckboxIndicator } from "@/components/ui/checkbox";
 import { useSearchParams } from 'expo-router/build/hooks';
 import { Heart } from "lucide-react-native";
-import { Product, Variant, CustomizableIngredient } from '@/constants/types';
+import { Product, Variant, CustomizableIngredient, Ingredient } from '@/constants/types';
 import { fetchProductById, fetchVariantsByProductId, fetchCustomizableIngredientsByProductId, fetchIngredientInfo } from '@/constants/api';
 import { Radio, RadioGroup, RadioIndicator, RadioLabel, RadioIcon } from '@/components/ui/radio';
 import { Colors } from '@/constants/Colors';
 import { addFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
 import FavoriteModal from '@/components/RemoveFavoriteModal';
 import { useRouter } from 'expo-router';
-import { addCartProduct } from '@/constants/cartProducts';
+import { addcartItem } from '@/constants/cartItems';
 
 const Detail_product = () => {
     const router = useRouter();
@@ -27,8 +27,10 @@ const Detail_product = () => {
 
     const [product, setProduct] = useState<Product | null>(null);
     const [variants, setVariants] = useState<Variant[]>([]);
-    const [selectedVariant, setSelectedVariant] = useState<string>("");
+    const [selectedVariant, setSelectedVariant] = useState<Variant>();
+    const [selectedVariantId, setSelectedVariantId] = useState<string>("");
     const [ingredients, setIngredients] = useState<CustomizableIngredient[]>([]);
+    const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
     const [additionalVariantPrice, setAdditionalVariantPrice] = useState<number>(0);
     const [additionalIngredientsPrice, setAdditionalIngredientsPrice] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
@@ -52,7 +54,8 @@ const Detail_product = () => {
 
                     const initialVariant = fetchedVariants.length > 0 ? fetchedVariants[0] : null;
                     if (initialVariant) {
-                        setSelectedVariant(initialVariant.id.toString());
+                        setSelectedVariant(initialVariant);
+                        setSelectedVariantId(initialVariant.id.toString());
                         setAdditionalVariantPrice(initialVariant.additionalPrice || 0);
                     }
 
@@ -91,7 +94,8 @@ const Detail_product = () => {
     const handleVariantChange = (variantId: string) => {
         const selectedVariant = variants.find((variant) => variant.id.toString() === variantId);
         if (selectedVariant) {
-            setSelectedVariant(variantId);
+            setSelectedVariantId(variantId);
+            setSelectedVariant(selectedVariant);
             const price = selectedVariant.additionalPrice || 0;
             setAdditionalVariantPrice(price);
             updateTotalPrice(product?.basePrice || 0, price, additionalIngredientsPrice);
@@ -101,6 +105,14 @@ const Detail_product = () => {
     const handleIngredientToggle = (ingredientId: number, isSelected: boolean) => {
         const ingredient = ingredients.find((item) => item.info?.id === ingredientId);
         if (ingredient && ingredient.info?.additionalPrice) {
+            if(isSelected){
+                let newIngredients: Ingredient[] = selectedIngredients;
+                newIngredients.push(ingredient.info);
+                setSelectedIngredients(newIngredients);
+            } else {
+                const newIngredients = selectedIngredients.filter((selectedIngredient) => selectedIngredient.id !== ingredient.info?.id);
+                setSelectedIngredients(newIngredients);
+            }
             const priceChange = isSelected ? ingredient.info.additionalPrice : -ingredient.info.additionalPrice;
             const newIngredientPrice = additionalIngredientsPrice + priceChange;
             setAdditionalIngredientsPrice(newIngredientPrice);
@@ -134,7 +146,7 @@ const Detail_product = () => {
     };
 
     const handlePressCart = () => {
-        // addCartProduct(platilloId,quantity,unitPrice,selectedVariant,ingredients);
+        addcartItem(product!,quantity,unitPrice,selectedVariant!,selectedIngredients);
         console.log(selectedVariant + " " + ingredients + " " + quantity + " " + additionalVariantPrice + " " + additionalIngredientsPrice + " $" + totalPrice);
         router.back();
     };
@@ -200,7 +212,7 @@ const Detail_product = () => {
                         <>
                             <Text size={"xl"} style={styles.subtitle}>Variantes</Text>
                             <RadioGroup
-                                value={selectedVariant}
+                                value={selectedVariantId}
                                 onChange={(value) => handleVariantChange(value)}
                             >
                                 {variants.map((variant, index) => (

@@ -5,41 +5,29 @@ import { StyleSheet, ScrollView } from 'react-native';
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
 import { Image } from "@/components/ui/image";
-import { fetchProductById } from '@/constants/api';
-import { Product } from '@/constants/types'; 
+import { CartItem } from '@/constants/types'; 
 import { VStack } from '@/components/ui/vstack';
 import { Pressable } from '@/components/ui/pressable';
 import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Heart } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { getCartProducts } from '@/constants/cartProducts';
+import { getcartItems } from '@/constants/cartItems';
 import CartModal from '@/components/RemoveFromCartModal';
 
-const cartProducts = getCartProducts();
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
-  const [cartProducts, setCartProducts] = useState<Product[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(getcartItems());
   const [showModal, setShowModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
   useFocusEffect(
     useCallback(() => {
-      const fetchItemsInCart = async () => {
-        try {
-          const products = await Promise.all(
-            cartProducts.map((product) => fetchProductById(product.id))
-          );
-          setCartProducts(products.filter((product) => product !== undefined) as Product[]);
-          console.log('Renderizando productos en el carrito', cartProducts);
-        } catch (error) {
-          console.error('Error al cargar el carrito:', error);
-        }
-      };
-  
-      fetchItemsInCart();
-    }, [cartProducts])
+      const items = getcartItems();
+      setCartItems(items);
+      console.log('Cart items updated:', items);
+    }, [])
   );
 
   const handleCardClick = (productId: number) => {
@@ -53,44 +41,52 @@ const CartScreen: React.FC = () => {
 
   const confirmRemoveFromCart = () => {
     if (selectedProductId !== null) {
-      const index = cartProducts.findIndex(product => product.id === selectedProductId);
+      const index = cartItems.findIndex(item => item.product.id === selectedProductId);
       if (index > -1) {
-        cartProducts.splice(index, 1);
+        cartItems.splice(index, 1);
         console.log('Producto eliminado del carrito ', selectedProductId);
       }
-      setCartProducts((prevProducts) =>
-        prevProducts.filter((product) => product.id !== selectedProductId)
+      setCartItems((prevCartItems) =>
+        prevCartItems.filter((cartItem) => cartItem.product.id !== selectedProductId)
       );
       setShowModal(false);
       setSelectedProductId(null);
     }
   };
 
-  const renderProductCard = (product: Product) => (
-    /* TODO: AÑADIR COMO SEGUNDO PARÁMETRO CANTIDAD DE PRODUCTOS SELECCIONADA */
-    <Pressable key={product.id} onPress={() => handleCardClick(product.id)}>
-      <View style={styles.card}>
-        <Image  size="md" source={{ uri: product.image }} alt={product.name}/>
-        <View style={{justifyContent: 'center', alignContent: 'flex-start', width: '60%'}}>
-          <VStack space="xs" style={{paddingLeft: 10}}>
-            <Heading size='md' style={{fontWeight: 'normal'}}>{product.name}</Heading>
-            <Text size='md'>${product.basePrice.toFixed(2)}</Text>
-          </VStack>
+  const renderProductCard = (cartItem: CartItem) => {
+    const compositeKey = `${cartItem.product.id}-${cartItem.selectedVariant?.id ?? 'default'}-${
+      cartItem.ingredients ? cartItem.ingredients.map(ing => ing.id).join('-') : 'noIngredients'
+    }`;
+  
+    return (
+      <Pressable key={compositeKey} onPress={() => handleCardClick(cartItem.product.id)}>
+        <View style={styles.card}>
+          <Image size="md" source={{ uri: cartItem.product.image }} alt={cartItem.product.name} />
+          <View style={{ justifyContent: 'center', alignContent: 'flex-start', width: '60%' }}>
+            <VStack space="xs" style={{ paddingLeft: 10 }}>
+              <Heading size="md" style={{ fontWeight: 'normal' }}>{cartItem.product.name}</Heading>
+              <Text size="md">${cartItem.product.basePrice.toFixed(2)}</Text>
+              {cartItem.selectedVariant && (
+                <Text size="md">{cartItem.selectedVariant.name}</Text>
+              )}
+            </VStack>
+          </View>
+          <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <Button style={styles.fav_btn} onPress={() => handleRemoveFromCart(cartItem.product.id)}>
+              <Heart size={20} color={Colors.light.background} fill={Colors.light.background} />
+            </Button>
+          </View>
         </View>
-        <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-          <Button style={styles.fav_btn} onPress={() => handleRemoveFromCart(product.id)}>
-            <Heart size={20} color={Colors.light.background} fill={Colors.light.background} />
-          </Button>
-        </View>
-      </View>
-    </Pressable>
-  );
+      </Pressable>
+    );
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
-      {cartProducts.length > 0 ? (
+      {cartItems.length > 0 ? (
         <VStack space="lg">
-          {cartProducts.map((product) => renderProductCard(product))}
+          {cartItems.map((product) => renderProductCard(product))}
         </VStack>
       ) : (
         <View style={styles.emptyContainer}>
