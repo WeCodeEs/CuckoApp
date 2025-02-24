@@ -67,9 +67,13 @@ const CartScreen: React.FC = () => {
             <VStack space="xs" style={{ paddingLeft: 10 }}>
               <Heading size="md" style={{ fontWeight: 'normal' }}>{cartItem.product.name}</Heading>
               <Text size="md">${cartItem.product.basePrice.toFixed(2)}</Text>
+              <Text size="md">{cartItem.quantity}</Text>
               {cartItem.selectedVariant && (
                 <Text size="md">{cartItem.selectedVariant.name}</Text>
               )}
+              {cartItem.ingredients && cartItem.ingredients.map(ingredient => (
+                <Text key={ingredient.id} size="md">{ingredient.name}</Text>
+              ))}
             </VStack>
           </View>
           <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>

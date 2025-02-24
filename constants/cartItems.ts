@@ -14,8 +14,8 @@ import { Product, Variant, Ingredient, CartItem } from '@/constants/types';
     console.log(`Producto agregado al carrito ${product}`);
     
     const existingIndex = cartItems.findIndex(cartItem =>
-      cartItem.product === product &&
-      cartItem.selectedVariant === selectedVariant &&
+      JSON.stringify(cartItem.product) === JSON.stringify(product) && 
+      JSON.stringify(cartItem.selectedVariant) === JSON.stringify(selectedVariant) &&
       JSON.stringify(cartItem.ingredients) === JSON.stringify(ingredients)
     );
     
