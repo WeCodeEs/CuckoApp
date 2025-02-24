@@ -90,7 +90,7 @@ const CartScreen: React.FC = () => {
       </ScrollView>
       <HStack style={styles.paymentBar}>
         <VStack style={styles.subtotalContainer}>
-          <Text size='sm'>
+          <Text size='sm' style={styles.subtotalText}>
             Subtotal:
           </Text>
           <Heading size='lg' style={styles.subtotal}>
@@ -99,7 +99,7 @@ const CartScreen: React.FC = () => {
         </VStack>
         <Center>
           <Button size="md" style={styles.paymentButton}>
-            <ButtonText size='sm'>
+            <ButtonText size='sm' style={styles.paymentButtonText}>
               CONTINUAR
             </ButtonText>
           </Button>
@@ -132,20 +132,27 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     justifyContent: 'space-between',
-    backgroundColor: Colors.light.background, 
+    backgroundColor: Colors.light.tabIconSelected,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 }, 
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
     elevation: 5,
+  },
+  subtotalText: {
+    color: Colors.light.lightGray
   },
   subtotalContainer : {
   },
   subtotal: {
     fontWeight: 'bold',
+    color: 'white',
   },
   paymentButton: {
     borderRadius: 30,
-    backgroundColor: Colors.light.tabIconSelected,
+    backgroundColor: Colors.light.background, 
+  },
+  paymentButtonText: {
+    color: Colors.light.tabIconSelected,
   }
 });
