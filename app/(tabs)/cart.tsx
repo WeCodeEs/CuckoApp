@@ -10,6 +10,10 @@ import CartModal from '@/components/RemoveFromCartModal';
 import { getcartItems, removeCartItem } from '@/constants/cartItems';
 import CartItemCard from '@/components/CartItemCard';
 import { Colors } from '@/constants/Colors';
+import { HStack } from '@/components/ui/hstack';
+import { Button, ButtonText } from '@/components/ui/button';
+import { Heading } from '@/components/ui/heading';
+import { Center } from '@/components/ui/center';
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
@@ -57,31 +61,51 @@ const CartScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContent}>
-      {cartItems.length > 0 ? (
-        <VStack space="lg">
-          {cartItems.map((cartItem) => (
-            <CartItemCard
-              key={`${cartItem.product.id}-${cartItem.selectedVariant?.id ?? 'default'}-${
-                cartItem.ingredients ? cartItem.ingredients.map(ing => ing.id).join('-') : 'noIngredients'
-              }`}
-              cartItem={cartItem}
-              onCardPress={handleCardClick}
-              onRemove={() => handleRemoveFromCart(cartItem)}
-            />
-          ))}
+    <>
+    
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {cartItems.length > 0 ? (
+          <VStack space="lg">
+            {cartItems.map((cartItem) => (
+              <CartItemCard
+                key={`${cartItem.product.id}-${cartItem.selectedVariant?.id ?? 'default'}-${
+                  cartItem.ingredients ? cartItem.ingredients.map(ing => ing.id).join('-') : 'noIngredients'
+                }`}
+                cartItem={cartItem}
+                onCardPress={handleCardClick}
+                onRemove={() => handleRemoveFromCart(cartItem)}
+              />
+            ))}
+          </VStack>
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Aún no tienes productos en el carrito. ¡Comienza a agregar!</Text>
+          </View>
+        )}
+        <CartModal
+          isVisible={showModal}
+          onClose={() => setShowModal(false)}
+          onConfirm={confirmRemoveFromCart}
+        />
+      </ScrollView>
+      <HStack style={styles.paymentBar}>
+        <VStack style={styles.subtotalContainer}>
+          <Text size='sm'>
+            Subtotal:
+          </Text>
+          <Heading size='lg' style={styles.subtotal}>
+            $358.00
+          </Heading>
         </VStack>
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Aún no tienes productos en el carrito. ¡Comienza a agregar!</Text>
-        </View>
-      )}
-      <CartModal
-        isVisible={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={confirmRemoveFromCart}
-      />
-    </ScrollView>
+        <Center>
+          <Button size="md" style={styles.paymentButton}>
+            <ButtonText>
+              CONTINUAR
+            </ButtonText>
+          </Button>
+        </Center>
+      </HStack>
+    </>
   );
 };
 
@@ -103,4 +127,25 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     textAlign: 'center',
   },
+  paymentBar: {
+    width: '100%',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    backgroundColor: Colors.light.background, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 }, 
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  subtotalContainer : {
+  },
+  subtotal: {
+    fontWeight: 'bold',
+  },
+  paymentButton: {
+    borderRadius: 30,
+    backgroundColor: Colors.light.tabIconSelected,
+  }
 });
