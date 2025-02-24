@@ -99,7 +99,7 @@ const CartScreen: React.FC = () => {
         </VStack>
         <Center>
           <Button size="md" style={styles.paymentButton}>
-            <ButtonText>
+            <ButtonText size='sm'>
               CONTINUAR
             </ButtonText>
           </Button>
