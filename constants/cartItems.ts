@@ -26,7 +26,7 @@ import { Product, Variant, Ingredient, CartItem } from '@/constants/types';
     }
   };
   
-  export const removecartItem = (
+  export const removeCartItem = (
     product: Product,
     selectedVariant: Variant | undefined,
     ingredients: Ingredient[] | undefined
@@ -34,8 +34,8 @@ import { Product, Variant, Ingredient, CartItem } from '@/constants/types';
     console.log(`Producto eliminado del carrito ${product}`);
     cartItems = cartItems.filter(cartItem =>
       !(
-        cartItem.product === product &&
-        cartItem.selectedVariant === selectedVariant &&
+        JSON.stringify(cartItem.product) === JSON.stringify(product) && 
+        JSON.stringify(cartItem.selectedVariant) === JSON.stringify(selectedVariant) &&
         JSON.stringify(cartItem.ingredients) === JSON.stringify(ingredients)
       )
     );

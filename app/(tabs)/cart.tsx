@@ -7,15 +7,15 @@ import { View } from "@/components/ui/view";
 import { CartItem } from '@/constants/types'; 
 import { VStack } from '@/components/ui/vstack';
 import CartModal from '@/components/RemoveFromCartModal';
-import { getcartItems } from '@/constants/cartItems';
+import { getcartItems, removeCartItem } from '@/constants/cartItems';
 import CartItemCard from '@/components/CartItemCard';
 import { Colors } from '@/constants/Colors';
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>(getcartItems());
+  const [selectedCartItem, setSelectedCartItem] = useState<CartItem | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -29,19 +29,30 @@ const CartScreen: React.FC = () => {
     router.push(`/detail_product?id=${productId}`);
   };
 
-  const handleRemoveFromCart = (productId: number) => {
-    setSelectedProductId(productId);
+  const handleRemoveFromCart = (cartItem: CartItem) => {
+    setSelectedCartItem(cartItem);
     setShowModal(true);
   };
 
   const confirmRemoveFromCart = () => {
-    if (selectedProductId !== null) {
-      setCartItems((prevCartItems) =>
-        prevCartItems.filter((cartItem) => cartItem.product.id !== selectedProductId)
+    if (selectedCartItem !== null) {
+      removeCartItem(
+        selectedCartItem.product,
+        selectedCartItem.selectedVariant,
+        selectedCartItem.ingredients
       );
-      console.log('Producto eliminado del carrito ', selectedProductId);
+      setCartItems((prevCartItems) =>
+        prevCartItems.filter((cartItem) =>
+          !(
+            JSON.stringify(cartItem.product) === JSON.stringify(selectedCartItem.product) &&
+            JSON.stringify(cartItem.selectedVariant) === JSON.stringify(selectedCartItem.selectedVariant) &&
+            JSON.stringify(cartItem.ingredients) === JSON.stringify(selectedCartItem.ingredients)
+          )
+        )
+      );
+      console.log('Producto eliminado del carrito ', selectedCartItem.product.id);
       setShowModal(false);
-      setSelectedProductId(null);
+      setSelectedCartItem(null);
     }
   };
 
@@ -56,7 +67,7 @@ const CartScreen: React.FC = () => {
               }`}
               cartItem={cartItem}
               onCardPress={handleCardClick}
-              onRemove={handleRemoveFromCart}
+              onRemove={() => handleRemoveFromCart(cartItem)}
             />
           ))}
         </VStack>
