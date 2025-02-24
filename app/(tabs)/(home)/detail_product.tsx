@@ -17,8 +17,11 @@ import { Radio, RadioGroup, RadioIndicator, RadioLabel, RadioIcon } from '@/comp
 import { Colors } from '@/constants/Colors';
 import { addFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
 import FavoriteModal from '@/components/RemoveFavoriteModal';
+import { useRouter } from 'expo-router';
+import { addCartProduct } from '@/constants/cartProducts';
 
 const Detail_product = () => {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const platilloId = Number(searchParams.get('id'));
 
@@ -30,6 +33,7 @@ const Detail_product = () => {
     const [additionalIngredientsPrice, setAdditionalIngredientsPrice] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
+    const [unitPrice, setUnitPrice] = useState<number>(0);
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const [isFavourite, setIsFavourite] = useState(
         getFavoriteProductIds().includes(platilloId)
@@ -78,7 +82,9 @@ const Detail_product = () => {
         ingredientPrice: number = additionalIngredientsPrice,
         newQuantity: number = quantity
     ) => {
-        const total = (basePrice + variantPrice + ingredientPrice) * newQuantity;
+        const unit = (basePrice + variantPrice + ingredientPrice);
+        const total = unit * newQuantity;
+        setUnitPrice(unit);
         setTotalPrice(total);
     }
 
@@ -118,16 +124,22 @@ const Detail_product = () => {
         }
     };
 
-    const handlePress = () => {
+    const handlePressFavorite = () => {
         if (isFavourite) {
           setShowModal(true);
         } else {
           addFavoriteProductId(platilloId);
           setIsFavourite(true);
         }
-      };
+    };
+
+    const handlePressCart = () => {
+        // addCartProduct(platilloId,quantity,unitPrice,selectedVariant,ingredients);
+        console.log(selectedVariant + " " + ingredients + " " + quantity + " " + additionalVariantPrice + " " + additionalIngredientsPrice + " $" + totalPrice);
+        router.back();
+    };
       
-      const confirmRemoveFavorite = () => {
+    const confirmRemoveFavorite = () => {
         const index = favoriteProductIds.indexOf(platilloId);
         if (index > -1) {
           favoriteProductIds.splice(index, 1);
@@ -135,12 +147,12 @@ const Detail_product = () => {
         }
         setIsFavourite(false);
         setShowModal(false);
-      };
+    };
       
       
-      const handleCancelRemoveFavorite = () => {
+    const handleCancelRemoveFavorite = () => {
         setShowModal(false);
-      };
+    };
 
     if (error) {
         return (
@@ -254,10 +266,10 @@ const Detail_product = () => {
                     )}
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Button size="sm" style={[styles.cart_btn, { width: '85%', marginRight: 15 }]}>
+                        <Button size="sm" style={[styles.cart_btn, { width: '85%', marginRight: 15 }]} onPress={handlePressCart}>
                             <ButtonText>AGREGAR AL CARRITO</ButtonText>
                         </Button>
-                        <Button size="lg" style={[styles.fav_btn, { backgroundColor: Colors.light.tabIconSelected }]} onPress={handlePress}>
+                        <Button size="lg" style={[styles.fav_btn, { backgroundColor: Colors.light.tabIconSelected }]} onPress={handlePressFavorite}>
                             <Heart key={isFavourite ? "filled" : "empty"} size={20} color={Colors.light.background} fill={isFavourite ? Colors.light.background : 'none'} />
                         </Button>
                     </View>

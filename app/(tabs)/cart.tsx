@@ -13,10 +13,10 @@ import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Heart } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
-import { getCartProductIds } from '@/constants/cartProducts';
+import { getCartProducts } from '@/constants/cartProducts';
 import CartModal from '@/components/RemoveFromCartModal';
 
-const cartProductIds = getCartProductIds();
+const cartProducts = getCartProducts();
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
@@ -29,17 +29,17 @@ const CartScreen: React.FC = () => {
       const fetchItemsInCart = async () => {
         try {
           const products = await Promise.all(
-            cartProductIds.map((id) => fetchProductById(id))
+            cartProducts.map((product) => fetchProductById(product.id))
           );
           setCartProducts(products.filter((product) => product !== undefined) as Product[]);
-          console.log('Renderizando productos en el carrito', cartProductIds);
+          console.log('Renderizando productos en el carrito', cartProducts);
         } catch (error) {
           console.error('Error al cargar el carrito:', error);
         }
       };
   
       fetchItemsInCart();
-    }, [cartProductIds])
+    }, [cartProducts])
   );
 
   const handleCardClick = (productId: number) => {
@@ -53,9 +53,9 @@ const CartScreen: React.FC = () => {
 
   const confirmRemoveFromCart = () => {
     if (selectedProductId !== null) {
-      const index = cartProductIds.indexOf(selectedProductId);
+      const index = cartProducts.findIndex(product => product.id === selectedProductId);
       if (index > -1) {
-        cartProductIds.splice(index, 1);
+        cartProducts.splice(index, 1);
         console.log('Producto eliminado del carrito ', selectedProductId);
       }
       setCartProducts((prevProducts) =>
