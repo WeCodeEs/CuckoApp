@@ -62,49 +62,52 @@ const CartScreen: React.FC = () => {
 
   return (
     <>
-    
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {cartItems.length > 0 ? (
-          <VStack space="lg">
-            {cartItems.map((cartItem) => (
-              <CartItemCard
-                key={`${cartItem.product.id}-${cartItem.selectedVariant?.id ?? 'default'}-${
-                  cartItem.ingredients ? cartItem.ingredients.map(ing => ing.id).join('-') : 'noIngredients'
-                }`}
-                cartItem={cartItem}
-                onCardPress={handleCardClick}
-                onRemove={() => handleRemoveFromCart(cartItem)}
-              />
-            ))}
-          </VStack>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Aún no tienes productos en el carrito. ¡Comienza a agregar!</Text>
-          </View>
-        )}
-        <CartModal
-          isVisible={showModal}
-          onClose={() => setShowModal(false)}
-          onConfirm={confirmRemoveFromCart}
-        />
-      </ScrollView>
-      <HStack style={styles.paymentBar}>
-        <VStack style={styles.subtotalContainer}>
-          <Text size='sm' style={styles.subtotalText}>
-            Subtotal:
+      {cartItems.length > 0 ? (
+        <>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <VStack space="lg">
+              {cartItems.map((cartItem) => (
+                <CartItemCard
+                  key={`${cartItem.product.id}-${cartItem.selectedVariant?.id ?? 'default'}-${
+                    cartItem.ingredients ? cartItem.ingredients.map(ing => ing.id).join('-') : 'noIngredients'
+                  }`}
+                  cartItem={cartItem}
+                  onCardPress={handleCardClick}
+                  onRemove={() => handleRemoveFromCart(cartItem)}
+                />
+              ))}
+            </VStack>
+            <CartModal
+              isVisible={showModal}
+              onClose={() => setShowModal(false)}
+              onConfirm={confirmRemoveFromCart}
+            />
+          </ScrollView>
+          <HStack style={styles.paymentBar}>
+            <VStack style={styles.subtotalContainer}>
+              <Text size="sm" style={styles.subtotalText}>
+                Subtotal:
+              </Text>
+              <Heading size="lg" style={styles.subtotal}>
+                $358.00
+              </Heading>
+            </VStack>
+            <Center>
+              <Button size="md" style={styles.paymentButton}>
+                <ButtonText size="sm" style={styles.paymentButtonText}>
+                  CONTINUAR
+                </ButtonText>
+              </Button>
+            </Center>
+          </HStack>
+        </>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            Aún no tienes productos en el carrito. ¡Comienza a agregar!
           </Text>
-          <Heading size='lg' style={styles.subtotal}>
-            $358.00
-          </Heading>
-        </VStack>
-        <Center>
-          <Button size="md" style={styles.paymentButton}>
-            <ButtonText size='sm' style={styles.paymentButtonText}>
-              CONTINUAR
-            </ButtonText>
-          </Button>
-        </Center>
-      </HStack>
+        </View>
+      )}
     </>
   );
 };
