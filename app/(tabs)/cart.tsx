@@ -40,11 +40,7 @@ const CartScreen: React.FC = () => {
 
   const confirmRemoveFromCart = () => {
     if (selectedCartItem !== null) {
-      removeCartItem(
-        selectedCartItem.product,
-        selectedCartItem.selectedVariant,
-        selectedCartItem.ingredients
-      );
+      removeCartItem(selectedCartItem);
       setCartItems((prevCartItems) =>
         prevCartItems.filter((cartItem) =>
           !(
@@ -59,6 +55,7 @@ const CartScreen: React.FC = () => {
       setSelectedCartItem(null);
     }
   };
+  
 
   return (
     <>

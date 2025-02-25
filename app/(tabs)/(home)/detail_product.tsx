@@ -18,7 +18,7 @@ import { Colors } from '@/constants/Colors';
 import { addFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
 import FavoriteModal from '@/components/RemoveFavoriteModal';
 import { useRouter } from 'expo-router';
-import { addcartItem } from '@/constants/cartItems';
+import { addCartItem } from '@/constants/cartItems';
 
 const Detail_product = () => {
     const router = useRouter();
@@ -146,10 +146,24 @@ const Detail_product = () => {
     };
 
     const handlePressCart = () => {
-        addcartItem(product!,quantity,unitPrice,selectedVariant!,selectedIngredients);
-        console.log(selectedVariant + " " + ingredients + " " + quantity + " " + additionalVariantPrice + " " + additionalIngredientsPrice + " $" + totalPrice);
+        addCartItem({
+          product: product!,
+          quantity: quantity,
+          unitPrice: unitPrice,
+          selectedVariant: selectedVariant!,
+          ingredients: selectedIngredients,
+        });
+        console.log(
+          selectedVariant + " " +
+          ingredients + " " +
+          quantity + " " +
+          additionalVariantPrice + " " +
+          additionalIngredientsPrice + " $" +
+          totalPrice
+        );
         router.back();
-    };
+      };
+      
       
     const confirmRemoveFavorite = () => {
         const index = favoriteProductIds.indexOf(platilloId);
