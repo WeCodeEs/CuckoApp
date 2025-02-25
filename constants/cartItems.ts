@@ -54,7 +54,7 @@ export const increaseCartItemQuantity = (cartItemToIncrease: CartItem, addedQuan
   updateTotalCartValue(changeInValue);
 };
 
-export const dereaseCartItemQuantity = (cartItemToDecrease: CartItem, removedQuantity: number) => {
+export const decreaseCartItemQuantity = (cartItemToDecrease: CartItem, removedQuantity: number) => {
   console.log(`El item ${cartItemToDecrease} ha reducido su cantidad en ${removedQuantity}`);
   const selectedCartItem = cartItems.find(cartItem =>
     JSON.stringify(cartItem.product) === JSON.stringify(cartItemToDecrease.product) &&

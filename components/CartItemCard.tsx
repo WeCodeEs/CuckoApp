@@ -8,6 +8,7 @@ import { Colors } from '@/constants/Colors';
 import { CartItem } from '@/constants/types';
 import { HStack } from './ui/hstack';
 import CardItemQuantity from './CartItemQuantity';
+import { decreaseCartItemQuantity, increaseCartItemQuantity } from '@/constants/cartItems';
 
 interface CartItemCardProps {
   cartItem: CartItem;
@@ -26,6 +27,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRe
         const newQuantity = quantity + 1;
         setQuantity(newQuantity);
         setTotalPrice(newQuantity*cartItem.unitPrice);
+        increaseCartItemQuantity(cartItem, 1);
       }
     };
     
@@ -35,6 +37,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRe
         setQuantity(newQuantity);
         setTotalPrice(newQuantity*cartItem.unitPrice);
         console.log(`${quantity} ${totalPrice}`);
+        decreaseCartItemQuantity(cartItem,1);
     }
   };
 
