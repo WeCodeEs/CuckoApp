@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { HStack } from './ui/hstack';
 import { Button, ButtonIcon } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { RemoveIcon, AddIcon } from "@/components/ui/icon";
+import { RemoveIcon, AddIcon, TrashIcon } from "@/components/ui/icon";
 import { Colors } from '@/constants/Colors';
 
 interface CartItemQuantityProps {
@@ -16,7 +16,11 @@ const CartItemQuantity: React.FC<CartItemQuantityProps> = ({ quantity, onIncreas
   return (
     <HStack style={styles.amount} space='md'>
       <Button size="xs" onPress={onDecrease} style={styles.amount_btn}>
-        <ButtonIcon as={RemoveIcon} stroke={Colors.light.ash} />
+        <ButtonIcon as={
+            quantity == 1 ? TrashIcon : RemoveIcon
+          } 
+          stroke={Colors.light.ash} 
+        />
       </Button>
       <Text style={styles.quantityText} size="md">
         {quantity}
