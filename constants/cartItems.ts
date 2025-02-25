@@ -2,7 +2,7 @@ import { Product, Variant, Ingredient, CartItem } from '@/constants/types';
 
   export let cartItems: CartItem[] = [];
   
-  export const getcartItems = (): CartItem[] => cartItems;
+  export const getCartItems = (): CartItem[] => cartItems;
   
   export const addcartItem = (
     product: Product,

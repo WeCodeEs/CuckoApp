@@ -7,7 +7,7 @@ import { View } from "@/components/ui/view";
 import { CartItem } from '@/constants/types'; 
 import { VStack } from '@/components/ui/vstack';
 import CartModal from '@/components/RemoveFromCartModal';
-import { getcartItems, removeCartItem } from '@/constants/cartItems';
+import { getCartItems, removeCartItem } from '@/constants/cartItems';
 import CartItemCard from '@/components/CartItemCard';
 import { Colors } from '@/constants/Colors';
 import { HStack } from '@/components/ui/hstack';
@@ -17,13 +17,13 @@ import { Center } from '@/components/ui/center';
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
-  const [cartItems, setCartItems] = useState<CartItem[]>(getcartItems());
+  const [cartItems, setCartItems] = useState<CartItem[]>(getCartItems());
   const [selectedCartItem, setSelectedCartItem] = useState<CartItem | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
-      const items = [...getcartItems()];
+      const items = [...getCartItems()];
       setCartItems(items);
       console.log('Cart items updated:', items);
     }, [])
