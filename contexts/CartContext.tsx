@@ -9,6 +9,7 @@ interface CartContextProps {
   increaseCartItemQuantity: (item: CartItem, amount: number) => void;
   decreaseCartItemQuantity: (item: CartItem, amount: number) => void;
   emptyCart: () => void;
+  cartItemsCount: number;
 }
 
 const CartContext = createContext<CartContextProps | undefined>(undefined);
@@ -110,6 +111,10 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     setTotalCartValue(0);
   };
 
+  const cartItemsCount = useMemo(() => {
+    return cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  }, [cartItems]);
+
   const value = useMemo(() => ({
     cartItems,
     totalCartValue,
@@ -118,7 +123,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     increaseCartItemQuantity,
     decreaseCartItemQuantity,
     emptyCart,
-  }), [cartItems, totalCartValue]);
+    cartItemsCount,
+  }), [cartItems, totalCartValue, cartItemsCount]);
 
   return (
     <CartContext.Provider value={value}>
