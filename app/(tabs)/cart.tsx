@@ -5,7 +5,7 @@ import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
 import { CartItem } from '@/constants/types'; 
 import { VStack } from '@/components/ui/vstack';
-import CartModal from '@/components/RemoveFromCartModal';
+import CartModal from '@/components/CartModal';
 import CartItemCard from '@/components/CartItemCard';
 import { Colors } from '@/constants/Colors';
 import { HStack } from '@/components/ui/hstack';
@@ -43,7 +43,7 @@ const CartScreen: React.FC = () => {
       {cartItems.length > 0 ? (
         <>
           <ScrollView contentContainerStyle={styles.scrollContent}>
-            <VStack space="lg">
+            <VStack space="md">
               {cartItems.map((cartItem) => (
                 <CartItemCard
                   key={`${cartItem.product.id}-${cartItem.selectedVariant?.id ?? 'default'}-${
