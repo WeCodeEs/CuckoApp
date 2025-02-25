@@ -18,12 +18,13 @@ import { Colors } from '@/constants/Colors';
 import { addFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
 import FavoriteModal from '@/components/RemoveFavoriteModal';
 import { useRouter } from 'expo-router';
-import { addCartItem } from '@/constants/cartItems';
+import { useCart } from '@/contexts/CartContext';
 
 const Detail_product = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const platilloId = Number(searchParams.get('id'));
+    const { addCartItem } = useCart();
 
     const [product, setProduct] = useState<Product | null>(null);
     const [variants, setVariants] = useState<Variant[]>([]);
@@ -153,16 +154,8 @@ const Detail_product = () => {
           selectedVariant: selectedVariant!,
           ingredients: selectedIngredients,
         });
-        console.log(
-          selectedVariant + " " +
-          ingredients + " " +
-          quantity + " " +
-          additionalVariantPrice + " " +
-          additionalIngredientsPrice + " $" +
-          totalPrice
-        );
         router.back();
-      };
+    };
       
       
     const confirmRemoveFavorite = () => {

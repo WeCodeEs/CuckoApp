@@ -1,20 +1,18 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Center } from "@/components/ui/center";
 import { HStack } from './ui/hstack';
 import { Button, ButtonIcon } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { RemoveIcon, AddIcon } from "@/components/ui/icon";
 import { Colors } from '@/constants/Colors';
-import { Heading } from './ui/heading';
 
-interface CardItemQuantityProps {
+interface CartItemQuantityProps {
   quantity: number;
   onIncrease: () => void;
   onDecrease: () => void;
 }
 
-const CardItemQuantity: React.FC<CardItemQuantityProps> = ({ quantity, onIncrease, onDecrease }) => {
+const CartItemQuantity: React.FC<CartItemQuantityProps> = ({ quantity, onIncrease, onDecrease }) => {
   return (
     <HStack style={styles.amount} space='md'>
       <Button size="xs" onPress={onDecrease} style={styles.amount_btn}>
@@ -45,4 +43,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CardItemQuantity;
+export default React.memo(CartItemQuantity);

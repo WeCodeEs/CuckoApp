@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Pressable, View, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import { Image } from "@/components/ui/image";
 import { VStack } from '@/components/ui/vstack';
 import { Text } from "@/components/ui/text";
@@ -7,8 +7,8 @@ import { Heading } from '@/components/ui/heading';
 import { Colors } from '@/constants/Colors';
 import { CartItem } from '@/constants/types';
 import { HStack } from './ui/hstack';
-import CardItemQuantity from './CartItemQuantity';
-import { decreaseCartItemQuantity, increaseCartItemQuantity } from '@/constants/cartItems';
+import { useCart } from '@/contexts/CartContext';
+import CartItemQuantity from '@/components/CartItemQuantity'
 
 interface CartItemCardProps {
   cartItem: CartItem;
@@ -18,26 +18,23 @@ interface CartItemCardProps {
 
 const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRemove }) => {
   const variantValue = cartItem.selectedVariant ? cartItem.selectedVariant.name : "";
-  const ingredientsArray = cartItem.ingredients ? cartItem.ingredients.map(ingredient => ingredient.name) : [];
-  const [quantity, setQuantity] = useState(cartItem.quantity);
-  const [totalPrice, setTotalPrice] = useState(cartItem.quantity * cartItem.unitPrice);
+  const ingredientsArray = cartItem.ingredients
+    ? cartItem.ingredients.map(ingredient => ingredient.name)
+    : [];
+
+  const totalPrice = cartItem.quantity * cartItem.unitPrice;
+
+  const { increaseCartItemQuantity, decreaseCartItemQuantity } = useCart();
 
   const increaseQuantity = () => {
-    if (quantity < 10) {
-        const newQuantity = quantity + 1;
-        setQuantity(newQuantity);
-        setTotalPrice(newQuantity*cartItem.unitPrice);
-        increaseCartItemQuantity(cartItem, 1);
-      }
-    };
-    
-    const decreaseQuantity = () => {
-      if (quantity > 1) {
-        const newQuantity = quantity - 1;
-        setQuantity(newQuantity);
-        setTotalPrice(newQuantity*cartItem.unitPrice);
-        console.log(`${quantity} ${totalPrice}`);
-        decreaseCartItemQuantity(cartItem,1);
+    if (cartItem.quantity < 10) {
+      increaseCartItemQuantity(cartItem, 1);
+    }
+  };
+
+  const decreaseQuantity = () => {
+    if (cartItem.quantity > 1) {
+      decreaseCartItemQuantity(cartItem, 1);
     }
   };
 
@@ -77,7 +74,11 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRe
         </Heading>
       </VStack>
       <View style={styles.priceContainer}>
-        <CardItemQuantity quantity={quantity} onIncrease={increaseQuantity} onDecrease={decreaseQuantity}/>
+        <CartItemQuantity 
+            quantity={cartItem.quantity} 
+            onIncrease={increaseQuantity} 
+            onDecrease={decreaseQuantity}
+          />
       </View>
     </View>
   );
@@ -126,4 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CartItemCard;
+export default React.memo(CartItemCard);
