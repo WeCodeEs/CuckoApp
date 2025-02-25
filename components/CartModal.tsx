@@ -12,11 +12,13 @@ import { CartItem } from '@/constants/types';
 interface CartModalProps {
   isVisible: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirmDelete: () => void;
+  onConfirmEmpty: () => void;
   cartItem: CartItem | null;
+  isEmptyCartModal: boolean;
 }
 
-const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirm, cartItem }) => {
+const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirmDelete, onConfirmEmpty, cartItem, isEmptyCartModal }) => {
   return (
     <Modal isOpen={isVisible} onClose={onClose}>
       <ModalBackdrop />
@@ -35,10 +37,13 @@ const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirm, ca
             style={{ fontWeight: 'normal', paddingTop: 10 }}
             className="text-typography-950 mb-2 text-center"
           >
-            Eliminar del carrito
+            { isEmptyCartModal ? "Vaciar el carrito" : "Eliminar del carrito" }
           </Heading>
           <Text size="sm" className="text-typography-500 text-center">
-            ¿Deseas eliminar "{cartItem?.product?.name || "este producto"}" del carrito?
+            { isEmptyCartModal ? 
+              "¿Deseas vaciar el carrito?" : 
+              `¿Deseas eliminar \"${cartItem?.product?.name || "este producto"}\" del carrito?` }
+            
           </Text>
         </ModalBody>
         <ModalFooter className="w-full flex-row space-x-2">
@@ -53,12 +58,22 @@ const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirm, ca
             <Text>Cancelar</Text>
           </Button>
           <Button
-            onPress={onConfirm}
+            onPress={
+              isEmptyCartModal?
+              onConfirmEmpty : 
+              onConfirmDelete
+            }
             size="sm"
             className="flex-grow"
             style={{ borderRadius: 30, backgroundColor: Colors.light.darkBlue }}
           >
-            <Text style={{ color: Colors.light.background }}>Eliminar</Text>
+            <Text style={{ color: Colors.light.background }}>
+              {
+                isEmptyCartModal?
+                "Vaciar":
+                "Eliminar"
+              }
+            </Text>
           </Button>
         </ModalFooter>
       </ModalContent>

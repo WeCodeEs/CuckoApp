@@ -13,12 +13,14 @@ import { Button, ButtonText } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Center } from '@/components/ui/center';
 import { useCart } from '@/contexts/CartContext';
+import { Divider } from '@/components/ui/divider';
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
-  const { cartItems, totalCartValue, removeCartItem } = useCart();
+  const { cartItems, totalCartValue, removeCartItem, emptyCart } = useCart();
   const [selectedCartItem, setSelectedCartItem] = useState<CartItem | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [isEmptyCartModal, setIsEmptyCartModal] = useState(false);
 
   const handleCardClick = (productId: number) => {
     router.push(`/detail_product?id=${productId}`);
@@ -26,9 +28,10 @@ const CartScreen: React.FC = () => {
 
   const handleRemoveFromCart = (cartItem: CartItem) => {
     setSelectedCartItem(cartItem);
+    setIsEmptyCartModal(false);
     setShowModal(true);
   };
-
+  
   const confirmRemoveFromCart = () => {
     if (selectedCartItem !== null) {
       removeCartItem(selectedCartItem);
@@ -36,6 +39,17 @@ const CartScreen: React.FC = () => {
       setShowModal(false);
       setSelectedCartItem(null);
     }
+  };
+  
+  const handleEmptyCart = () => {
+    setIsEmptyCartModal(true);
+    setShowModal(true);
+  };
+  
+  const confirmEmptyCart = () => {
+    emptyCart();
+    console.log('Se vació el carrito');
+    setShowModal(false);
   };
 
   return (
@@ -55,11 +69,21 @@ const CartScreen: React.FC = () => {
                 />
               ))}
             </VStack>
+            <View style={styles.dividerContainer}>
+              <Divider/>
+            </View>
+            <View style={styles.emptyCartButtonContainer}>
+              <Button size="md" variant="link" action="negative" onPress={handleEmptyCart}>
+                <ButtonText>Vaciar Carrito</ButtonText>
+              </Button>
+            </View>
             <CartModal
               isVisible={showModal}
               onClose={() => setShowModal(false)}
-              onConfirm={confirmRemoveFromCart}
+              onConfirmDelete={confirmRemoveFromCart}
+              onConfirmEmpty={confirmEmptyCart}
               cartItem={selectedCartItem}
+              isEmptyCartModal={isEmptyCartModal}
             />
           </ScrollView>
           <HStack style={styles.paymentBar}>
@@ -108,6 +132,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     color: Colors.light.text,
     textAlign: 'center',
+  },
+  dividerContainer: {
+    width: '100%',
+    marginTop: 20,
+    paddingHorizontal: 16,
+  },
+  emptyCartButtonContainer: {
+    width: '100%',
+    padding: 6
   },
   paymentBar: {
     width: '100%',
