@@ -59,6 +59,7 @@ const CartScreen: React.FC = () => {
               isVisible={showModal}
               onClose={() => setShowModal(false)}
               onConfirm={confirmRemoveFromCart}
+              cartItem={selectedCartItem}
             />
           </ScrollView>
           <HStack style={styles.paymentBar}>

@@ -7,14 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { ShoppingCartIcon } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+import { CartItem } from '@/constants/types';
 
 interface CartModalProps {
   isVisible: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  cartItem: CartItem | null;
 }
 
-const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirm }) => {
+const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirm, cartItem }) => {
   return (
     <Modal isOpen={isVisible} onClose={onClose}>
       <ModalBackdrop />
@@ -36,7 +38,7 @@ const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirm }) 
             Eliminar del carrito
           </Heading>
           <Text size="sm" className="text-typography-500 text-center">
-            ¿Deseas eliminar este producto del carrito?
+            ¿Deseas eliminar "{cartItem?.product?.name || "este producto"}" del carrito?
           </Text>
         </ModalBody>
         <ModalFooter className="w-full flex-row space-x-2">
