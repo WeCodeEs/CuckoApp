@@ -5,7 +5,7 @@ import { Box } from '@/components/ui/box';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
-import { TrashIcon } from 'lucide-react-native';
+import { ShoppingCartIcon } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 
 interface CartModalProps {
@@ -24,7 +24,7 @@ const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirm }) 
             style={{ backgroundColor: Colors.light.lightBlue }}
             className="w-[56px] h-[56px] rounded-full items-center justify-center"
           >
-            <Icon as={TrashIcon} stroke={Colors.light.darkBlue} size="xl" />
+            <Icon as={ShoppingCartIcon} stroke={Colors.light.darkBlue} size="xl" />
           </Box>
         </ModalHeader>
         <ModalBody className="mt-0 mb-4">
@@ -33,10 +33,10 @@ const CartModal: React.FC<CartModalProps> = ({ isVisible, onClose, onConfirm }) 
             style={{ fontWeight: 'normal', paddingTop: 10 }}
             className="text-typography-950 mb-2 text-center"
           >
-            Eliminar de favoritos
+            Eliminar del carrito
           </Heading>
           <Text size="sm" className="text-typography-500 text-center">
-            ¿Deseas eliminar este producto de tus favoritos?
+            ¿Deseas eliminar este producto del carrito?
           </Text>
         </ModalBody>
         <ModalFooter className="w-full flex-row space-x-2">
