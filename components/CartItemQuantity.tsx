@@ -10,12 +10,19 @@ interface CartItemQuantityProps {
   quantity: number;
   onIncrease: () => void;
   onDecrease: () => void;
+  onDecreaseToZero: () => void;
 }
 
-const CartItemQuantity: React.FC<CartItemQuantityProps> = ({ quantity, onIncrease, onDecrease }) => {
+const CartItemQuantity: React.FC<CartItemQuantityProps> = ({ quantity, onIncrease, onDecrease, onDecreaseToZero }) => {
   return (
     <HStack style={styles.amount} space='md'>
-      <Button size="xs" onPress={onDecrease} style={styles.amount_btn}>
+      <Button 
+      size="xs" 
+        onPress={
+          quantity == 1 ? onDecreaseToZero : onDecrease
+        } 
+        style={styles.amount_btn}
+      >
         <ButtonIcon as={
             quantity == 1 ? TrashIcon : RemoveIcon
           } 

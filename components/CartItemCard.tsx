@@ -8,12 +8,12 @@ import { Colors } from '@/constants/Colors';
 import { CartItem } from '@/constants/types';
 import { HStack } from './ui/hstack';
 import { useCart } from '@/contexts/CartContext';
-import CartItemQuantity from '@/components/CartItemQuantity'
+import CartItemQuantity from '@/components/CartItemQuantity';
 
 interface CartItemCardProps {
   cartItem: CartItem;
   onCardPress: (productId: number) => void;
-  onRemove: (productId: number) => void;
+  onRemove: () => void;
 }
 
 const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRemove }) => {
@@ -22,20 +22,25 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRe
     ? cartItem.ingredients.map(ingredient => ingredient.name)
     : [];
 
+  const quantity = cartItem.quantity;
   const totalPrice = cartItem.quantity * cartItem.unitPrice;
 
   const { increaseCartItemQuantity, decreaseCartItemQuantity } = useCart();
 
   const increaseQuantity = () => {
-    if (cartItem.quantity < 10) {
+    if (quantity < 10) {
       increaseCartItemQuantity(cartItem, 1);
     }
   };
 
   const decreaseQuantity = () => {
-    if (cartItem.quantity > 1) {
+    if (quantity > 1) {
       decreaseCartItemQuantity(cartItem, 1);
     }
+  };
+
+  const removeItem = () => {
+    onRemove();
   };
 
   let combinedText = "";
@@ -63,9 +68,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRe
         <View style={styles.details}>
           {combinedText !== "" && (
             <HStack>
-              <Text size="2xs">
-                {combinedText}
-              </Text>
+              <Text size="2xs">{combinedText}</Text>
             </HStack>
           )}
         </View>
@@ -75,10 +78,11 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRe
       </VStack>
       <View style={styles.priceContainer}>
         <CartItemQuantity 
-            quantity={cartItem.quantity} 
-            onIncrease={increaseQuantity} 
-            onDecrease={decreaseQuantity}
-          />
+          quantity={quantity} 
+          onIncrease={increaseQuantity} 
+          onDecrease={decreaseQuantity}
+          onDecreaseToZero={removeItem}
+        />
       </View>
     </View>
   );
