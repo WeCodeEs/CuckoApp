@@ -14,6 +14,7 @@ import { Heading } from '@/components/ui/heading';
 import { Center } from '@/components/ui/center';
 import { useCart } from '@/contexts/CartContext';
 import { Divider } from '@/components/ui/divider';
+import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
@@ -106,9 +107,15 @@ const CartScreen: React.FC = () => {
         </>
       ) : (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>
-            Aún no tienes productos en el carrito. ¡Comienza a agregar!
-          </Text>
+          <Center style={styles.emptyCartContainer}>
+            <CuckooIsotipo style={styles.svg} />
+            <Text style={styles.emptyText}>
+              Aún no tienes productos en el carrito. 
+            </Text>
+            <Heading size='md' style={styles.emptyText}>
+              ¡Comienza a agregar! 
+            </Heading>
+          </Center>
         </View>
       )}
     </>
@@ -168,5 +175,16 @@ const styles = StyleSheet.create({
   },
   paymentButtonText: {
     color: Colors.light.tabIconSelected,
-  }
+  },
+  emptyCartContainer: {
+    height: '100%',
+    width: '100%',
+    marginTop: -150,
+    padding: 10,
+  },
+  svg: {
+    position: 'relative',
+    width: '70%',
+    aspectRatio: '1/1',
+  },
 });
