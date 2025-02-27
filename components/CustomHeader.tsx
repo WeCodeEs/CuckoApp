@@ -71,14 +71,14 @@ export function CustomHeader() {
             />
           </Box>
         </GridItem>
-        
+
         {/* Icono de Notificaciones */}
         <GridItem className="flex items-end justify-center" _extra={{ className: 'col-span-2' }}>
           <Pressable 
             onPress={() => router.push('/notifications')}
             style={styles.notificationButton}
           >
-            <Bell size={28} color={Colors.dark.tabIconSelected} />
+            <Bell size={28} color={Colors.light.mediumDarkBlue} />
             {hasUnreadNotifications && <Box style={styles.notificationBadge} />}
           </Pressable>
         </GridItem>
