@@ -8,12 +8,16 @@ import { Pressable } from '@/components/ui/pressable';
 import { Grid, GridItem } from '@/components/ui/grid';
 import { Box } from '@/components/ui/box';
 import { HeaderDrawer } from './HeaderDrawer';
+import { Bell, Icon } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
+import { useRouter } from "expo-router";
 
 export function CustomHeader() {
+  const router = useRouter();
   const navigation = useNavigation();
   const [showDrawer, setShowDrawer] = useState(false);
   const [stylesReady, setStylesReady] = useState(false);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true); // Simulación de notificaciones
 
   useEffect(() => {
     const loadStyles = async () => {
@@ -41,6 +45,7 @@ export function CustomHeader() {
     <>
     <SafeAreaView style={styles.container}>
       <Grid className="gap-2 px-4" _extra={{ className: 'grid-cols-8' }}>
+        {/* Avatar del usuario */}
         <GridItem className="flex items-start justify-center" _extra= {{ className: 'col-span-2' }}>
           <Pressable onPress={() => setShowDrawer(true)} className="h-12 w-12">
             <Avatar className="w-full h-full">
@@ -54,6 +59,8 @@ export function CustomHeader() {
           </Pressable>
           <HeaderDrawer isOpen={showDrawer} onClose={() => setShowDrawer(false)} />
         </GridItem>
+
+        {/* Logo */}
         <GridItem className="items-center" _extra={{ className: 'col-span-4' }}>
           <Box className="w-full items-center">
             <Image 
@@ -64,7 +71,17 @@ export function CustomHeader() {
             />
           </Box>
         </GridItem>
-        <GridItem className="flex items-end justify-center" _extra= {{ className: 'col-span-2' }}/>
+        
+        {/* Icono de Notificaciones */}
+        <GridItem className="flex items-end justify-center" _extra={{ className: 'col-span-2' }}>
+          <Pressable 
+            onPress={() => router.push('/notifications')}
+            style={styles.notificationButton}
+          >
+            <Bell size={28} color={Colors.dark.tabIconSelected} />
+            {hasUnreadNotifications && <Box style={styles.notificationBadge} />}
+          </Pressable>
+        </GridItem>
       </Grid>
       <Divider/>
     </SafeAreaView>
@@ -78,5 +95,18 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 0 : 40,
     alignItems: 'center',
     backgroundColor: Colors.light.background,
+  },
+  notificationButton: {
+    position: 'relative',
+    padding: 8,
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: 'red',
   },
 });
