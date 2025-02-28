@@ -10,42 +10,57 @@ import { HStack } from "@/components/ui/hstack";
 import { Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem } from "@/components/ui/select";
 import { ChevronDownIcon } from "@/components/ui/icon";
 import { Colors } from "@/constants/Colors";
-import { Clock, ShoppingBag  } from "lucide-react-native";
+import { Clock, ShoppingBag, CircleAlert } from "lucide-react-native";
 
 const places = [
   { label: "Cuckoo Resto", value: "resto" },
   { label: "Cuckoo Box", value: "box" }
 ];
 
-const generateTimeSlots = () => {
-  const slots = [];
+const OPEN_HOUR = 8;
+const CLOSE_HOUR = 18;
+
+const generateTimeSlots = (): { label: string; value: string }[] => {
+  const slots: { label: string; value: string }[] = [];
   const now = new Date();
   now.setSeconds(0, 0);
-  const currentMinutes = now.getMinutes();
-  let startHour = now.getHours();
-  let startMinute = currentMinutes < 20 ? 30 : 0;
-  if (currentMinutes >= 40) startHour++;
   
-  for (let hour = startHour; hour < 20; hour++) {
-    if (hour === startHour && startMinute === 30) {
-      slots.push({ label: `${hour.toString().padStart(2, "0")}:30`, value: `${hour}:30` });
+  now.setMinutes(now.getMinutes() + 20);
+  let startHour = now.getHours();
+  let startMinute = now.getMinutes() >= 30 ? 0 : 30;
+  if (now.getMinutes() >= 40) startHour++;
+  
+  if (startHour < OPEN_HOUR) {
+    startHour = OPEN_HOUR;
+    startMinute = 30;
+  }
+  if (startHour >= CLOSE_HOUR) return slots;
+
+  console.log("Hora actual:", now.getHours(), "Minuto actual:", now.getMinutes());
+  
+  for (let hour = startHour; hour <= CLOSE_HOUR; hour++) {
+    if (hour === CLOSE_HOUR) {
+      slots.push({ label: `${hour.toString().padStart(2, "0")}:00`, value: `${hour}:00` });
     } else {
       slots.push({ label: `${hour.toString().padStart(2, "0")}:00`, value: `${hour}:00` });
       slots.push({ label: `${hour.toString().padStart(2, "0")}:30`, value: `${hour}:30` });
     }
   }
+
+  console.log("Horarios generados:", slots);
   return slots;
 };
 
 export default function ScheduleOrderScreen() {
-  const [selectedPlace, setSelectedPlace] = useState(places[0].value);
+  const [selectedPlace, setSelectedPlace] = useState("");
   const [timeSlots, setTimeSlots] = useState(generateTimeSlots);
-  const [selectedTime, setSelectedTime] = useState(timeSlots[0]?.value || "");
+  const [selectedTime, setSelectedTime] = useState("");
 
   useEffect(() => {
     setTimeSlots(generateTimeSlots());
-    setSelectedTime(timeSlots[0]?.value || "");
   }, []);
+
+  const formattedDate = new Date().toLocaleDateString("es-MX");
 
   return (
     <View style={styles.container}>
@@ -54,9 +69,9 @@ export default function ScheduleOrderScreen() {
         <Text size="md" style={styles.subText}>Selecciona el lugar y hora de la entrega</Text>
 
         <Text style={styles.label}>Lugar</Text>
-        <Select onValueChange={setSelectedPlace} style={{}}>
-          <SelectTrigger variant="underlined" size="sm"  style={styles.selectTrigger}>
-            <ShoppingBag key={"place"} size={20} color={Colors.light.text} />
+        <Select onValueChange={setSelectedPlace}>
+          <SelectTrigger variant="underlined" size="sm" style={styles.selectTrigger}>
+            <ShoppingBag size={20} color={Colors.light.mediumDarkBlue} />
             <SelectInput placeholder="Selecciona un lugar" style={styles.selectText}/>
             <SelectIcon as={ChevronDownIcon} />
           </SelectTrigger>
@@ -75,9 +90,9 @@ export default function ScheduleOrderScreen() {
 
         <Text style={styles.label}>Hora</Text>
         <Select onValueChange={setSelectedTime}>
-          <SelectTrigger variant="underlined" size="sm"  style={styles.selectTrigger}>
-            <Clock key={"place"} size={20} color={Colors.light.text} />
-            <SelectInput placeholder="Selecciona una hora"  style={styles.selectText}/>
+          <SelectTrigger variant="underlined" size="sm" style={styles.selectTrigger}>
+            <Clock size={20} color={Colors.light.mediumDarkBlue} />
+            <SelectInput placeholder="Selecciona una hora" style={styles.selectText}/>
             <SelectIcon as={ChevronDownIcon} />
           </SelectTrigger>
           <SelectPortal>
@@ -92,29 +107,25 @@ export default function ScheduleOrderScreen() {
             </SelectContent>
           </SelectPortal>
         </Select>
+
+        <Center style={styles.warningContainer}>  
+          <CircleAlert key={"place"} size={15} color={"gray"} style={styles.warningIcon}/>      
+          <Text size="sm" style={styles.warningText}> 
+            No podrás cambiar los datos de entrega después de confirmar</Text>
+        </Center>
       </VStack>
 
-      {/* <HStack style={styles.footer}>
-        <Text style={styles.footerText}>{new Date().toLocaleDateString("es-MX")} {selectedTime}, {places.find(p => p.value === selectedPlace)?.label}</Text>
-        <Button style={styles.confirmButton} onPress={() => console.log("Pedido confirmado")}>CONFIRMAR</Button>
-      </HStack> */}
       <HStack style={styles.paymentBar}>
-            <VStack style={styles.subtotalContainer}>
-              <Text size="sm" style={styles.subtotalText}>
-                25/02/2025, 17:30 hrs.
-              </Text>
-              <Text size="sm" style={styles.subtotalText}>
-                Cuckoo Box
-              </Text>
-            </VStack>
-            <Center>
-              <Button size="md" style={styles.paymentButton}>
-                <ButtonText size="sm" style={styles.paymentButtonText}>
-                  CONFIRMAR
-                </ButtonText>
-              </Button>
-            </Center>
-        </HStack>
+        <VStack style={styles.subtotalContainer}>
+          <Text size="sm" style={styles.subtotalText}>{formattedDate}{selectedTime ? ", " + selectedTime + " hrs." : ""}</Text>
+          <Text size="sm" style={styles.subtotalText}>{selectedPlace ? places.find(p => p.value === selectedPlace)?.label : ""}</Text>
+        </VStack>
+        <Center>
+          <Button size="md" style={styles.paymentButton}>
+            <ButtonText size="sm" style={styles.paymentButtonText}>CONFIRMAR</ButtonText>
+          </Button>
+        </Center>
+      </HStack>
     </View>
   );
 }
@@ -151,7 +162,23 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: "bold",
-    marginTop: 16
+    marginTop: 16,
+    color: Colors.light.text,
+  },
+  warningContainer: {
+    paddingHorizontal: '0%', 
+    paddingTop: '45%', 
+    flexDirection:'row'
+  },
+  warningIcon: {
+    alignSelf: 'flex-start', 
+    paddingTop: '5%'
+  },
+  warningText: {
+    color:"gray", 
+    textAlignVertical:"bottom", 
+    textAlign:"center", 
+    paddingHorizontal: 6
   },
   paymentBar: {
     width: '100%',
@@ -170,10 +197,6 @@ const styles = StyleSheet.create({
   },
   subtotalContainer: {
     paddingVertical: 7,
-  },
-  subtotal: {
-    fontWeight: 'bold',
-    color: 'white',
   },
   paymentButton: {
     borderRadius: 30,
