@@ -18,8 +18,13 @@ interface CartItemCardProps {
 
 const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onRemove }) => {
   const variantValue = cartItem.selectedVariant ? cartItem.selectedVariant.name : "";
+  
   const ingredientsArray = cartItem.ingredients
-    ? cartItem.ingredients.map(ingredient => ingredient.name)
+    ? cartItem.ingredients.map(ingredient =>
+        ingredient.customizationType === "Addable"
+          ? `Con ${ingredient.info?.name ?? "Ingrediente"}`
+          : `Sin ${ingredient.info?.name ?? "Ingrediente"}`
+      )
     : [];
 
   const quantity = cartItem.quantity;

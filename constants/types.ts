@@ -66,5 +66,5 @@ export interface CartItem {
   quantity: number;
   unitPrice: number;
   selectedVariant: Variant | undefined;
-  ingredients: Ingredient[] | undefined;
+  ingredients: CustomizableIngredient[] | undefined;
 };

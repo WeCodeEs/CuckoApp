@@ -31,7 +31,7 @@ const Detail_product = () => {
     const [selectedVariant, setSelectedVariant] = useState<Variant>();
     const [selectedVariantId, setSelectedVariantId] = useState<string>("");
     const [ingredients, setIngredients] = useState<CustomizableIngredient[]>([]);
-    const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
+    const [selectedIngredients, setSelectedIngredients] = useState<CustomizableIngredient[]>([]);
     const [additionalVariantPrice, setAdditionalVariantPrice] = useState<number>(0);
     const [additionalIngredientsPrice, setAdditionalIngredientsPrice] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
@@ -104,22 +104,39 @@ const Detail_product = () => {
     };
 
     const handleIngredientToggle = (ingredientId: number, isSelected: boolean) => {
+        console.log(`Toggle ingrediente ${ingredientId}`);
         const ingredient = ingredients.find((item) => item.info?.id === ingredientId);
-        if (ingredient && ingredient.info?.additionalPrice) {
-            if(isSelected){
-                let newIngredients: Ingredient[] = selectedIngredients;
-                newIngredients.push(ingredient.info);
-                setSelectedIngredients(newIngredients);
-            } else {
-                const newIngredients = selectedIngredients.filter((selectedIngredient) => selectedIngredient.id !== ingredient.info?.id);
-                setSelectedIngredients(newIngredients);
+    
+        if (ingredient) {
+            setSelectedIngredients((prevIngredients) => {
+                let updatedIngredients;
+                if (isSelected) {
+                    updatedIngredients = [...prevIngredients, ingredient];
+                    console.log(`Ingrediente agregado: ${ingredient.info?.name}`);
+                } else {
+                    updatedIngredients = prevIngredients.filter(
+                        (selectedIngredient) => selectedIngredient.ingredientId !== ingredient.ingredientId
+                    );
+                    console.log(`Ingrediente eliminado: ${ingredient.info?.name}`);
+                }
+                return updatedIngredients;
+            });
+    
+            if (ingredient.info?.additionalPrice) {
+                setAdditionalIngredientsPrice((prevPrice) => {
+                    const priceChange = isSelected ? ingredient.info!.additionalPrice : -ingredient.info!.additionalPrice;
+                    return prevPrice + priceChange;
+                });
+    
+                updateTotalPrice(
+                    product?.basePrice || 0,
+                    additionalVariantPrice,
+                    isSelected ? additionalIngredientsPrice + ingredient.info.additionalPrice : additionalIngredientsPrice - ingredient.info.additionalPrice
+                );
             }
-            const priceChange = isSelected ? ingredient.info.additionalPrice : -ingredient.info.additionalPrice;
-            const newIngredientPrice = additionalIngredientsPrice + priceChange;
-            setAdditionalIngredientsPrice(newIngredientPrice);
-            updateTotalPrice(product?.basePrice || 0, additionalVariantPrice, newIngredientPrice);
         }
     };
+    
 
     const increaseQuantity = () => {
         if (quantity < 10) {
@@ -147,12 +164,13 @@ const Detail_product = () => {
     };
 
     const handlePressCart = () => {
+        const orderedIngredients = [...selectedIngredients].sort((a, b) => a.ingredientId - b.ingredientId);
         addCartItem({
           product: product!,
           quantity: quantity,
           unitPrice: unitPrice,
           selectedVariant: selectedVariant!,
-          ingredients: selectedIngredients,
+          ingredients: orderedIngredients,
         });
         router.back();
     };
