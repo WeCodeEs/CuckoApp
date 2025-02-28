@@ -16,7 +16,7 @@ interface CartItemCardProps {
   onRemove: () => void;
 }
 
-const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onCardPress, onRemove }) => {
+const CartItemCard: React.FC<CartItemCardProps> = ({ cartItem, onRemove }) => {
   const variantValue = cartItem.selectedVariant ? cartItem.selectedVariant.name : "";
   const ingredientsArray = cartItem.ingredients
     ? cartItem.ingredients.map(ingredient => ingredient.name)
