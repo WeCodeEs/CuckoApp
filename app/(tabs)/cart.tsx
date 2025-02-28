@@ -32,7 +32,7 @@ const CartScreen: React.FC = () => {
     setIsEmptyCartModal(false);
     setShowModal(true);
   };
-  
+
   const confirmRemoveFromCart = () => {
     if (selectedCartItem !== null) {
       removeCartItem(selectedCartItem);
@@ -41,16 +41,33 @@ const CartScreen: React.FC = () => {
       setSelectedCartItem(null);
     }
   };
-  
+
   const handleEmptyCart = () => {
     setIsEmptyCartModal(true);
     setShowModal(true);
   };
-  
+
   const confirmEmptyCart = () => {
     emptyCart();
     console.log('Se vació el carrito');
     setShowModal(false);
+  };
+
+  const handleContinuePress = () => {
+    //TODO: Generar una llamada al back una vez el paso se ha concretado para extraer la inforación del pedido
+    const examplePedido = {
+      id: 88, 
+      platillos: [{ id: 5, cantidad: 1 }, { id: 6, cantidad: 7 }],
+      precioFinal: totalCartValue,
+      fecha: new Date().toLocaleDateString(),
+      hora: new Date().toLocaleTimeString(),
+      estado: 'En preparación',
+    };
+
+    router.push({
+      pathname: "/(drawer)/order_details",
+      params: { pedido: JSON.stringify(examplePedido) }
+    });
   };
 
   return (
@@ -97,7 +114,7 @@ const CartScreen: React.FC = () => {
               </Heading>
             </VStack>
             <Center>
-              <Button size="md" style={styles.paymentButton}>
+              <Button size="md" style={styles.paymentButton} onPress={handleContinuePress}>
                 <ButtonText size="sm" style={styles.paymentButtonText}>
                   CONTINUAR
                 </ButtonText>
