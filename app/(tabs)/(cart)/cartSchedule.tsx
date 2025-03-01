@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
@@ -7,7 +7,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
-import { Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, SelectScrollView } from "@/components/ui/select";
 import { ChevronDownIcon } from "@/components/ui/icon";
 import { Colors } from "@/constants/Colors";
 import { Clock, ShoppingBag, CircleAlert } from "lucide-react-native";
@@ -18,7 +18,7 @@ const places = [
 ];
 
 const OPEN_HOUR = 8;
-const CLOSE_HOUR = 22;
+const CLOSE_HOUR = 17;
 
 const generateTimeSlots = (): { label: string; value: string }[] => {
   const slots: { label: string; value: string }[] = [];
@@ -83,9 +83,11 @@ export default function ScheduleOrderScreen() {
               <SelectDragIndicatorWrapper>
                 <SelectDragIndicator />
               </SelectDragIndicatorWrapper>
-              {places.map(place => (
-                <SelectItem key={place.value} label={place.label} value={place.value} />
-              ))}
+              <SelectScrollView>
+                {places.map(place => (
+                  <SelectItem key={place.value} label={place.label} value={place.value} />
+                ))}
+              </SelectScrollView>
             </SelectContent>
           </SelectPortal>
         </Select>
@@ -97,16 +99,18 @@ export default function ScheduleOrderScreen() {
             <SelectInput placeholder="Selecciona una hora" style={styles.selectText}/>
             <SelectIcon as={ChevronDownIcon} />
           </SelectTrigger>
-          <SelectPortal>
-            <SelectBackdrop />
-            <SelectContent>
-              <SelectDragIndicatorWrapper>
-                <SelectDragIndicator />
-              </SelectDragIndicatorWrapper>
-              {timeSlots.map(slot => (
-                <SelectItem key={slot.value} label={slot.label} value={slot.value} />
-              ))}
-            </SelectContent>
+          <SelectPortal>            
+              <SelectBackdrop />
+              <SelectContent>
+                <SelectDragIndicatorWrapper>
+                  <SelectDragIndicator />
+                </SelectDragIndicatorWrapper>
+                <SelectScrollView>
+                {timeSlots.map(slot => (
+                  <SelectItem key={slot.value} label={slot.label} value={slot.value} />
+                ))}
+                </SelectScrollView>
+              </SelectContent>
           </SelectPortal>
         </Select>
 
