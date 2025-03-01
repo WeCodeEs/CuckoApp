@@ -18,38 +18,41 @@ const places = [
 ];
 
 const OPEN_HOUR = 8;
-const CLOSE_HOUR = 18;
+const CLOSE_HOUR = 22;
 
 const generateTimeSlots = (): { label: string; value: string }[] => {
   const slots: { label: string; value: string }[] = [];
   const now = new Date();
   now.setSeconds(0, 0);
-  
   now.setMinutes(now.getMinutes() + 20);
-  let startHour = now.getHours();
-  let startMinute = now.getMinutes() >= 30 ? 0 : 30;
-  if (now.getMinutes() >= 40) startHour++;
   
-  if (startHour < OPEN_HOUR) {
+  let startHour = now.getHours();
+  let startMinute = now.getMinutes() < 30 ? 30 : 0;
+  if (now.getMinutes() >= 30) startHour++;
+  
+  if (startHour < OPEN_HOUR || (startHour === OPEN_HOUR && startMinute < 30)) {
     startHour = OPEN_HOUR;
     startMinute = 30;
   }
   if (startHour >= CLOSE_HOUR) return slots;
 
-  console.log("Hora actual:", now.getHours(), "Minuto actual:", now.getMinutes());
-  
-  for (let hour = startHour; hour <= CLOSE_HOUR; hour++) {
-    if (hour === CLOSE_HOUR) {
-      slots.push({ label: `${hour.toString().padStart(2, "0")}:00`, value: `${hour}:00` });
-    } else {
-      slots.push({ label: `${hour.toString().padStart(2, "0")}:00`, value: `${hour}:00` });
-      slots.push({ label: `${hour.toString().padStart(2, "0")}:30`, value: `${hour}:30` });
+  let hour = startHour;
+  let minute = startMinute;
+  while (hour < CLOSE_HOUR) {
+    slots.push({
+      label: `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`,
+      value: `${hour}:${minute.toString().padStart(2, "0")}`
+    });
+    
+    minute += 30;
+    if (minute === 60) {
+      minute = 0;
+      hour++;
     }
   }
-
-  console.log("Horarios generados:", slots);
   return slots;
 };
+
 
 export default function ScheduleOrderScreen() {
   const [selectedPlace, setSelectedPlace] = useState("");
@@ -108,24 +111,26 @@ export default function ScheduleOrderScreen() {
           </SelectPortal>
         </Select>
 
-        <Center style={styles.warningContainer}>  
-          <CircleAlert key={"place"} size={15} color={"gray"} style={styles.warningIcon}/>      
-          <Text size="sm" style={styles.warningText}> 
-            No podrás cambiar los datos de entrega después de confirmar</Text>
-        </Center>
+        
       </VStack>
-
-      <HStack style={styles.paymentBar}>
-        <VStack style={styles.subtotalContainer}>
-          <Text size="sm" style={styles.subtotalText}>{formattedDate}{selectedTime ? ", " + selectedTime + " hrs." : ""}</Text>
-          <Text size="sm" style={styles.subtotalText}>{selectedPlace ? places.find(p => p.value === selectedPlace)?.label : ""}</Text>
-        </VStack>
-        <Center>
-          <Button size="md" style={styles.paymentButton}>
-            <ButtonText size="sm" style={styles.paymentButtonText}>CONFIRMAR</ButtonText>
-          </Button>
+      <View>
+        <Center style={styles.warningContainer}>  
+            <CircleAlert key={"place"} size={15} color={"gray"} style={styles.warningIcon}/>      
+            <Text size="sm" style={styles.warningText}> 
+              No podrás cambiar los datos de entrega después de confirmar</Text>
         </Center>
-      </HStack>
+        <HStack style={styles.paymentBar}>
+          <VStack style={styles.summaryContainer}>
+            <Text size="sm" style={styles.summaryText}>{formattedDate}{selectedTime ? ", " + selectedTime + " hrs." : ""}</Text>
+            <Text size="sm" style={styles.summaryText}>{selectedPlace ? places.find(p => p.value === selectedPlace)?.label : ""}</Text>
+          </VStack>
+          <Center>
+            <Button size="md" style={styles.paymentButton}>
+              <ButtonText size="sm" style={styles.paymentButtonText}>CONFIRMAR</ButtonText>
+            </Button>
+          </Center>
+        </HStack>
+      </View>
     </View>
   );
 }
@@ -166,8 +171,8 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
   },
   warningContainer: {
-    paddingHorizontal: '0%', 
-    paddingTop: '45%', 
+    paddingHorizontal: '0%',
+    paddingBottom: 10, 
     flexDirection:'row'
   },
   warningIcon: {
@@ -192,10 +197,10 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
-  subtotalText: {
+  summaryText: {
     color: Colors.light.lightGray,
   },
-  subtotalContainer: {
+  summaryContainer: {
     paddingVertical: 7,
   },
   paymentButton: {
