@@ -13,3 +13,5 @@ expo-env.d.ts
 .idea
 
 .expo
+
+patches

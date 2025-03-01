@@ -8,6 +8,7 @@ import "react-native-reanimated";
 import { ThemeProvider, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { CartProvider } from "@/contexts/CartContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,12 +41,14 @@ export default function RootLayout() {
   return (
     <GluestackUIProvider mode="light">
       <ThemeProvider value={colorScheme === "light" ? CuckoTheme : DarkTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-          <Stack.Screen name="(registration)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
+        <CartProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+            <Stack.Screen name="(registration)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </CartProvider>
       </ThemeProvider>
     </GluestackUIProvider>
   );

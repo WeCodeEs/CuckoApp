@@ -6,15 +6,8 @@ import { Text } from '@/components/ui/text';
 import { View } from "@/components/ui/view";
 import { Pressable } from '@/components/ui/pressable';
 import { Clock, ChevronRight, CheckCircle, ShoppingBag } from 'lucide-react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from "expo-router"; 
 import { Colors } from '@/constants/Colors';
-
-type RootStackParamList = {
-  order_details: { pedido: Pedido };
-};
-
-type NavigationProp = StackNavigationProp<RootStackParamList, 'order_details'>;
 
 interface Pedido {
   id: number;
@@ -53,55 +46,44 @@ const pedidos: Pedido[] = [
 ];
 
 const PedidoCard: React.FC<{ pedido: Pedido }> = ({ pedido }) => {
-  const navigation = useNavigation<NavigationProp>();
+  const router = useRouter();
 
   const getBackgroundColor = () => {
     switch (pedido.estado) {
-      case 'En preparación':
-        return Colors.light.preparingBackground;
-      case 'Listo':
-        return Colors.light.readyBackground;
-      case 'Entregado':
-        return Colors.light.deliveredBackground;
-      default:
-        return Colors.light.errorBackground;
+      case 'En preparación': return Colors.light.preparingBackground;
+      case 'Listo': return Colors.light.readyBackground;
+      case 'Entregado': return Colors.light.deliveredBackground;
+      default: return Colors.light.errorBackground;
     }
   };
 
   const getTextColor = () => {
     switch (pedido.estado) {
-      case 'En preparación':
-        return Colors.light.preparing;
-      case 'Listo':
-        return Colors.light.ready;
-      case 'Entregado':
-        return Colors.light.delivered;
-      default:
-        return Colors.light.errorText;
+      case 'En preparación': return Colors.light.preparing;
+      case 'Listo': return Colors.light.ready;
+      case 'Entregado': return Colors.light.delivered;
+      default: return Colors.light.errorText;
     }
   };
 
   return (
-    <Pressable style={styles.card} onPress={() => navigation.navigate('order_details', {pedido})}>
-      <View style={{ maxWidth: '68%'}}>
+    <Pressable 
+      style={styles.card} 
+      onPress={() => router.push({ pathname: "/(drawer)/order_details", params: { pedido: JSON.stringify(pedido) } })}
+    >
+      <View style={{ maxWidth: '68%' }}>
         <Heading style={styles.order} size='lg'>Pedido {pedido.id}</Heading>
         <View style={{ alignSelf: 'flex-start' }}>
-          <View style={[styles.status_container, {backgroundColor: getBackgroundColor()}]}>
-            {pedido.estado === 'En preparación' ? (
-              <Clock size={14} color={getTextColor()} style={styles.icon}/>
-            ) : pedido.estado === 'Listo' ? (
-              <ShoppingBag size={14} color={getTextColor()} style={styles.icon}/>
-            ) : (
-              <CheckCircle size={14} color={getTextColor()} style={styles.icon}/>
-            )}
-            <Text size='sm' style={[styles.status, { color: getTextColor(), marginLeft: 6 }]}>
-              {pedido.estado}
-            </Text>
+          <View style={[styles.status_container, { backgroundColor: getBackgroundColor() }]}>
+            {pedido.estado === 'En preparación' ? <Clock size={14} color={getTextColor()} style={styles.icon}/>
+            : pedido.estado === 'Listo' ? <ShoppingBag size={14} color={getTextColor()} style={styles.icon}/>
+            : <CheckCircle size={14} color={getTextColor()} style={styles.icon}/>}
+            <Text size='sm' style={[styles.status, { color: getTextColor(), marginLeft: 6 }]}>{pedido.estado}</Text>
           </View>
         </View>
         <Text style={styles.date}>{pedido.fecha}</Text>
       </View>
-      <View style={{height: 'auto', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-end', maxWidth: '35%'}}>
+      <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-end', maxWidth: '35%' }}>
         <ChevronRight size={30} color={Colors.light.darkBlue}/>
         <Heading size='lg' style={styles.price}>${pedido.precioFinal.toFixed(2)}</Heading>
       </View>
@@ -109,17 +91,13 @@ const PedidoCard: React.FC<{ pedido: Pedido }> = ({ pedido }) => {
   );
 };
 
-const OrderHistoryScreen: React.FC = () => {
-  return (
-    <ScrollView style={styles.container}>
-      <VStack space={"lg"}>
-        {pedidos.map((pedido) => (
-          <PedidoCard key={pedido.id} pedido={pedido}/>
-        ))}
-      </VStack>
-    </ScrollView>
-  );
-};
+const OrderHistoryScreen: React.FC = () => (
+  <ScrollView style={styles.container}>
+    <VStack space={"lg"}>
+      {pedidos.map((pedido) => <PedidoCard key={pedido.id} pedido={pedido}/>)}
+    </VStack>
+  </ScrollView>
+);
 
 const styles = StyleSheet.create({
   container: {

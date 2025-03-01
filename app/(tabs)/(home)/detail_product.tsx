@@ -11,25 +11,32 @@ import Constants from 'expo-constants';
 import { Checkbox, CheckboxIcon, CheckboxLabel, CheckboxIndicator } from "@/components/ui/checkbox";
 import { useSearchParams } from 'expo-router/build/hooks';
 import { Heart } from "lucide-react-native";
-import { Product, Variant, CustomizableIngredient } from '@/constants/types';
+import { Product, Variant, CustomizableIngredient, Ingredient } from '@/constants/types';
 import { fetchProductById, fetchVariantsByProductId, fetchCustomizableIngredientsByProductId, fetchIngredientInfo } from '@/constants/api';
 import { Radio, RadioGroup, RadioIndicator, RadioLabel, RadioIcon } from '@/components/ui/radio';
 import { Colors } from '@/constants/Colors';
 import { addFavoriteProductId, getFavoriteProductIds, favoriteProductIds } from '@/constants/favoriteProducts';
 import FavoriteModal from '@/components/RemoveFavoriteModal';
+import { useRouter } from 'expo-router';
+import { useCart } from '@/contexts/CartContext';
 
 const Detail_product = () => {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const platilloId = Number(searchParams.get('id'));
+    const { addCartItem } = useCart();
 
     const [product, setProduct] = useState<Product | null>(null);
     const [variants, setVariants] = useState<Variant[]>([]);
-    const [selectedVariant, setSelectedVariant] = useState<string>("");
+    const [selectedVariant, setSelectedVariant] = useState<Variant>();
+    const [selectedVariantId, setSelectedVariantId] = useState<string>("");
     const [ingredients, setIngredients] = useState<CustomizableIngredient[]>([]);
+    const [selectedIngredients, setSelectedIngredients] = useState<CustomizableIngredient[]>([]);
     const [additionalVariantPrice, setAdditionalVariantPrice] = useState<number>(0);
     const [additionalIngredientsPrice, setAdditionalIngredientsPrice] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
+    const [unitPrice, setUnitPrice] = useState<number>(0);
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const [isFavourite, setIsFavourite] = useState(
         getFavoriteProductIds().includes(platilloId)
@@ -48,7 +55,8 @@ const Detail_product = () => {
 
                     const initialVariant = fetchedVariants.length > 0 ? fetchedVariants[0] : null;
                     if (initialVariant) {
-                        setSelectedVariant(initialVariant.id.toString());
+                        setSelectedVariant(initialVariant);
+                        setSelectedVariantId(initialVariant.id.toString());
                         setAdditionalVariantPrice(initialVariant.additionalPrice || 0);
                     }
 
@@ -78,14 +86,17 @@ const Detail_product = () => {
         ingredientPrice: number = additionalIngredientsPrice,
         newQuantity: number = quantity
     ) => {
-        const total = (basePrice + variantPrice + ingredientPrice) * newQuantity;
+        const unit = (basePrice + variantPrice + ingredientPrice);
+        const total = unit * newQuantity;
+        setUnitPrice(unit);
         setTotalPrice(total);
     }
 
     const handleVariantChange = (variantId: string) => {
         const selectedVariant = variants.find((variant) => variant.id.toString() === variantId);
         if (selectedVariant) {
-            setSelectedVariant(variantId);
+            setSelectedVariantId(variantId);
+            setSelectedVariant(selectedVariant);
             const price = selectedVariant.additionalPrice || 0;
             setAdditionalVariantPrice(price);
             updateTotalPrice(product?.basePrice || 0, price, additionalIngredientsPrice);
@@ -93,14 +104,39 @@ const Detail_product = () => {
     };
 
     const handleIngredientToggle = (ingredientId: number, isSelected: boolean) => {
+        console.log(`Toggle ingrediente ${ingredientId}`);
         const ingredient = ingredients.find((item) => item.info?.id === ingredientId);
-        if (ingredient && ingredient.info?.additionalPrice) {
-            const priceChange = isSelected ? ingredient.info.additionalPrice : -ingredient.info.additionalPrice;
-            const newIngredientPrice = additionalIngredientsPrice + priceChange;
-            setAdditionalIngredientsPrice(newIngredientPrice);
-            updateTotalPrice(product?.basePrice || 0, additionalVariantPrice, newIngredientPrice);
+    
+        if (ingredient) {
+            setSelectedIngredients((prevIngredients) => {
+                let updatedIngredients;
+                if (isSelected) {
+                    updatedIngredients = [...prevIngredients, ingredient];
+                    console.log(`Ingrediente agregado: ${ingredient.info?.name}`);
+                } else {
+                    updatedIngredients = prevIngredients.filter(
+                        (selectedIngredient) => selectedIngredient.ingredientId !== ingredient.ingredientId
+                    );
+                    console.log(`Ingrediente eliminado: ${ingredient.info?.name}`);
+                }
+                return updatedIngredients;
+            });
+    
+            if (ingredient.info?.additionalPrice) {
+                setAdditionalIngredientsPrice((prevPrice) => {
+                    const priceChange = isSelected ? ingredient.info!.additionalPrice : -ingredient.info!.additionalPrice;
+                    return prevPrice + priceChange;
+                });
+    
+                updateTotalPrice(
+                    product?.basePrice || 0,
+                    additionalVariantPrice,
+                    isSelected ? additionalIngredientsPrice + ingredient.info.additionalPrice : additionalIngredientsPrice - ingredient.info.additionalPrice
+                );
+            }
         }
     };
+    
 
     const increaseQuantity = () => {
         if (quantity < 10) {
@@ -118,16 +154,29 @@ const Detail_product = () => {
         }
     };
 
-    const handlePress = () => {
+    const handlePressFavorite = () => {
         if (isFavourite) {
           setShowModal(true);
         } else {
           addFavoriteProductId(platilloId);
           setIsFavourite(true);
         }
-      };
+    };
+
+    const handlePressCart = () => {
+        const orderedIngredients = [...selectedIngredients].sort((a, b) => a.ingredientId - b.ingredientId);
+        addCartItem({
+          product: product!,
+          quantity: quantity,
+          unitPrice: unitPrice,
+          selectedVariant: selectedVariant!,
+          ingredients: orderedIngredients,
+        });
+        router.back();
+    };
       
-      const confirmRemoveFavorite = () => {
+      
+    const confirmRemoveFavorite = () => {
         const index = favoriteProductIds.indexOf(platilloId);
         if (index > -1) {
           favoriteProductIds.splice(index, 1);
@@ -135,12 +184,12 @@ const Detail_product = () => {
         }
         setIsFavourite(false);
         setShowModal(false);
-      };
+    };
       
       
-      const handleCancelRemoveFavorite = () => {
+    const handleCancelRemoveFavorite = () => {
         setShowModal(false);
-      };
+    };
 
     if (error) {
         return (
@@ -188,7 +237,7 @@ const Detail_product = () => {
                         <>
                             <Text size={"xl"} style={styles.subtitle}>Variantes</Text>
                             <RadioGroup
-                                value={selectedVariant}
+                                value={selectedVariantId}
                                 onChange={(value) => handleVariantChange(value)}
                             >
                                 {variants.map((variant, index) => (
@@ -254,10 +303,10 @@ const Detail_product = () => {
                     )}
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Button size="sm" style={[styles.cart_btn, { width: '85%', marginRight: 15 }]}>
+                        <Button size="sm" style={[styles.cart_btn, { width: '85%', marginRight: 15 }]} onPress={handlePressCart}>
                             <ButtonText>AGREGAR AL CARRITO</ButtonText>
                         </Button>
-                        <Button size="lg" style={[styles.fav_btn, { backgroundColor: Colors.light.tabIconSelected }]} onPress={handlePress}>
+                        <Button size="lg" style={[styles.fav_btn, { backgroundColor: Colors.light.tabIconSelected }]} onPress={handlePressFavorite}>
                             <Heart key={isFavourite ? "filled" : "empty"} size={20} color={Colors.light.background} fill={isFavourite ? Colors.light.background : 'none'} />
                         </Button>
                     </View>
