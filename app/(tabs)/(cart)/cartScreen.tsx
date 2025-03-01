@@ -54,19 +54,8 @@ const CartScreen: React.FC = () => {
   };
 
   const handleContinuePress = () => {
-    //TODO: Generar una llamada al back una vez el paso se ha concretado para extraer la inforación del pedido
-    const examplePedido = {
-      id: 88, 
-      platillos: [{ id: 5, cantidad: 1 }, { id: 6, cantidad: 7 }],
-      precioFinal: totalCartValue,
-      fecha: new Date().toLocaleDateString(),
-      hora: new Date().toLocaleTimeString(),
-      estado: 'En preparación',
-    };
-
     router.push({
-      pathname: "/(drawer)/order_details",
-      params: { pedido: JSON.stringify(examplePedido) }
+      pathname: "/(cart)/cartSchedule",
     });
   };
 
