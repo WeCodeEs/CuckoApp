@@ -53,7 +53,6 @@ const generateTimeSlots = (): { label: string; value: string }[] => {
   return slots;
 };
 
-
 export default function ScheduleOrderScreen() {
   const [selectedPlace, setSelectedPlace] = useState("");
   const [timeSlots, setTimeSlots] = useState(generateTimeSlots);
@@ -115,7 +114,7 @@ export default function ScheduleOrderScreen() {
       </VStack>
       <View>
         <Center style={styles.warningContainer}>  
-            <CircleAlert key={"place"} size={15} color={"gray"} style={styles.warningIcon}/>      
+            <CircleAlert key={"place"} size={15} color={Colors.light.ash} style={styles.warningIcon}/>      
             <Text size="sm" style={styles.warningText}> 
               No podrás cambiar los datos de entrega después de confirmar</Text>
         </Center>
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-    backgroundColor: "white"
+    backgroundColor: Colors.light.background
   },
   vStack: {
     width: "100%",
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   subText: {
-    color: "gray",
+    color: Colors.light.ash,
     textAlign: 'center',
     width: '100%'
   },
@@ -162,7 +161,7 @@ const styles = StyleSheet.create({
   },
   selectText: {
     width: '80%', 
-    color: 'black',
+    color: Colors.light.text,
     fontSize: 15,
   },
   label: {
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
     paddingTop: '5%'
   },
   warningText: {
-    color:"gray", 
+    color: Colors.light.ash, 
     textAlignVertical:"bottom", 
     textAlign:"center", 
     paddingHorizontal: 6
