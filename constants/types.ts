@@ -60,3 +60,11 @@ export interface Menu {
   description: string;
   status: 'Activo' | 'Inactivo';
 }
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+  unitPrice: number;
+  selectedVariant: Variant | undefined;
+  ingredients: CustomizableIngredient[] | undefined;
+};

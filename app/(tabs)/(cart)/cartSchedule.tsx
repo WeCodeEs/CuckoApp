@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function CartScreen() {
+export default function CartSchedule() {
   return (
     <View style={styles.container}>
-      <Text>Cart</Text>
+      <Text>Programar Envío</Text>
     </View>
   );
 }
@@ -15,3 +15,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+

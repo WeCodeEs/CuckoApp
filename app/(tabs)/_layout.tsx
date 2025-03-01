@@ -1,13 +1,14 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { CustomHeader } from '@/components/CustomHeader';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useCart } from '@/contexts/CartContext';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { cartItemsCount } = useCart();
 
   return (
     <Tabs
@@ -36,12 +37,14 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="cart"
+        name="(cart)"
         options={{
           title: 'Carrito',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'ShoppingCart' : 'ShoppingCart'} color={color} />
           ),
+          tabBarBadge: cartItemsCount > 0 ? cartItemsCount.toString() : undefined,
+          tabBarBadgeStyle: {backgroundColor: Colors.light.mediumBlue, color: Colors.light.background}
         }}
       />
     </Tabs>

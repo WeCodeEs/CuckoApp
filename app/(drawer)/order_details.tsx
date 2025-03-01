@@ -2,114 +2,84 @@ import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
-import { Soup, ClipboardList } from 'lucide-react-native';
 import { View } from "@/components/ui/view";
 import { VStack } from '@/components/ui/vstack';
+import { Soup, ClipboardList } from 'lucide-react-native';
 import { Clock, CheckCircle, ShoppingBag } from 'lucide-react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { Center } from '@/components/ui/center';
+import { useLocalSearchParams } from "expo-router";
 import { Colors } from '@/constants/Colors';
-
-type RootStackParamList = {
-    order_details: { pedido: Pedido };
-  };
 
 interface Pedido {
   id: number;
-  platillos: number[];
+  platillos: { id: number, cantidad: number }[];
   precioFinal: number;
   fecha: string;
   hora: string;
   estado: string;
 }
 
-const getBackgroundColor = (estado: string) => {
-  switch (estado) {
-    case 'En preparación':
-      return Colors.light.preparingBackground;
-    case 'Listo':
-      return Colors.light.readyBackground;
-    case 'Entregado':
-      return Colors.light.deliveredBackground;
-    default:
-      return Colors.light.errorBackground;
-  }
-};
-
-const getTextColor = (estado: string) => {
-  switch (estado) {
-    case 'En preparación':
-      return Colors.light.preparing;
-    case 'Listo':
-      return Colors.light.ready; 
-    case 'Entregado':
-      return Colors.light.delivered; 
-    default:
-      return Colors.light.errorText;
-  }
-};
-
-type OrderDetailsRouteProp = RouteProp<RootStackParamList, 'order_details'>;
-
 const OrderDetailsScreen: React.FC = () => {
-  const route = useRoute<OrderDetailsRouteProp>();
-  const { pedido } = route.params;
+  const { pedido } = useLocalSearchParams();
+  const parsedPedido: Pedido = pedido ? JSON.parse(pedido as string) : null;
 
-  if (!pedido) {
+  if (!parsedPedido) {
     return <Text>No se encontró el pedido.</Text>;
   }
 
+  const getBackgroundColor = () => {
+    switch (parsedPedido.estado) {
+      case 'En preparación': return Colors.light.preparingBackground;
+      case 'Listo': return Colors.light.readyBackground;
+      case 'Entregado': return Colors.light.deliveredBackground;
+      default: return Colors.light.errorBackground;
+    }
+  };
+
+  const getTextColor = () => {
+    switch (parsedPedido.estado) {
+      case 'En preparación': return Colors.light.preparing;
+      case 'Listo': return Colors.light.ready;
+      case 'Entregado': return Colors.light.delivered;
+      default: return Colors.light.errorText;
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
-      <Heading size={"2xl"} style={styles.order_id}> Pedido {pedido.id} </Heading>
-      <Text size={"md"} style={styles.date}> {pedido.fecha}, {pedido.hora} </Text>
+      <Heading size={"2xl"} style={styles.order_id}>Pedido {parsedPedido.id}</Heading>
+      <Text size={"md"} style={styles.date}>{parsedPedido.fecha}, {parsedPedido.hora}</Text>
+
       <View style={{ alignSelf: 'center' }}>
-          <View style={[styles.statusContainer,{backgroundColor: getBackgroundColor(pedido.estado)}]}>
-          {pedido.estado === 'En preparación' ? (
-            <Clock size={16} color={getTextColor(pedido.estado)}/>
-          ) : pedido.estado === 'Listo' ? (
-            <ShoppingBag size={16} color={getTextColor(pedido.estado)}/>
-          ) : (
-            <CheckCircle size={16} color={getTextColor(pedido.estado)}/>
-          )}
-          <Text size='md' style={[styles.status, { color: getTextColor(pedido.estado), marginLeft: 6 }]}>
-            {pedido.estado}
-          </Text>
+        <View style={[styles.statusContainer, { backgroundColor: getBackgroundColor() }]}>
+          {parsedPedido.estado === 'En preparación' ? <Clock size={16} color={getTextColor()}/>
+          : parsedPedido.estado === 'Listo' ? <ShoppingBag size={16} color={getTextColor()}/>
+          : <CheckCircle size={16} color={getTextColor()}/>}
+          <Text size='md' style={[styles.status, { color: getTextColor(), marginLeft: 6 }]}>{parsedPedido.estado}</Text>
         </View>
       </View>
-      <View style={[styles.subtitle_container, {marginHorizontal: 30}]}>
+
+      <View style={[styles.subtitle_container, { marginHorizontal: 30 }]}>
         <Soup size={30} color={Colors.light.darkBlue} style={styles.icon}/>
-        <Heading  size={"xl"} style={styles.subtitle}> Productos ordenados </Heading>
+        <Heading size={"xl"} style={styles.subtitle}>Productos ordenados</Heading>
       </View>
-      
-      {/* Lista de pedidos temporal en espera del esquema final en jsonbin */}
+
       <VStack space='xl'>
-        <View style={styles.details_row}>
-          <Text size={"xs"} style={styles.count}>x1</Text>
-          <Text size={"lg"} style={styles.dish}>Platillo ejemplo 1</Text>
-          <Text size={"lg"} style={styles.dish_price}>$40.00</Text>
-        </View>
-        <View style={styles.details_row}>
-          <Text size={"xs"} style={styles.count}>x3</Text>
-          <Text size={"lg"} style={styles.dish}>Platillo ejemplo 2</Text>
-          <Text size={"lg"} style={styles.dish_price}>$60.00</Text>
-        </View>
-        <View style={styles.details_row}>
-          <Text size={"xs"} style={styles.count}>x2</Text>
-          <Text size={"lg"} style={styles.dish}>Platillo ejemplo 3</Text>
-          <Text size={"lg"} style={styles.dish_price}>$65.00</Text>
-        </View>
+        {parsedPedido.platillos.map((platillo, index) => (
+          <View key={index} style={styles.details_row}>
+            <Text size={"xs"} style={styles.count}>x{platillo.cantidad}</Text>
+            <Text size={"lg"} style={styles.dish}>Platillo ejemplo {platillo.id}</Text>
+            <Text size={"lg"} style={styles.dish_price}>$10.00</Text>
+          </View>
+        ))}
       </VStack>
 
-      <View style={[styles.details_row, {alignItems: 'center'}]}>
+      <View style={[styles.details_row, { alignItems: 'center' }]}>
         <View style={styles.subtitle_container}>
           <ClipboardList size={27} color={Colors.light.darkBlue} style={styles.icon}/>
-          <Heading  size={"xl"} style={styles.subtitle}> Total </Heading>
+          <Heading size={"xl"} style={styles.subtitle}>Total</Heading>
         </View>
-        <View>
-          <Heading size={"xl"} style={styles.price}>${pedido.precioFinal.toFixed(2)}</Heading>
-        </View>
-      </View>   
+        <Heading size={"xl"} style={styles.price}>${parsedPedido.precioFinal.toFixed(2)}</Heading>
+      </View>
     </ScrollView>
   );
 };
