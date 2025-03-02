@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { 
-  View, Text, FlatList, StyleSheet, Image, TouchableOpacity, 
-  ActivityIndicator, Animated 
-} from "react-native";
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { Notification } from "@/constants/types";
@@ -13,7 +10,7 @@ export default function Notifications() {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const fadeAnim = new Animated.Value(1); // Animación de opacidad
+  const fadeAnim = new Animated.Value(1);
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,10 +28,9 @@ export default function Notifications() {
     loadData();
   }, []);
 
-  // Marcar una notificación como leída con animación
   const markAsRead = useCallback((id: string) => {
     Animated.timing(fadeAnim, {
-      toValue: 0, // Desvanece antes de actualizar el estado
+      toValue: 0,
       duration: 300,
       useNativeDriver: true,
     }).start(() => {
@@ -44,12 +40,10 @@ export default function Notifications() {
         )
       );
 
-      // Reinicia la opacidad para futuras animaciones
       fadeAnim.setValue(1);
     });
   }, []);
 
-  // Marcar todas las notificaciones como leídas con animación
   const markAllAsRead = useCallback(() => {
     Animated.timing(fadeAnim, {
       toValue: 0,
