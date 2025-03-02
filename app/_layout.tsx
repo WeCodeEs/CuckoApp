@@ -45,7 +45,7 @@ export default function RootLayout() {
           <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
           <Stack.Screen name="(registration)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
-          <Stack.Screen name="notifications" options={{ title: "Notificaciones" }} />
+          <Stack.Screen name="notifications" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
     </GluestackUIProvider>

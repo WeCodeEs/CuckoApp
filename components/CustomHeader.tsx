@@ -8,7 +8,7 @@ import { Pressable } from '@/components/ui/pressable';
 import { Grid, GridItem } from '@/components/ui/grid';
 import { Box } from '@/components/ui/box';
 import { HeaderDrawer } from './HeaderDrawer';
-import { Bell, Icon } from 'lucide-react-native';
+import { Bell } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useRouter } from "expo-router";
 
@@ -17,7 +17,7 @@ export function CustomHeader() {
   const navigation = useNavigation();
   const [showDrawer, setShowDrawer] = useState(false);
   const [stylesReady, setStylesReady] = useState(false);
-  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true); // Simulación de notificaciones
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
 
   useEffect(() => {
     const loadStyles = async () => {
@@ -75,10 +75,10 @@ export function CustomHeader() {
         {/* Icono de Notificaciones */}
         <GridItem className="flex items-end justify-center" _extra={{ className: 'col-span-2' }}>
           <Pressable 
-            onPress={() => router.push('/notifications')}
+            onPress={() => router.push({ pathname: "/notifications" }) }
             style={styles.notificationButton}
           >
-            <Bell size={28} color={Colors.light.mediumDarkBlue} />
+            <Bell size={28} color={Colors.dark.tabIconDefault} />
             {hasUnreadNotifications && <Box style={styles.notificationBadge} />}
           </Pressable>
         </GridItem>
@@ -107,6 +107,6 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: 'red',
+    backgroundColor: Colors.light.mediumBlue,
   },
 });

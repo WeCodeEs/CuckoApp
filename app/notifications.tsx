@@ -1,54 +1,72 @@
-import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { 
+  View, Text, FlatList, StyleSheet, Image, TouchableOpacity, 
+  ActivityIndicator, Animated 
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Pressable } from "@/components/ui/pressable";
 import { Colors } from "@/constants/Colors";
-import { Cog } from "lucide-react-native";
+import { Notification } from "@/constants/types";
+import { useRouter } from "expo-router";
+import { fetchAllNotifications } from "@/constants/api";
 
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  date: string;
-  read: boolean;
-}
+export default function Notifications() {
+  const router = useRouter();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const fadeAnim = new Animated.Value(1); // Animación de opacidad
 
-export default function NotificationsScreen() {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: "1",
-      title: "Pedido Listo",
-      message: "Tu pedido #1234 está listo para recoger.",
-      date: "Hoy, 12:45 PM",
-      read: false,
-    },
-    {
-      id: "2",
-      title: "Promoción Especial",
-      message: "¡Café 2x1 solo por hoy!",
-      date: "Ayer, 5:30 PM",
-      read: true,
-    },
-    {
-      id: "3",
-      title: "Nuevo Mensaje",
-      message: "Tu pedido #1229 ha sido confirmado.",
-      date: "Ayer, 10:15 AM",
-      read: true,
-    },
-]);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const notificationsData = await fetchAllNotifications();
+        setNotifications(notificationsData);
+      } catch (error) {
+        console.error("Error loading notifications:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const markAsRead = (id: string) => {
-    setNotifications(prevNotifications =>
-      prevNotifications.map(notification =>
-        notification.id === id ? { ...notification, read: true } : notification
-      )
-    );
-  };
+    loadData();
+  }, []);
+
+  // Marcar una notificación como leída con animación
+  const markAsRead = useCallback((id: string) => {
+    Animated.timing(fadeAnim, {
+      toValue: 0, // Desvanece antes de actualizar el estado
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
+          notification.id === id ? { ...notification, read: true } : notification
+        )
+      );
+
+      // Reinicia la opacidad para futuras animaciones
+      fadeAnim.setValue(1);
+    });
+  }, []);
+
+  // Marcar todas las notificaciones como leídas con animación
+  const markAllAsRead = useCallback(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) => ({ ...notification, read: true }))
+      );
+
+      fadeAnim.setValue(1);
+    });
+  }, []);
 
   const renderNotification = ({ item }: { item: Notification }) => (
     <TouchableOpacity onPress={() => markAsRead(item.id)}>
-      <View style={[styles.notificationItem, !item.read && styles.unread]}>
+      <Animated.View style={[styles.notificationItem, !item.read && styles.unread, { opacity: fadeAnim }]}>
         <Image
           source={require("@/assets/images/avatars/avatar-icon-1.png")}
           style={styles.avatar}
@@ -59,38 +77,42 @@ export default function NotificationsScreen() {
           <Text style={styles.notificationDate}>{item.date}</Text>
         </View>
         {!item.read && <View style={styles.unreadIndicator} />}
-      </View>
+      </Animated.View>
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Notificaciones</Text>
-        <Pressable onPress={() => console.log("Ir a configuración de notificaciones")}>
-          <Cog size={28} color={Colors.light.mediumLightBlue} />
-        </Pressable>
+        {notifications.length > 0 && (
+          <TouchableOpacity onPress={markAllAsRead} style={styles.markAllButton}>
+            <Text style={styles.markAllButtonText}>Marcar todas como leídas</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
-      {/* Lista de Notificaciones */}
-      {notifications.length > 0 ? (
-        <FlatList
-          data={notifications}
-          keyExtractor={(item) => item.id}
-          renderItem={renderNotification}
-          contentContainerStyle={styles.listContainer}
-        />
-      ) : (
-        <View style={styles.emptyContainer}>
-          <Image source={require("@/assets/images/avatars/avatar-icon-1.png")} style={styles.emptyImage} />
-          <Text style={styles.emptyTitle}>No hay notificaciones</Text>
-          <Text style={styles.emptyText}>No tienes notificaciones por el momento.</Text>
-          <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>Transferir Dinero</Text>
-          </Pressable>
-        </View>
-      )}
+      <View style={styles.notificationsContainer}>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={Colors.light.mediumLightBlue} />
+            <Text style={styles.loadingText}>Cargando notificaciones...</Text>
+          </View>
+        ) : notifications.length > 0 ? (
+          <FlatList
+            data={notifications}
+            keyExtractor={(item) => item.id}
+            renderItem={renderNotification}
+            contentContainerStyle={styles.listContainer}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Image source={require("@/assets/images/avatars/avatar-icon-1.png")} style={styles.emptyImage} />
+            <Text style={styles.emptyTitle}>No hay notificaciones</Text>
+            <Text style={styles.emptyText}>No tienes notificaciones por el momento.</Text>
+          </View>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
@@ -101,24 +123,49 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   header: {
-    backgroundColor: Colors.light.background,
-    paddingVertical: 20,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    paddingVertical: 50,
     paddingHorizontal: 20,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: Colors.dark.tabIconSelected,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 35,
     fontWeight: "bold",
-    color: "white",
+    textAlign: "center",
+    marginBottom: 30,
+    color: Colors.light.background,
   },
+  markAllButton: {
+    backgroundColor: Colors.light.background,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+  },
+  markAllButtonText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: Colors.light.mediumDarkBlue,
+  },
+  notificationsContainer: {
+    flex: 1,
+    backgroundColor: Colors.light.background,
+    borderRadius: 20,
+    marginTop: -20,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+  },  
   listContainer: {
     padding: 20,
   },
   notificationItem: {
     flexDirection: "row",
-    backgroundColor: "white",
+    backgroundColor: Colors.light.background,
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
@@ -130,7 +177,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   unread: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: Colors.light.lightBlue,
   },
   avatar: {
     width: 50,
@@ -144,6 +191,7 @@ const styles = StyleSheet.create({
   notificationTitle: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "#333",
   },
   notificationMessage: {
     fontSize: 14,
@@ -156,10 +204,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   unreadIndicator: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: Colors.light.mediumLightBlue,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: Colors.light.tabIconSelected,
   },
   emptyContainer: {
     flex: 1,
@@ -168,8 +216,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   emptyImage: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 120,
     marginBottom: 20,
   },
   emptyTitle: {
@@ -182,16 +230,15 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
     marginTop: 10,
-    marginBottom: 20,
   },
-  button: {
-    backgroundColor: Colors.light.background,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  buttonText: {
-    color: "white",
-    fontWeight: "bold",
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#555",
   },
 });

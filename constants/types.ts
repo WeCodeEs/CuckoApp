@@ -60,3 +60,11 @@ export interface Menu {
   description: string;
   status: 'Activo' | 'Inactivo';
 }
+
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  date: string;
+  read: boolean;
+}
