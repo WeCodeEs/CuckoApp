@@ -68,3 +68,11 @@ export interface Notification {
   date: string;
   read: boolean;
 }
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+  unitPrice: number;
+  selectedVariant: Variant | undefined;
+  ingredients: CustomizableIngredient[] | undefined;
+};

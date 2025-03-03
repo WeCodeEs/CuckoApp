@@ -15,6 +15,8 @@ import { Heart } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { getFavoriteProductIds } from '@/constants/favoriteProducts';
 import FavoriteModal from '@/components/RemoveFavoriteModal';
+import { Center } from '@/components/ui/center';
+import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 
 const favoriteProductIds = getFavoriteProductIds();
 
@@ -93,7 +95,15 @@ const FavoritesScreen: React.FC = () => {
         </VStack>
       ) : (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Aún no tienes productos favoritos. ¡Comienza a agregar!</Text>
+          <Center style={styles.emptyFavoritesContainer}>
+            <CuckooIsotipo style={styles.svg} />
+            <Text style={styles.emptyText}>
+              Aún no tienes productos favoritos. 
+            </Text>
+            <Heading size='md' style={styles.emptyText}>
+              ¡Añádelos desde el menú! 
+            </Heading>
+          </Center>
         </View>
       )}
       <FavoriteModal
@@ -162,5 +172,15 @@ const styles = StyleSheet.create({
     aspectRatio: '1/1',
     borderRadius: 100,
     backgroundColor: Colors.light.mediumBlue,
-  }
+  },
+  emptyFavoritesContainer: {
+    height: '100%',
+    width: '100%',
+    marginTop: -150,
+  },
+  svg: {
+    position: 'relative',
+    width: '70%',
+    aspectRatio: '1/1',
+  },
 });

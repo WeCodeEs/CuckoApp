@@ -8,6 +8,7 @@ import "react-native-reanimated";
 import { ThemeProvider, DefaultTheme, DarkTheme } from "@react-navigation/native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { CartProvider } from "@/contexts/CartContext";
 
 SplashScreen.preventAutoHideAsync();
 
