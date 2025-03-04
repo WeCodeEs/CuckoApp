@@ -61,6 +61,14 @@ export interface Menu {
   status: 'Activo' | 'Inactivo';
 }
 
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  date: string;
+  read: boolean;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;

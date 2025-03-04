@@ -41,14 +41,13 @@ export default function RootLayout() {
   return (
     <GluestackUIProvider mode="light">
       <ThemeProvider value={colorScheme === "light" ? CuckoTheme : DarkTheme}>
-        <CartProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-            <Stack.Screen name="(registration)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </CartProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+          <Stack.Screen name="(registration)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+          <Stack.Screen name="notifications" options={{ headerShown: false }} />
+        </Stack>
       </ThemeProvider>
     </GluestackUIProvider>
   );

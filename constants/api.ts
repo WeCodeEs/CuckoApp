@@ -1,16 +1,17 @@
-import { Menu, Product, User, Faculty, Category } from '@/constants/types';
+import { Menu, Product, User, Faculty, Category, Notification } from '@/constants/types';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "";
+const API_URL_MENU = process.env.EXPO_PUBLIC_API_URL_MENU ?? "";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY ?? "";
+const API_URL_NOTI = process.env.EXPO_PUBLIC_API_URL_NOTI ?? "";
 
-if (!API_KEY || !API_URL) {
+if (!API_KEY || !API_URL_MENU) {
   console.error("API Key o API URL no definidos.");
   throw new Error("Las variables de entorno API_KEY o API_URL no están definidas.");
 }
 
 export async function fetchAllMenus(): Promise<Menu[]> {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -32,7 +33,7 @@ export async function fetchAllMenus(): Promise<Menu[]> {
 }
 
 export async function fetchAllCategories(): Promise<Category[]> {
-  const response = await fetch(API_URL, {
+  const response = await fetch(API_URL_MENU, {
     headers: {
       "X-Master-Key": API_KEY
     }
@@ -89,7 +90,7 @@ export async function fetchProductsByMenuId(menuId: number): Promise<Product[]> 
 
 export async function fetchAllProducts(): Promise<Product[]> {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(API_URL_MENU, {
         headers: {
           "X-Master-Key": API_KEY
         }
@@ -115,7 +116,7 @@ export async function fetchProductById(productId: number): Promise<Product | und
 
 export async function fetchVariantsByProductId(productId: number) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -131,7 +132,7 @@ export async function fetchVariantsByProductId(productId: number) {
 
 export async function fetchCustomizableIngredientsByProductId(productId: number) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -149,7 +150,7 @@ export async function fetchCustomizableIngredientsByProductId(productId: number)
 
 export async function fetchIngredientInfo(ingredientId: number) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -176,7 +177,7 @@ export async function checkPhoneNumberRegistration(phoneNumber: string): Promise
 
 export async function fetchAllUsers(): Promise<any[]> {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -204,7 +205,7 @@ export async function fetchUserByPhoneNumber(phoneNumber: string): Promise<User 
 
 export async function fetchAllFaculties(): Promise<any[]> {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -226,5 +227,28 @@ export async function fetchFacultyById(facultyId: number): Promise<Faculty | und
   } catch (error) {
     console.error("Error al obtener la facultad por ID:", error);
     throw error;
+  }
+}
+
+export async function fetchAllNotifications(): Promise<Notification[]> {
+  try {
+    const response = await fetch(API_URL_NOTI, {
+      headers: {
+        "X-Master-Key": API_KEY
+      }
+    });
+    const data = await response.json();
+
+    const notifications = data.record?.notifications;
+
+    if (Array.isArray(notifications)) {
+      return notifications;
+    } else {
+      console.error("La respuesta no contiene un arreglo de notificaciones:", data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error al obtener las notificaciones:", error);
+    return [];
   }
 }
