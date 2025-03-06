@@ -8,6 +8,7 @@ import { X, Pencil, Check, Plus, Info } from "lucide-react-native";
 import { Pressable } from "@/components/ui/pressable";
 import { Heading } from "@/components/ui/heading";
 import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
+import { sanitizePhoneNumber, sanitizeLada, isValidPhoneNumber } from '@/constants/validations';
 
 interface InputPhoneProps {
     lada: string;
@@ -23,22 +24,20 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
     const [inputLada, setInputLada] = useState(lada);
     const [finalPhone, setFinalPhone] = useState(phone);
     const [finalLada, setFinalLada] = useState(lada);
+    const [showAlert, setShowAlert] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     const handlePhoneChange = (text: string) => {
-        const newPhone = text.replace(/[^0-9]/g, '');
-        setInputPhone(newPhone);
-        onPhoneChange(newPhone);
+        const sanitizedPhone = sanitizePhoneNumber(text);
+        setInputPhone(sanitizedPhone);
+        onPhoneChange(sanitizedPhone);
     };
     
     const handleLadaChange = (text: string) => {
-        const newLada = text.replace(/[^0-9]/g, '');
-        console.log(newLada);
-        setInputLada(newLada);
-        onLadaChange(newLada);
-      };
-
-    const [showAlert, setShowAlert] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+        const sanitizedLada = sanitizeLada(text);
+        setInputLada(sanitizedLada);
+        onLadaChange(sanitizedLada);
+    };
 
     const maskPhoneNumber = (phone: string) => {
         if (phone.length >= 10) {
@@ -48,21 +47,18 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
     };
 
     const handleSave = () => {
-        if(inputPhone.length != 10)
-        {
+        if (!isValidPhoneNumber(inputPhone)) {
             setShowAlert(true);
-        }
-        else
-        {
+        } else {
             setFinalLada(inputLada);
             setFinalPhone(inputPhone);
-            onPhoneChange(finalPhone);
-            onLadaChange(finalLada);
+            onPhoneChange(inputPhone);
+            onLadaChange(inputLada);
             setShowAlert(false);
             setIsEditing(false);
         }
     };
-    
+
     const handleCancel = () => {
         setInputPhone(maskPhoneNumber(finalPhone));
         setInputLada(finalLada);
@@ -77,67 +73,64 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
             {editable ? (
                 isEditing ? (
                     <View style={styles.editableContainer}>
-                        <View style={styles.ladaContainer}>
-                            <Input variant="underlined" style={styles.ladaInput} size="md">
-                                <InputSlot className="pl-3">
-                                    <InputIcon as={Plus} size={'2xl'}/>
-                                </InputSlot>
-                                <InputField placeholder={lada} />
-                            </Input>
-                        </View>
-                        <Input variant="underlined" style={styles.phoneInput} size="md">
-                            <InputField 
-                                onChangeText={(text) => setInputPhone(text.replace(/[^0-9]/g, ''))}
-                                keyboardType="phone-pad"
-                                maxLength={10}
-                            />
-                        </Input>
-                        <View style={styles.buttonsContainer}>
-                            <Button 
-                                style={styles.button}
-                                variant="outline"
-                                action="secondary"
-                                onPress={handleSave}
-                            >
-                                <Icon as={Check} size="md" className="text-typography-600" />
-                            </Button>
-                            <Button 
-                                style={styles.button}
-                                variant="outline"
-                                action="secondary"
-                                onPress={handleCancel}
-                            >
-                                <Icon as={X} size="md" className="text-typography-600" />
-                            </Button>
-                        </View>
-                    </View>
-
-                ) : (
-                    <View style={styles.displayContainer}>
-                        <Text>+{inputLada} {maskPhoneNumber(inputPhone)}</Text>
-                        <Pressable onPress={() => setIsEditing(true)}>
-                            <Icon style={styles.editIcon} as={Pencil} size="lg" className="text-typography-600"/>
-                        </Pressable>
-                    </View>
-                )
-            ) : (
-                <View style={styles.displayContainer}>
-                    <View style={styles.ladaContainer}>
                         <Input variant="underlined" style={styles.ladaInput} size="md">
                             <InputSlot className="pl-3">
                                 <InputIcon as={Plus} size={'2xl'}/>
                             </InputSlot>
                             <InputField 
-                                placeholder={"52"} 
+                                placeholder="52" 
+                                value={inputLada}
                                 onChangeText={handleLadaChange}
-                                keyboardType='phone-pad'
+                                keyboardType="phone-pad"
                                 maxLength={3}
                             />
                         </Input>
+
+                        <Input variant="underlined" style={styles.phoneInput} size="md">
+                            <InputField 
+                                value={inputPhone}
+                                onChangeText={handlePhoneChange}
+                                keyboardType="phone-pad"
+                                maxLength={10}
+                            />
+                        </Input>
+
+                        <View style={styles.buttonsContainer}>
+                            <Button style={styles.button} variant="outline" onPress={handleSave}>
+                                <Icon as={Check} size="md" />
+                            </Button>
+                            <Button style={styles.button} variant="outline" onPress={handleCancel}>
+                                <Icon as={X} size="md" />
+                            </Button>
+                        </View>
                     </View>
+                ) : (
+                    <View style={styles.displayContainer}>
+                        <Text>+{finalLada} {maskPhoneNumber(finalPhone)}</Text>
+                        <Pressable onPress={() => setIsEditing(true)}>
+                            <Icon style={styles.editIcon} as={Pencil} size="lg" />
+                        </Pressable>
+                    </View>
+                )
+            ) : (
+                <View style={styles.displayContainer}>
+                    <Input variant="underlined" style={styles.ladaInput} size="md">
+                        <InputSlot className="pl-3">
+                            <InputIcon as={Plus} size={'2xl'}/>
+                        </InputSlot>
+                        <InputField 
+                            placeholder={"52"} 
+                            value={lada}
+                            onChangeText={handleLadaChange}
+                            keyboardType='phone-pad'
+                            maxLength={3}
+                        />
+                    </Input>
+
                     <Input variant="underlined" style={styles.phoneInput} size="md">
                         <InputField 
                             placeholder="951 123 4567"
+                            value={phone}
                             onChangeText={handlePhoneChange}
                             keyboardType="phone-pad"
                             maxLength={10}
@@ -145,6 +138,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
                     </Input>
                 </View>
             )}
+
             {showAlert && (     
                 <View style={styles.alertContainer}>
                     <Alert action="error" variant="solid">
