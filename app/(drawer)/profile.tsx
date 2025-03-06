@@ -13,6 +13,9 @@ import InputInfo from '@/components/InputInfo';
 import InputSelect from '@/components/InputSelect';
 import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
+import { isValidEmail, sanitizeEmail, isValidPhoneNumber, sanitizePhoneNumber } from '@/constants/validations';
+import { Alert, AlertText, AlertIcon } from '@/components/ui/alert';
+import { Info } from "lucide-react-native";
 
 const ProfileScreen = () => {
     const user = {
@@ -22,20 +25,34 @@ const ProfileScreen = () => {
       faculty: "Ingeniería",
       phone: "9511234567",
       lada: "52",
-    }
+    };
+
     const [phone, setPhone] = useState(user.phone);
     const [lada, setLada] = useState(user.lada);
     const [mail, setMail] = useState(user.mail);
     const [selectedAvatar, setSelectedAvatar] = useState("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU");
     const [showModal, setShowModal] = useState(false);
+    const [showEmailAlert, setShowEmailAlert] = useState(false);
+    const [showPhoneAlert, setShowPhoneAlert] = useState(false);
 
     const handleLadaChange = (newLada: string) => setLada(newLada);
-    const handlePhoneChange = (newPhone: string) => setPhone(newPhone);
+
+    const handlePhoneChange = (newPhone: string) => {
+        const sanitizedPhone = sanitizePhoneNumber(newPhone);
+        setPhone(sanitizedPhone);
+        setShowPhoneAlert(!isValidPhoneNumber(sanitizedPhone));
+    };
+
+    const handleEmailChange = (newEmail: string) => {
+        const { sanitized, hadInvalidChars } = sanitizeEmail(newEmail);
+        setMail(sanitized);
+        setShowEmailAlert(hadInvalidChars || !isValidEmail(sanitized));
+    };
 
     return (
       <KeyboardAvoidingView
-      style={styles.keyboardContainer}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
             <Center style={styles.header_container}>
@@ -61,9 +78,15 @@ const ProfileScreen = () => {
                       editable={true}
                       isEmail={true}
                       headingText={"Correo"}
-                      onEditComplete={(newValue) => setMail(newValue)}
+                      onEditComplete={handleEmailChange}
                       onCancelEdit={() => {}}
                     />
+                    {showEmailAlert && (
+                      <Alert action="error" variant="solid" className="mt-4">
+                        <AlertIcon as={Info} />
+                        <AlertText>El correo debe ser una dirección de correo válida.</AlertText>
+                      </Alert>
+                    )}
                     <InputSelect 
                         initialValue={user.faculty}
                         editable={true}
@@ -73,13 +96,19 @@ const ProfileScreen = () => {
                         onCancelEdit={() => console.log("Edición cancelada")}
                     />
                     <InputPhone
-                        lada={user.lada}
-                        phone={user.phone}
+                        lada={lada}
+                        phone={phone}
                         onLadaChange={handleLadaChange}
                         onPhoneChange={handlePhoneChange}
                         editable={true}
                         headingText="Teléfono"
                     />
+                    {showPhoneAlert && (
+                      <Alert action="error" variant="solid" className="mt-4">
+                        <AlertIcon as={Info} />
+                        <AlertText>El número de teléfono debe contener 10 dígitos.</AlertText>
+                      </Alert>
+                    )}
                 </Box>
             </Center>
         </ScrollView>
