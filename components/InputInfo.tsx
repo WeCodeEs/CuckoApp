@@ -8,6 +8,7 @@ import { Check, X, Pencil, Info } from "lucide-react-native";
 import { Pressable } from "@/components/ui/pressable";
 import { Heading } from "@/components/ui/heading";
 import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
+import { isValidName } from '@/constants/validations';
 
 interface InputInfoProps {
     initialValue: string;
@@ -37,15 +38,23 @@ const InputInfo: React.FC<InputInfoProps> = ({ initialValue, editable, onEditCom
     };
 
     const handleSave = () => {
-        if (isEmail && !validateEmail(inputValue)) {
-            setShowAlert(true);
-            return;
+        if (isEmail) {
+            if (!validateEmail(inputValue)) {
+                setShowAlert(true);
+                return;
+            }
+        } else {
+            if (!isValidName(inputValue)) {
+                setShowAlert(true);
+                return;
+            }
         }
         setValue(inputValue);
         setIsEditing(false);
         setShowAlert(false);
         onEditComplete(inputValue);
     };
+    
 
     return (
         <View style={styles.container}>

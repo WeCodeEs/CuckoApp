@@ -1,39 +1,58 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native';
-import { View } from "@/components/ui/view";
-import { Text } from '@/components/ui/text';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, ScrollView, View } from 'react-native';
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
+import { Text } from "@/components/ui/text";
 import { Input, InputField } from '@/components/ui/input';
 import { Colors } from '@/constants/Colors';
 import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { useRouter } from "expo-router";
-
-
+import { isValidName, sanitizeName } from '@/constants/validations';
+import { Alert, AlertText, AlertIcon } from '@/components/ui/alert';
+import { Info } from "lucide-react-native";
 
 const RegistrationName = () => {
   const router = useRouter();
-  const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
+  const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-
-
-  const handlePressIn = () => {
-    setButtonColor(Colors.light.mediumBlue);
-  };
-
-  const handlePressOut = () => {
-    setButtonColor(Colors.light.darkBlue);
-  };
-
-  const handleCancelEdit = () => {
-    console.log("Edición cancelada");
-  };
+  const [hasEditedName, setHasEditedName] = useState(false);
+  const [hasEditedLastName, setHasEditedLastName] = useState(false);
+  const [showNameAlert, setShowNameAlert] = useState(false);
+  const [showLastNameAlert, setShowLastNameAlert] = useState(false);
 
   const handleChangeName = (inputName: string) => {
-    setName(inputName);
+    setHasEditedName(true);
+    const { sanitized, hadInvalidChars } = sanitizeName(inputName);
+
+    setName(sanitized);
+    setShowNameAlert(hadInvalidChars); 
   };
+
+  const handleBlurName = () => {
+    setName(sanitizeName(name, true).sanitized); 
+  };
+
+  const handleChangeLastName = (inputLastName: string) => {
+    setHasEditedLastName(true);
+    const { sanitized, hadInvalidChars } = sanitizeName(inputLastName);
+
+    setLastName(sanitized);
+    setShowLastNameAlert(hadInvalidChars);
+  };
+
+  const handleBlurLastName = () => {
+    setLastName(sanitizeName(lastName, true).sanitized);
+  };
+
+  useEffect(() => {
+    if (isValidName(name) && isValidName(lastName) && name.length > 0 && lastName.length > 0) {
+      setButtonColor(Colors.light.darkBlue);
+    } else {
+      setButtonColor(Colors.light.lightGray);
+    }
+  }, [name, lastName]);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -52,33 +71,49 @@ const RegistrationName = () => {
               <Text style={styles.text}>Ahora, dinos como te llamas...</Text>
               <View style={styles.field_container}>
                 <Heading style={styles.subtitle} size={"lg"}>Nombre</Heading>
-                <Input variant="underlined" size="md" isDisabled={false} isInvalid={false} isReadOnly={false} >
+                <Input variant="underlined" size="md">
                   <InputField
-                    placeholder='Juan'
-                    onChangeText={(text) => handleChangeName(text)}
+                    placeholder='Juan Carlos'
+                    value={name}
+                    onChangeText={handleChangeName}
+                    onBlur={handleBlurName}
                   />
                 </Input>
+                {showNameAlert && (
+                  <Alert action="error" variant="solid" className="mt-4">
+                    <AlertIcon as={Info} />
+                    <AlertText>Este campo solo permite letras y espacios.</AlertText>
+                  </Alert>
+                )}
               </View>
               <View style={styles.field_container}>
                 <Heading style={styles.subtitle} size={"lg"}>Apellidos</Heading>
-                <Input variant="underlined" size="md" isDisabled={false} isInvalid={false} isReadOnly={false} >
+                <Input variant="underlined" size="md">
                   <InputField
-                    placeholder='Pérez'
+                    placeholder='Pérez Gómez'
+                    value={lastName}
+                    onChangeText={handleChangeLastName}
+                    onBlur={handleBlurLastName}
                   />
                 </Input>
+                {showLastNameAlert && (
+                  <Alert action="error" variant="solid" className="mt-4">
+                    <AlertIcon as={Info} />
+                    <AlertText>Se eliminaron caracteres no permitidos.</AlertText>
+                  </Alert>
+                )}
               </View>
             </Center>
-
           </ScrollView>
-
-          <Button
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-            onPress={() => router.push({pathname: "/(registration)/registrationForm", params: {name: name}})}
-            style={[styles.nextButton, { backgroundColor: buttonColor }]}
-          >
-            <ButtonText>Continuar</ButtonText>
-          </Button>
+            <Center style={styles.buttonContainer}>
+              <Button
+                onPress={() => router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } })}
+                style={[styles.nextButton, { backgroundColor: buttonColor }]}
+                disabled={!isValidName(name) || !isValidName(lastName)}
+              >
+                <ButtonText>Continuar</ButtonText>
+              </Button>
+            </Center>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -121,20 +156,19 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     textAlign: 'center',
   },
-  general_container: {
-    padding: 30,
-    width: '100%',
-    height: 'auto',
-  },
   field_container: {
     paddingHorizontal: 30,
     paddingBottom: 10,
     marginBottom: 10,
     width: '100%',
-    height: 'auto',
+  },
+  buttonContainer: {
+    width: '100%',
+    marginBottom: -10,
+    alignSelf: 'flex-end'
   },
   nextButton: {
     borderRadius: 30,
-    marginHorizontal: 30,
+    width: '60%'
   },
 });
