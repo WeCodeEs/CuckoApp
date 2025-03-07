@@ -8,7 +8,8 @@ import { Colors } from "@/constants/Colors";
 import { ActionsheetVirtualizedList } from "@/components/ui/actionsheet";
 import { Pressable } from "@/components/ui/pressable";
 import { Product } from "@/constants/types";
-import { fetchAllProducts } from '@/constants/api';
+import { fetchAllProducts, fetchProductById } from "@/constants/api";
+import ErrorToast from "@/components/ErrorToast";
 
 interface SearchProductsProps {
   searchTerm: string;
@@ -17,6 +18,7 @@ interface SearchProductsProps {
 const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fadeAnim = useState(new Animated.Value(0))[0];
   const navigation = useNavigation<NavigationProp<any>>();
 
@@ -59,8 +61,31 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
   const getItem = (data: Product[], index: number): Product => data[index];
   const getItemCount = (data: Product[]): number => data.length;
 
+  const handleProductPress = async (productId: number) => {
+    try {
+      const productDetail = await fetchProductById(productId);
+      if (!productDetail) {
+        setErrorMessage("Producto no encontrado");
+        return;
+      }
+      navigation.navigate("detail_product", {
+        product: encodeURIComponent(JSON.stringify(productDetail)),
+      });
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      setErrorMessage("Error al obtener el producto");
+    }
+  };
+
   return (
     <Animated.View style={[styles.viewContainer, { opacity: fadeAnim }]}>
+      {errorMessage && (
+        <ErrorToast
+          id="error-search"
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+        />
+      )}
       {filteredProducts.length === 0 ? (
         <Text style={styles.emptyText}>No se encontraron productos</Text>
       ) : (
@@ -74,9 +99,7 @@ const SearchProducts: React.FC<SearchProductsProps> = ({ searchTerm }) => {
             return (
               <Pressable
                 style={styles.productContainer}
-                onPress={() =>
-                  navigation.navigate("detail_product", { platilloId: product.id })
-                }
+                onPress={() => handleProductPress(product.id)}
               >
                 <View style={styles.productContent}>
                   <Image
