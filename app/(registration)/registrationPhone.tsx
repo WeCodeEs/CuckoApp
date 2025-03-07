@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
     height: '100%',
     flex: 1,
-    padding: 100,
   },
   keyboardContainer: {
     flex: 1,
@@ -152,7 +151,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
-    marginBottom: -10,
+    marginBottom: -15,
     alignSelf: 'flex-end'
   },
   nextButton: {
