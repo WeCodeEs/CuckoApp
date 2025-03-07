@@ -3,52 +3,22 @@ import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, Tou
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
-import { Input, InputField } from '@/components/ui/input';
 import { Colors } from '@/constants/Colors';
 import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { useRouter } from "expo-router";
-import { isValidName, sanitizeName } from '@/constants/validations';
-import { Alert, AlertText, AlertIcon } from '@/components/ui/alert';
-import { Info } from "lucide-react-native";
+import InputInfo from '@/components/InputInfo';
+import { isValidName } from '@/constants/validations';
 
 const RegistrationName = () => {
   const router = useRouter();
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [showNameAlert, setShowNameAlert] = useState(false);
-  const [showLastNameAlert, setShowLastNameAlert] = useState(false);
-
-  const handleChangeName = (inputName: string) => {
-    const { sanitized, hadInvalidChars } = sanitizeName(inputName);
-    setName(sanitized);
-    setShowNameAlert(hadInvalidChars);
-  };
-
-  const handleBlurName = () => {
-    const { sanitized, hadInvalidChars } = sanitizeName(name, true);
-    setName(sanitized);
-    setShowNameAlert(hadInvalidChars && !isValidName(sanitized));
-  };
-  
-  const handleChangeLastName = (inputLastName: string) => {
-    const { sanitized, hadInvalidChars } = sanitizeName(inputLastName);
-    setLastName(sanitized);
-    setShowLastNameAlert(hadInvalidChars);
-  };
-
-  const handleBlurLastName = () => {
-    const { sanitized, hadInvalidChars } = sanitizeName(lastName, true);
-    setLastName(sanitized);
-    setShowLastNameAlert(hadInvalidChars && !isValidName(sanitized));
-  };
 
   useEffect(() => {
     if (isValidName(name) && isValidName(lastName) && name.length > 0 && lastName.length > 0) {
       setButtonColor(Colors.light.darkBlue);
-      setShowNameAlert(false);
-      setShowLastNameAlert(false);
     } else {
       setButtonColor(Colors.light.lightGray);
     }
@@ -70,48 +40,35 @@ const RegistrationName = () => {
               <Heading style={styles.title} size='2xl'>¡Genial!</Heading>
               <Text style={styles.text}>Ahora, dinos cómo te llamas...</Text>
               <View style={styles.field_container}>
-                <Heading style={styles.subtitle} size={"lg"}>Nombre</Heading>
-                <Input variant="underlined" size="md">
-                  <InputField
-                    placeholder='Juan Carlos'
-                    value={name}
-                    onChangeText={handleChangeName}
-                    onBlur={handleBlurName}
-                  />
-                </Input>
-                {showNameAlert && (
-                  <Alert action="error" variant="solid" className="mt-4">
-                    <AlertIcon as={Info} />
-                    <AlertText>Este campo solo admite letras y espacios.</AlertText>
-                  </Alert>
-                )}
+                <InputInfo
+                  initialValue={name}
+                  editable={true}
+                  alwaysEditable={true}
+                  isEmail={false}
+                  headingText="Nombre"
+                  placeholder="Juan Alejandro"
+                  onEditComplete={(newValue) => setName(newValue)}
+                  onCancelEdit={() => {}}
+                />
               </View>
               <View style={styles.field_container}>
-                <Heading style={styles.subtitle} size={"lg"}>Apellidos</Heading>
-                <Input variant="underlined" size="md">
-                  <InputField
-                    placeholder='Pérez Gómez'
-                    value={lastName}
-                    onChangeText={handleChangeLastName}
-                    onBlur={handleBlurLastName}
-                  />
-                </Input>
-                {showLastNameAlert && (
-                  <Alert action="error" variant="solid" className="mt-4">
-                    <AlertIcon as={Info} />
-                    <AlertText>Este campo solo admite letras y espacios.</AlertText>
-                  </Alert>
-                )}
+                <InputInfo
+                  initialValue={lastName}
+                  editable={true}
+                  alwaysEditable={true}
+                  isEmail={false}
+                  headingText="Apellidos"
+                  placeholder="Pérez López"
+                  onEditComplete={(newValue) => setLastName(newValue)}
+                  onCancelEdit={() => {}}
+                />
               </View>
             </Center>
           </ScrollView>
           <Center style={styles.buttonContainer}>
             <Button
               onPress={() => {
-                if (!isValidName(name) || !isValidName(lastName)) {
-                  setShowNameAlert(!isValidName(name));
-                  setShowLastNameAlert(!isValidName(lastName));
-                } else {
+                if (isValidName(name) && isValidName(lastName)) {
                   router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
                 }
               }}
@@ -150,14 +107,10 @@ const styles = StyleSheet.create({
   logo: {
     position: 'relative',
     width: '60%',
-    aspectRatio: '1/1',
+    aspectRatio: 1,
   },
   title: {
     marginBottom: 10,
-  },
-  subtitle: {
-    marginBottom: 10,
-    marginTop: 20,
   },
   text: {
     marginHorizontal: 20,

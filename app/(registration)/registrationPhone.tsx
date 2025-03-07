@@ -9,35 +9,24 @@ import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import RegistrationActionSheet from '@/components/RegistrationActionSheet';
 import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
-import { Alert, AlertText, AlertIcon } from '@/components/ui/alert';
-import { Info } from "lucide-react-native";
 
 const RegistrationPhone = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [showActionsheet, setShowActionsheet] = useState(false);
   const [lada, setLada] = useState("52");
   const [phone, setPhone] = useState("");
-  const [showPhoneAlert, setShowPhoneAlert] = useState(false);
 
-
-  
   const handleLadaChange = (newLada: string) => {
     setLada(sanitizeLada(newLada));
   };
-  
+
   const handlePhoneChange = (newPhone: string) => {
     const sanitizedPhone = sanitizePhoneNumber(newPhone);
     setPhone(sanitizedPhone);
-    
-    if (isValidPhoneNumber(sanitizedPhone)) {
-      setShowPhoneAlert(false);
-    }
   };
-  
+
   const handleNextPress = () => {
-    if (!isValidPhoneNumber(phone)) {
-      setShowPhoneAlert(true);
-    } else {
+    if (isValidPhoneNumber(phone)) {
       setShowActionsheet(true);
     }
   };
@@ -75,15 +64,6 @@ const RegistrationPhone = () => {
                   headingText="Teléfono"
                 />
               </Center>
-
-              {showPhoneAlert && (
-                <View style={styles.alertContainer}>
-                  <Alert action="error" variant="solid" className="mt-4">
-                    <AlertIcon as={Info} />
-                    <AlertText>El número de teléfono debe contener 10 dígitos.</AlertText>
-                  </Alert>
-                </View>
-              )}
             </Center>
           </ScrollView>
           <Center style={styles.buttonContainer}>
@@ -94,9 +74,7 @@ const RegistrationPhone = () => {
             >
               <ButtonText>Siguiente</ButtonText>
             </Button>
-
           </Center>
-
           <RegistrationActionSheet
             isOpen={showActionsheet}
             onClose={() => setShowActionsheet(false)}
@@ -132,7 +110,7 @@ const styles = StyleSheet.create({
   logo: {
     position: 'relative',
     width: '60%',
-    aspectRatio: '1/1',
+    aspectRatio: 1,
   },
   title: {
     marginTop: -40,
@@ -158,8 +136,4 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     width: '60%'
   },
-  alertContainer: {
-    width: '90%',
-    padding: 500,
-  }
 });

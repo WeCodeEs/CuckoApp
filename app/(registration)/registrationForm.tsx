@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, ScrollView, View } from 'react-native';
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
-import { Input, InputField } from '@/components/ui/input';
+import { Text } from "@/components/ui/text";
 import { Colors } from '@/constants/Colors';
 import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import InputSelect from '@/components/InputSelect';
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { isValidEmail, sanitizeEmail } from '@/constants/validations';
-import { Alert, AlertText, AlertIcon } from '@/components/ui/alert';
-import { Info } from "lucide-react-native";
+import InputInfo from '@/components/InputInfo';
+import { isValidEmail } from '@/constants/validations';
 
 const RegistrationForm = () => {
   const router = useRouter();
@@ -18,29 +17,10 @@ const RegistrationForm = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [email, setEmail] = useState("");
   const [selectedSchool, setSelectedSchool] = useState("");
-  const [showEmailAlert, setShowEmailAlert] = useState(false);
-
-  const handleChangeEmail = (inputEmail: string) => {
-    const { sanitized, hadInvalidChars } = sanitizeEmail(inputEmail);
-
-    setEmail(sanitized);
-    setShowEmailAlert(false); // Oculta la alerta mientras el usuario escribe
-  };
-
-  const handleBlurEmail = () => {
-    const { sanitized, hadInvalidChars } = sanitizeEmail(email);
-    setEmail(sanitized);
-    setShowEmailAlert(hadInvalidChars); // Solo muestra la alerta si el email sigue inválido
-  };
-
-  const handleSelectSchool = (school: string) => {
-    setSelectedSchool(school);
-  };
 
   useEffect(() => {
     if (isValidEmail(email) && selectedSchool) {
       setButtonColor(Colors.light.darkBlue);
-      setShowEmailAlert(false); // Oculta la alerta si el email es válido
     } else {
       setButtonColor(Colors.light.lightGray);
     }
@@ -60,22 +40,18 @@ const RegistrationForm = () => {
                 <CuckooIsotipo style={styles.logo} />
               </View>
               <Heading size={"2xl"} style={styles.title}>¡Hola {name}!</Heading>
+              <Text style={styles.text}>Ya estamos en la recta final :)</Text>
               <View style={styles.field_container}>
-                <Heading style={styles.subtitle} size={"lg"}>Correo</Heading>
-                <Input variant="underlined" size="md">
-                  <InputField
-                    placeholder='alguien@mail.com'
-                    value={email}
-                    onChangeText={handleChangeEmail}
-                    onBlur={handleBlurEmail}
-                  />
-                </Input>
-                {showEmailAlert && (
-                  <Alert action="error" variant="solid" className="mt-4">
-                    <AlertIcon as={Info} />
-                    <AlertText>El correo debe ser una dirección de correo válida.</AlertText>
-                  </Alert>
-                )}
+                <InputInfo
+                  initialValue={email}
+                  editable={true}
+                  alwaysEditable={true}
+                  isEmail={true}
+                  headingText="Correo"
+                  placeholder="nombre@mail.com"
+                  onEditComplete={(newValue) => setEmail(newValue)}
+                  onCancelEdit={() => {}}
+                />
               </View>
               <View style={[styles.field_container, { marginTop: 10 }]}>
                 <InputSelect
@@ -83,7 +59,7 @@ const RegistrationForm = () => {
                   editable={false}
                   headingText="Escuela"
                   items={["Comunicación", "Diseño", "Derecho", "Ingeniería", "Medicina", "Negocios", "Psicología", "Turismo"]}
-                  onEditComplete={handleSelectSchool}
+                  onEditComplete={setSelectedSchool}
                   onCancelEdit={() => setSelectedSchool("")}
                 />
               </View>
@@ -92,9 +68,7 @@ const RegistrationForm = () => {
           <Center style={styles.buttonContainer}>
             <Button
               onPress={() => {
-                if (!isValidEmail(email)) {
-                  setShowEmailAlert(true); // Muestra la alerta solo si el email sigue inválido
-                } else {
+                if (isValidEmail(email)) {
                   router.replace("/(tabs)/(home)");
                 }
               }}
@@ -133,29 +107,19 @@ const styles = StyleSheet.create({
   logo: {
     position: 'relative',
     width: '60%',
-    aspectRatio: '1/1',
+    aspectRatio: 1,
   },
   title: {
     marginBottom: 10,
-  },
-  subtitle: {
-    marginBottom: 10,
-    marginTop: 20,
   },
   text: {
     marginHorizontal: 20,
     textAlign: 'center',
   },
-  general_container: {
-    padding: 30,
-    width: '100%',
-    height: 'auto',
-  },
   field_container: {
     paddingHorizontal: 30,
     paddingBottom: 10,
     width: '100%',
-    height: 'auto',
   },
   buttonContainer: {
     width: '100%',
