@@ -17,38 +17,38 @@ const RegistrationName = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [hasEditedName, setHasEditedName] = useState(false);
-  const [hasEditedLastName, setHasEditedLastName] = useState(false);
   const [showNameAlert, setShowNameAlert] = useState(false);
   const [showLastNameAlert, setShowLastNameAlert] = useState(false);
 
   const handleChangeName = (inputName: string) => {
-    setHasEditedName(true);
     const { sanitized, hadInvalidChars } = sanitizeName(inputName);
-
     setName(sanitized);
-    setShowNameAlert(hadInvalidChars); 
+    setShowNameAlert(hadInvalidChars);
   };
 
   const handleBlurName = () => {
-    setName(sanitizeName(name, true).sanitized); 
+    const { sanitized, hadInvalidChars } = sanitizeName(name, true);
+    setName(sanitized);
+    setShowNameAlert(hadInvalidChars && !isValidName(sanitized));
   };
-
+  
   const handleChangeLastName = (inputLastName: string) => {
-    setHasEditedLastName(true);
     const { sanitized, hadInvalidChars } = sanitizeName(inputLastName);
-
     setLastName(sanitized);
     setShowLastNameAlert(hadInvalidChars);
   };
 
   const handleBlurLastName = () => {
-    setLastName(sanitizeName(lastName, true).sanitized);
+    const { sanitized, hadInvalidChars } = sanitizeName(lastName, true);
+    setLastName(sanitized);
+    setShowLastNameAlert(hadInvalidChars && !isValidName(sanitized));
   };
 
   useEffect(() => {
     if (isValidName(name) && isValidName(lastName) && name.length > 0 && lastName.length > 0) {
       setButtonColor(Colors.light.darkBlue);
+      setShowNameAlert(false);
+      setShowLastNameAlert(false);
     } else {
       setButtonColor(Colors.light.lightGray);
     }
@@ -68,7 +68,7 @@ const RegistrationName = () => {
                 <CuckooIsotipo style={styles.logo} />
               </View>
               <Heading style={styles.title} size='2xl'>¡Genial!</Heading>
-              <Text style={styles.text}>Ahora, dinos como te llamas...</Text>
+              <Text style={styles.text}>Ahora, dinos cómo te llamas...</Text>
               <View style={styles.field_container}>
                 <Heading style={styles.subtitle} size={"lg"}>Nombre</Heading>
                 <Input variant="underlined" size="md">
@@ -82,7 +82,7 @@ const RegistrationName = () => {
                 {showNameAlert && (
                   <Alert action="error" variant="solid" className="mt-4">
                     <AlertIcon as={Info} />
-                    <AlertText>Este campo solo permite letras y espacios.</AlertText>
+                    <AlertText>Este campo solo admite letras y espacios.</AlertText>
                   </Alert>
                 )}
               </View>
@@ -99,21 +99,28 @@ const RegistrationName = () => {
                 {showLastNameAlert && (
                   <Alert action="error" variant="solid" className="mt-4">
                     <AlertIcon as={Info} />
-                    <AlertText>Se eliminaron caracteres no permitidos.</AlertText>
+                    <AlertText>Este campo solo admite letras y espacios.</AlertText>
                   </Alert>
                 )}
               </View>
             </Center>
           </ScrollView>
-            <Center style={styles.buttonContainer}>
-              <Button
-                onPress={() => router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } })}
-                style={[styles.nextButton, { backgroundColor: buttonColor }]}
-                disabled={!isValidName(name) || !isValidName(lastName)}
-              >
-                <ButtonText>Continuar</ButtonText>
-              </Button>
-            </Center>
+          <Center style={styles.buttonContainer}>
+            <Button
+              onPress={() => {
+                if (!isValidName(name) || !isValidName(lastName)) {
+                  setShowNameAlert(!isValidName(name));
+                  setShowLastNameAlert(!isValidName(lastName));
+                } else {
+                  router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
+                }
+              }}
+              style={[styles.nextButton, { backgroundColor: buttonColor }]}
+              disabled={!isValidName(name) || !isValidName(lastName)}
+            >
+              <ButtonText>Continuar</ButtonText>
+            </Button>
+          </Center>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </TouchableWithoutFeedback>
