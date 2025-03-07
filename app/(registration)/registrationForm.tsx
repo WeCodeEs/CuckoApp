@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
   text: {
     marginHorizontal: 20,
     textAlign: 'center',
+    marginBottom: 30,
   },
   field_container: {
     paddingHorizontal: 30,

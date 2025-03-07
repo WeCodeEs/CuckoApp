@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginHorizontal: 20,
+    marginBottom: 30,
     textAlign: 'center',
   },
   field_container: {
