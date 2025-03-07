@@ -31,6 +31,10 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
         const sanitizedPhone = sanitizePhoneNumber(text);
         setInputPhone(sanitizedPhone);
         onPhoneChange(sanitizedPhone);
+    
+        if (isValidPhoneNumber(sanitizedPhone)) {
+            setShowAlert(false);
+        }
     };
     
     const handleLadaChange = (text: string) => {
@@ -38,6 +42,15 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
         setInputLada(sanitizedLada);
         onLadaChange(sanitizedLada);
     };
+
+    const handleBlur = () => {
+        if (!isValidPhoneNumber(inputPhone)) {
+            setShowAlert(true);
+        } else {
+            setShowAlert(false);
+        }   
+    };
+    
 
     const maskPhoneNumber = (phone: string) => {
         if (phone.length >= 10) {
@@ -130,8 +143,9 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
                     <Input variant="underlined" style={styles.phoneInput} size="md">
                         <InputField 
                             placeholder="951 123 4567"
-                            value={phone}
+                            value={inputPhone}
                             onChangeText={handlePhoneChange}
+                            onBlur={handleBlur} 
                             keyboardType="phone-pad"
                             maxLength={10}
                         />

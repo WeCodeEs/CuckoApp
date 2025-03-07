@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, View } from 'react-native';
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
+import { Text } from "@/components/ui/text";
 import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
 import { Button, ButtonText } from '@/components/ui/button';
@@ -16,16 +17,29 @@ const RegistrationPhone = () => {
   const [showActionsheet, setShowActionsheet] = useState(false);
   const [lada, setLada] = useState("52");
   const [phone, setPhone] = useState("");
-  const [hasEdited, setHasEdited] = useState(false);
+  const [showPhoneAlert, setShowPhoneAlert] = useState(false);
 
+
+  
   const handleLadaChange = (newLada: string) => {
     setLada(sanitizeLada(newLada));
   };
-
+  
   const handlePhoneChange = (newPhone: string) => {
     const sanitizedPhone = sanitizePhoneNumber(newPhone);
     setPhone(sanitizedPhone);
-    setHasEdited(true);
+    
+    if (isValidPhoneNumber(sanitizedPhone)) {
+      setShowPhoneAlert(false);
+    }
+  };
+  
+  const handleNextPress = () => {
+    if (!isValidPhoneNumber(phone)) {
+      setShowPhoneAlert(true);
+    } else {
+      setShowActionsheet(true);
+    }
   };
 
   useEffect(() => {
@@ -49,6 +63,7 @@ const RegistrationPhone = () => {
               <CuckooIsotipo style={styles.logo} />
             </View>
             <Heading style={styles.title} size='2xl'>Bienvenido</Heading>
+            <Text style={styles.text}>Para continuar, ingresa un número de celular</Text>
             <Center style={styles.general_container}>
               <InputPhone
                 lada={lada}
@@ -60,7 +75,7 @@ const RegistrationPhone = () => {
               />
             </Center>
 
-            {hasEdited && !isValidPhoneNumber(phone) && (
+            {showPhoneAlert && (
               <View style={styles.alertContainer}>
                 <Alert action="error" variant="solid" className="mt-4">
                   <AlertIcon as={Info} />
@@ -71,12 +86,13 @@ const RegistrationPhone = () => {
           </Center>
           <Center style={styles.buttonContainer}>
             <Button
-              onPress={() => setShowActionsheet(true)}
+              onPress={handleNextPress}
               style={[styles.nextButton, { backgroundColor: buttonColor }]}
               disabled={!isValidPhoneNumber(phone)}
             >
               <ButtonText>Siguiente</ButtonText>
             </Button>
+
           </Center>
 
           <RegistrationActionSheet
@@ -119,6 +135,10 @@ const styles = StyleSheet.create({
   title: {
     marginTop: -40,
     paddingBottom: 10,
+  },
+  text: {
+    marginHorizontal: 20,
+    textAlign: 'center',
   },
   general_container: {
     paddingHorizontal: 30,
