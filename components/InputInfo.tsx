@@ -9,6 +9,7 @@ import { Pressable } from "@/components/ui/pressable";
 import { Heading } from "@/components/ui/heading";
 import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
 import { isValidName } from '@/constants/validations';
+import { sanitizeName, sanitizeEmail } from '@/constants/validations';
 
 interface InputInfoProps {
   initialValue: string;
@@ -18,7 +19,7 @@ interface InputInfoProps {
   isEmail?: boolean;
   headingText: string;
   alwaysEditable?: boolean;
-  placeholder?: string; 
+  placeholder?: string;
 }
 
 const InputInfo: React.FC<InputInfoProps> = ({
@@ -29,42 +30,58 @@ const InputInfo: React.FC<InputInfoProps> = ({
   isEmail,
   headingText,
   alwaysEditable,
-  placeholder, 
+  placeholder,
 }) => {
   const [value, setValue] = useState(initialValue);
   const [inputValue, setInputValue] = useState(initialValue);
   const [isEditing, setIsEditing] = useState(alwaysEditable ? true : false);
   const [showAlert, setShowAlert] = useState(false);
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  const handleChangeText = (text: string) => {
+    if (isEmail) {
+      const { sanitized, hadInvalidChars } = sanitizeEmail(text);
+      setInputValue(sanitized);
+      setShowAlert(hadInvalidChars);
+    } else {
+      const { sanitized, hadInvalidChars } = sanitizeName(text, false);
+      setInputValue(sanitized);
+      setShowAlert(hadInvalidChars);
+    }
+  };
+
+  const handleBlur = () => {
+    if (isEmail) {
+      const { sanitized, hadInvalidChars } = sanitizeEmail(inputValue);
+      setInputValue(sanitized);
+      setValue(sanitized);
+      setShowAlert(hadInvalidChars);
+      onEditComplete(sanitized);
+    } else {
+      const { sanitized, hadInvalidChars } = sanitizeName(inputValue, true);
+      setInputValue(sanitized);
+      setValue(sanitized);
+      if (!isValidName(sanitized)) {
+        setShowAlert(true);
+      } else {
+        setShowAlert(false);
+      }
+      onEditComplete(sanitized);
+    }
   };
 
   const handleSave = () => {
-    if (isEmail) {
-      if (!validateEmail(inputValue)) {
-        setShowAlert(true);
-        return;
-      }
-    } else {
-      if (!isValidName(inputValue)) {
-        setShowAlert(true);
-        return;
-      }
+    handleBlur();
+    if (!alwaysEditable) {
+      setIsEditing(false);
     }
-    setValue(inputValue);
-    setIsEditing(alwaysEditable ? true : false);
-    setShowAlert(false);
-    onEditComplete(inputValue);
   };
 
   const handleCancel = () => {
     setInputValue(value);
+    setShowAlert(false);
     if (!alwaysEditable) {
       setIsEditing(false);
     }
-    setShowAlert(false);
     onCancelEdit();
   };
 
@@ -77,9 +94,9 @@ const InputInfo: React.FC<InputInfoProps> = ({
             <Input variant="underlined" style={styles.input} size="md">
               <InputField 
                 value={inputValue}
-                onChangeText={(text) => setInputValue(text)}
-                onBlur={handleSave}
-                placeholder={placeholder || headingText} 
+                onChangeText={handleChangeText}
+                onBlur={handleBlur}
+                placeholder={placeholder || headingText}
               />
             </Input>
             {!alwaysEditable && (
@@ -106,7 +123,8 @@ const InputInfo: React.FC<InputInfoProps> = ({
           <InputField 
             placeholder={placeholder || headingText}
             value={inputValue}
-            onChangeText={(text) => setInputValue(text)}
+            onChangeText={handleChangeText}
+            onBlur={handleBlur}
           />
         </Input>
       )}
@@ -117,7 +135,7 @@ const InputInfo: React.FC<InputInfoProps> = ({
             <AlertText>
               {isEmail
                 ? 'Por favor, introduce un correo electrónico válido.'
-                : 'Este campo solo admite letras y espacios.'}
+                : 'Este campo solo admite letras, espacios simples y guiones.'}
             </AlertText>
           </Alert>
         </View>
