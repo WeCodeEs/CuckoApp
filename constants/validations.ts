@@ -26,23 +26,24 @@ export const sanitizeLada = (lada: string): string => {
 
 export const sanitizeName = (name: string, isFinal: boolean = false): { sanitized: string, hadInvalidChars: boolean } => {
   const beforeSanitization = name;
-  
   let sanitized = name.replace(/\s{2,}/g, ' ');
-
   if (isFinal) {
-    sanitized = sanitized.trim(); 
+    sanitized = sanitized.trim();
   }
-
   const hadInvalidChars = /[^A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s-]/.test(beforeSanitization) || beforeSanitization !== sanitized;
-
   return { sanitized, hadInvalidChars };
 };
 
 export const sanitizeEmail = (email: string): { sanitized: string, hadInvalidChars: boolean } => {
   let sanitized = email.replace(/\s/g, '');
-
   const hadInvalidChars = !isValidEmail(sanitized);
-
   return { sanitized, hadInvalidChars };
 };
 
+export const sanitizeOTP = (input: string): string => {
+  return input.replace(/[^0-9]/g, '');
+};
+
+export const isAllDigitsEqual = (code: string): boolean => {
+  return code.length === 4 && code.split('').every(digit => digit === code[0]);
+};

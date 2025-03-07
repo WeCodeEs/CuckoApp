@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
 import {
   Actionsheet,
   ActionsheetBackdrop,
@@ -16,10 +16,10 @@ import { Colors } from '@/constants/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from "expo-router";
 import { checkPhoneNumberRegistration } from '@/constants/api';
-import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
-import { Pressable } from '@/components/ui/pressable';
-import { Icon, CloseIcon, HelpCircleIcon } from '@/components/ui/icon';
-import { VStack } from '@/components/ui/vstack';
+import { sanitizeOTP, isAllDigitsEqual } from '@/constants/validations';
+import { useToast } from '@/components/ui/toast';
+import ErrorToast from '@/components/ErrorToast';
+import { TextInput as RNTextInput } from 'react-native';
 
 interface RegistrationActionSheetProps {
   isOpen: boolean;
@@ -32,15 +32,15 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const inputRefs = [
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
-    useRef<TextInput>(null),
+    useRef<RNTextInput>(null),
+    useRef<RNTextInput>(null),
+    useRef<RNTextInput>(null),
+    useRef<RNTextInput>(null),
   ];
   const [code, setCode] = useState(['', '', '', '']);
   const navigation = useNavigation();
   const router = useRouter();
-  const toast = useToast(); 
+  const toast = useToast();
 
   useEffect(() => {
     if (isOpen) {
@@ -52,7 +52,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   }, [isOpen]);
 
   const handleChange = (text: string, index: number) => {
-    const sanitized = text.replace(/[^0-9]/g, '');
+    const sanitized = sanitizeOTP(text);
     const newCode = [...code];
     newCode[index] = sanitized;
     setCode(newCode);
@@ -112,12 +112,41 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   const handleNavigation = async () => {
     const fullCode = code.join('');
     if (fullCode.length === 4) {
-      const isValidOTP = fullCode.split('').every(digit => digit === fullCode[0]);
-      if (isValidOTP) {
-        setCode(['', '', '', '']);
-        inputRefs.forEach((ref) => {
-          ref.current?.clear();
+      if (!isAllDigitsEqual(fullCode)) {
+        toast.show({
+          id: "otp-invalid",
+          placement: 'top',
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Código de verificación inválido. Intenta de nuevo o genera un nuevo código de verificación"
+              onClose={() => toast.close(id)}
+            />
+          ),
         });
+        setCode(['', '', '', '']);
+        inputRefs.forEach(ref => ref.current?.clear());
+        inputRefs[0].current?.focus();
+      } else if (fullCode === "0000") {
+        toast.show({
+          id: "otp-connection-error",
+          placement: 'top',
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Ha habido un error en la verificación del código."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+        setCode(['', '', '', '']);
+        inputRefs.forEach(ref => ref.current?.clear());
+        inputRefs[0].current?.focus();
+      } else {
+        setCode(['', '', '', '']);
+        inputRefs.forEach(ref => ref.current?.clear());
         try {
           const isUserRegistered = await checkUserRegistration();
           if (isUserRegistered) {
@@ -131,86 +160,22 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         } catch (err) {
           console.error("Error al verificar el teléfono:", err);
         }
-      } else {
-        toast.show({
-          id: "otp-error",
-          placement: 'top',
-          duration: 3000,
-          render: ({ id }) => {
-            const uniqueToastId = "toast-" + id;
-            return (
-              <Toast
-                action="error"
-                variant="outline"
-                nativeID={uniqueToastId}
-                className="p-4 gap-6 border-error-500 w-full shadow-hard-5 max-w-[443px] flex-row justify-between"
-              >
-                <HStack space="md">
-                  <Icon as={HelpCircleIcon} className="stroke-error-500 mt-0.5" />
-                  <VStack space="xs">
-                    <ToastTitle className="font-semibold text-error-500">Error!</ToastTitle>
-                    <ToastDescription size="sm">
-                      La verificación con Twilio ha fallado.
-                    </ToastDescription>
-                  </VStack>
-                </HStack>
-                <HStack className="min-[450px]:gap-3 gap-1">
-                  <Button variant="link" size="sm" className="px-3.5 self-center">
-                    <ButtonText>Reintentar</ButtonText>
-                  </Button>
-                  <Pressable onPress={() => toast.close(id)}>
-                    <Icon as={CloseIcon} />
-                  </Pressable>
-                </HStack>
-              </Toast>
-            );
-          },
-        });
-        setCode(['', '', '', '']);
-        inputRefs.forEach(ref => {
-          ref.current?.clear();
-        });
-        inputRefs[0].current?.focus();
       }
     } else {
       toast.show({
         id: "otp-incomplete",
         placement: 'top',
-        duration: 3000,
-        render: ({ id }) => {
-          const uniqueToastId = "toast-" + id;
-          return (
-            <Toast
-              action="error"
-              variant="outline"
-              nativeID={uniqueToastId}
-              className="p-4 gap-6 border-error-500 w-full shadow-hard-5 max-w-[443px] flex-row justify-between"
-            >
-              <HStack space="md">
-                <Icon as={HelpCircleIcon} className="stroke-error-500 mt-0.5" />
-                <VStack space="xs">
-                  <ToastTitle className="font-semibold text-error-500">Error!</ToastTitle>
-                  <ToastDescription size="sm">
-                    Ingresa un código de 4 dígitos.
-                  </ToastDescription>
-                </VStack>
-              </HStack>
-              <HStack className="min-[450px]:gap-3 gap-1">
-                <Button variant="link" size="sm" className="px-3.5 self-center">
-                  <ButtonText>Reintentar</ButtonText>
-                </Button>
-                <Pressable onPress={() => toast.close(id)}>
-                  <Icon as={CloseIcon} />
-                </Pressable>
-              </HStack>
-            </Toast>
-          );
-        },
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Ingresa un código de 4 dígitos."
+            onClose={() => toast.close(id)}
+          />
+        ),
       });
       setCode(['', '', '', '']);
-      inputRefs.forEach(ref => {
-        ref.current?.clear();
-      });
+      inputRefs.forEach(ref => ref.current?.clear());
       inputRefs[0].current?.focus();
     }
   };
@@ -229,7 +194,9 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
           </ActionsheetDragIndicatorWrapper>
           <Center style={styles.centerContent}>
             <Heading style={styles.title} size='xl'>Código de verificación</Heading>
-            <Text style={styles.text}>Se ha enviado un código de verificación a +{lada} {phone}</Text>
+            <Text style={styles.text}>
+              Se ha enviado un código de verificación a{"\n"}+{lada} {phone}
+            </Text>
             <HStack style={styles.hStack}>
               {inputRefs.map((inputRef, index) => (
                 <TextInput
