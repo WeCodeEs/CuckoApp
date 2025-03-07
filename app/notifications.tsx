@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Animated } from "react-native";
+import { View, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Animated } from "react-native";
+import { Text } from "@/components/ui/text";
+import { Heading } from "@/components/ui/heading";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { Notification } from "@/constants/types";
@@ -66,7 +68,7 @@ export default function Notifications() {
           style={styles.avatar}
         />
         <View style={styles.notificationContent}>
-          <Text style={styles.notificationTitle}>{item.title}</Text>
+          <Heading style={styles.notificationTitle}>{item.title}</Heading>
           <Text style={styles.notificationMessage}>{item.message}</Text>
           <Text style={styles.notificationDate}>{item.date}</Text>
         </View>
@@ -78,10 +80,10 @@ export default function Notifications() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Notificaciones</Text>
+        <Heading style={styles.headerTitle}>Notificaciones</Heading>
         {notifications.length > 0 && (
           <TouchableOpacity onPress={markAllAsRead} style={styles.markAllButton}>
-            <Text style={styles.markAllButtonText}>Marcar todas como leídas</Text>
+            <Heading style={styles.markAllButtonText}>Marcar todas como leídas</Heading>
           </TouchableOpacity>
         )}
       </View>
@@ -102,7 +104,7 @@ export default function Notifications() {
         ) : (
           <View style={styles.emptyContainer}>
             <Image source={require("@/assets/images/avatars/avatar-icon-1.png")} style={styles.emptyImage} />
-            <Text style={styles.emptyTitle}>No hay notificaciones</Text>
+            <Heading style={styles.emptyTitle}>No hay notificaciones</Heading>
             <Text style={styles.emptyText}>No tienes notificaciones por el momento.</Text>
           </View>
         )}
@@ -126,9 +128,10 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 35,
-    fontWeight: "bold",
+    fontWeight: "normal",
     textAlign: "center",
-    marginBottom: 30,
+    paddingVertical: 20,
+    marginBottom: 10,
     color: Colors.light.background,
   },
   markAllButton: {
@@ -138,8 +141,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   markAllButtonText: {
-    fontSize: 14,
-    fontWeight: "bold",
+    fontSize: 13,
+    fontWeight: "normal",
     color: Colors.light.mediumDarkBlue,
   },
   notificationsContainer: {
@@ -148,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: -20,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: Colors.light.text,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
@@ -164,7 +167,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: Colors.light.text,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
@@ -184,17 +187,17 @@ const styles = StyleSheet.create({
   },
   notificationTitle: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
+    fontWeight: "normal",
+    color: Colors.light.text,
   },
   notificationMessage: {
     fontSize: 14,
-    color: "#555",
+    color: Colors.light.ash,
     marginTop: 4,
   },
   notificationDate: {
     fontSize: 12,
-    color: "#999",
+    color: Colors.dark.icon,
     marginTop: 4,
   },
   unreadIndicator: {
@@ -216,12 +219,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "normal",
     textAlign: "center",
   },
   emptyText: {
     fontSize: 14,
-    color: "#666",
+    color: Colors.light.text,
     textAlign: "center",
     marginTop: 10,
   },
@@ -233,6 +236,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#555",
+    color: Colors.light.text,
   },
 });
