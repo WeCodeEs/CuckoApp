@@ -15,11 +15,13 @@ interface InputPhoneProps {
     phone: string;
     onLadaChange: (newLada: string) => void;
     onPhoneChange: (newPhone: string) => void;
+    onSave?: (newPhone: string) => void;
+    onCancel?: () => void;
     editable: boolean;
     headingText: string;
 }
 
-const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPhoneChange, editable, headingText }) => {
+const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPhoneChange, onSave, onCancel,  editable, headingText }) => {
     const [inputPhone, setInputPhone] = useState(phone);
     const [inputLada, setInputLada] = useState(lada);
     const [finalPhone, setFinalPhone] = useState(phone);
@@ -69,14 +71,16 @@ const InputPhone: React.FC<InputPhoneProps> = ({ lada, phone, onLadaChange, onPh
             onLadaChange(inputLada);
             setShowAlert(false);
             setIsEditing(false);
+            onSave!(inputPhone);
         }
     };
-
+    
     const handleCancel = () => {
-        setInputPhone(maskPhoneNumber(finalPhone));
+        setInputPhone(finalPhone);
         setInputLada(finalLada);
         setShowAlert(false);
         setIsEditing(false);
+        onCancel!();
     };
 
     return (

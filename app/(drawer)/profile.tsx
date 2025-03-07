@@ -13,7 +13,7 @@ import InputInfo from '@/components/InputInfo';
 import InputSelect from '@/components/InputSelect';
 import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
-import { isValidEmail, sanitizeEmail, isValidPhoneNumber, sanitizePhoneNumber } from '@/constants/validations';
+import { isValidEmail, sanitizeEmail, isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
 import { Alert, AlertText, AlertIcon } from '@/components/ui/alert';
 import { Info } from "lucide-react-native";
 
@@ -35,18 +35,27 @@ const ProfileScreen = () => {
     const [showEmailAlert, setShowEmailAlert] = useState(false);
     const [showPhoneAlert, setShowPhoneAlert] = useState(false);
 
-    const handleLadaChange = (newLada: string) => setLada(newLada);
-
-    const handlePhoneChange = (newPhone: string) => {
-        const sanitizedPhone = sanitizePhoneNumber(newPhone);
-        setPhone(sanitizedPhone);
-        setShowPhoneAlert(!isValidPhoneNumber(sanitizedPhone));
+    const handleLadaChange = (newLada: string) => {
+        setLada(sanitizeLada(newLada));
     };
 
-    const handleEmailChange = (newEmail: string) => {
-        const { sanitized, hadInvalidChars } = sanitizeEmail(newEmail);
-        setMail(sanitized);
-        setShowEmailAlert(hadInvalidChars || !isValidEmail(sanitized));
+    const handlePhoneChange = (newPhone: string) => {
+        setPhone(sanitizePhoneNumber(newPhone));
+        setShowPhoneAlert(false);
+    };
+
+    const handlePhoneSave = (newPhone: string) => {
+        if (!isValidPhoneNumber(newPhone)) {
+            setShowPhoneAlert(true);
+        } else {
+            setShowPhoneAlert(false);
+            setPhone(newPhone);
+        }
+    };
+
+    const handlePhoneCancel = () => {
+        setPhone(user.phone);
+        setShowPhoneAlert(false);
     };
 
     return (
@@ -78,15 +87,9 @@ const ProfileScreen = () => {
                       editable={true}
                       isEmail={true}
                       headingText={"Correo"}
-                      onEditComplete={handleEmailChange}
+                      onEditComplete={(email) => setMail(email)}
                       onCancelEdit={() => {}}
                     />
-                    {showEmailAlert && (
-                      <Alert action="error" variant="solid" className="mt-4">
-                        <AlertIcon as={Info} />
-                        <AlertText>El correo debe ser una dirección de correo válida.</AlertText>
-                      </Alert>
-                    )}
                     <InputSelect 
                         initialValue={user.faculty}
                         editable={true}
@@ -100,6 +103,8 @@ const ProfileScreen = () => {
                         phone={phone}
                         onLadaChange={handleLadaChange}
                         onPhoneChange={handlePhoneChange}
+                        onSave={handlePhoneSave}
+                        onCancel={handlePhoneCancel}
                         editable={true}
                         headingText="Teléfono"
                     />
@@ -142,19 +147,11 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 195,
         backgroundColor: Colors.light.mediumBlue,
-      },
-      general_container: {
+    },
+    general_container: {
         backgroundColor: Colors.light.mediumBlue,
         width: '100%',
         height: 'auto',
-    },
-    section_container: {
-        width: '100%',
-        height: 'auto',
-        flexDirection: 'row',
-        alignContent: 'center',
-        justifyContent: 'space-between',
-        paddingBottom: 25,
     },
     content_box: {
         padding: 20,
@@ -172,11 +169,6 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
         paddingHorizontal: 50,
         textAlign: 'center',
-    },
-    subtitle: {
-        paddingTop: 30,
-        paddingBottom: 15,
-        color: Colors.light.text,
     },
     avatar_image: {
         borderRadius: 100,
