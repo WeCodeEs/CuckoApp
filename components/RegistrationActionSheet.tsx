@@ -16,6 +16,10 @@ import { Colors } from '@/constants/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from "expo-router";
 import { checkPhoneNumberRegistration } from '@/constants/api';
+import { useToast, Toast, ToastTitle, ToastDescription } from '@/components/ui/toast';
+import { Pressable } from '@/components/ui/pressable';
+import { Icon, CloseIcon, HelpCircleIcon } from '@/components/ui/icon';
+import { VStack } from '@/components/ui/vstack';
 
 interface RegistrationActionSheetProps {
   isOpen: boolean;
@@ -36,23 +40,24 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   const [code, setCode] = useState(['', '', '', '']);
   const navigation = useNavigation();
   const router = useRouter();
+  const toast = useToast(); 
 
   useEffect(() => {
     if (isOpen) {
       const focusTimeout = setTimeout(() => {
         inputRefs[0].current?.focus();
       }, 100);
-
       return () => clearTimeout(focusTimeout);
     }
   }, [isOpen]);
 
   const handleChange = (text: string, index: number) => {
+    const sanitized = text.replace(/[^0-9]/g, '');
     const newCode = [...code];
-    newCode[index] = text;
+    newCode[index] = sanitized;
     setCode(newCode);
 
-    if (text.length === 1) {
+    if (sanitized.length === 1) {
       if (index < inputRefs.length - 1) {
         inputRefs[index + 1].current?.focus();
       } else {
@@ -60,17 +65,14 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
       }
     }
 
-    if (text.length > 1) {
-      const digits = text.split('').slice(0, 4);
+    if (sanitized.length > 1) {
+      const digits = sanitized.split('').slice(0, 4);
       const updatedCode = [...code];
-
       digits.forEach((digit, idx) => {
         updatedCode[idx] = digit;
         inputRefs[idx].current?.setNativeProps({ text: digit });
       });
-
       setCode(updatedCode);
-
       if (digits.length === 4) {
         inputRefs[3].current?.blur();
       } else {
@@ -100,58 +102,121 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
 
   const checkUserRegistration = async (): Promise<boolean> => {
     try {
-      //TODO: Validar que todos los campos contengan información
       const isPhoneNumberRegistered = await checkPhoneNumberRegistration(phone);
-      if(isPhoneNumberRegistered){
-        // const userData = await fetchUserByPhoneNumber(phone);
-        // setUser(userData); 
-      }else{
-        //TODO: La primera de múltiples llamadas al back para rellenar la información del usuario
-        // await insertUserPhoneNumber({ lada, phone });
-        // setUser({ lada, phone }); 
-      }
       return isPhoneNumberRegistered;
     } catch (err) {
-      return false; 
+      return false;
     }
   };
-  
 
   const handleNavigation = async () => {
-
     const fullCode = code.join('');
-    
-    if (true) { // TODO: Agregar validacion de codigo OTP
-      setCode(['', '', '', '']); 
-
-      inputRefs.forEach((ref) => {
-        ref.current?.clear();
-      });
-
-      try {
-        const isUserRegistered = await checkUserRegistration();
-        if (isUserRegistered) {
-          router.replace("/(tabs)/(home)");
-        } else {
-          router.push('/(registration)/registrationName');
+    if (fullCode.length === 4) {
+      const isValidOTP = fullCode.split('').every(digit => digit === fullCode[0]);
+      if (isValidOTP) {
+        setCode(['', '', '', '']);
+        inputRefs.forEach((ref) => {
+          ref.current?.clear();
+        });
+        try {
+          const isUserRegistered = await checkUserRegistration();
+          if (isUserRegistered) {
+            router.replace("/(tabs)/(home)");
+          } else {
+            router.push('/(registration)/registrationName');
+          }
+          setTimeout(() => {
+            onClose();
+          }, 300);
+        } catch (err) {
+          console.error("Error al verificar el teléfono:", err);
         }
-  
-        setTimeout(() => {
-          onClose();
-        }, 300);
-      } catch (err) {
-        console.error("Error al verificar el teléfono:", err);
+      } else {
+        toast.show({
+          id: "otp-error",
+          placement: 'top',
+          duration: 3000,
+          render: ({ id }) => {
+            const uniqueToastId = "toast-" + id;
+            return (
+              <Toast
+                action="error"
+                variant="outline"
+                nativeID={uniqueToastId}
+                className="p-4 gap-6 border-error-500 w-full shadow-hard-5 max-w-[443px] flex-row justify-between"
+              >
+                <HStack space="md">
+                  <Icon as={HelpCircleIcon} className="stroke-error-500 mt-0.5" />
+                  <VStack space="xs">
+                    <ToastTitle className="font-semibold text-error-500">Error!</ToastTitle>
+                    <ToastDescription size="sm">
+                      La verificación con Twilio ha fallado.
+                    </ToastDescription>
+                  </VStack>
+                </HStack>
+                <HStack className="min-[450px]:gap-3 gap-1">
+                  <Button variant="link" size="sm" className="px-3.5 self-center">
+                    <ButtonText>Reintentar</ButtonText>
+                  </Button>
+                  <Pressable onPress={() => toast.close(id)}>
+                    <Icon as={CloseIcon} />
+                  </Pressable>
+                </HStack>
+              </Toast>
+            );
+          },
+        });
+        setCode(['', '', '', '']);
+        inputRefs.forEach(ref => {
+          ref.current?.clear();
+        });
+        inputRefs[0].current?.focus();
       }
     } else {
-      // TODO: Mensaje de error y limpieza
+      toast.show({
+        id: "otp-incomplete",
+        placement: 'top',
+        duration: 3000,
+        render: ({ id }) => {
+          const uniqueToastId = "toast-" + id;
+          return (
+            <Toast
+              action="error"
+              variant="outline"
+              nativeID={uniqueToastId}
+              className="p-4 gap-6 border-error-500 w-full shadow-hard-5 max-w-[443px] flex-row justify-between"
+            >
+              <HStack space="md">
+                <Icon as={HelpCircleIcon} className="stroke-error-500 mt-0.5" />
+                <VStack space="xs">
+                  <ToastTitle className="font-semibold text-error-500">Error!</ToastTitle>
+                  <ToastDescription size="sm">
+                    Ingresa un código de 4 dígitos.
+                  </ToastDescription>
+                </VStack>
+              </HStack>
+              <HStack className="min-[450px]:gap-3 gap-1">
+                <Button variant="link" size="sm" className="px-3.5 self-center">
+                  <ButtonText>Reintentar</ButtonText>
+                </Button>
+                <Pressable onPress={() => toast.close(id)}>
+                  <Icon as={CloseIcon} />
+                </Pressable>
+              </HStack>
+            </Toast>
+          );
+        },
+      });
       setCode(['', '', '', '']);
+      inputRefs.forEach(ref => {
+        ref.current?.clear();
+      });
       inputRefs[0].current?.focus();
     }
   };
 
   return (
-    // TODO: Cuando el usuario pegue el codigo completo, o que lo pegue desde el teclado por ios, se pegue en cada recuadro
-    <Actionsheet isOpen={isOpen} onClose={onClose} snapPoints={ Platform.OS === 'ios' ? [35] : [55] }>
+    <Actionsheet isOpen={isOpen} onClose={onClose} snapPoints={Platform.OS === 'ios' ? [35] : [55]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'position' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? -30 : 0}
@@ -176,7 +241,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
                     focusedIndex === index && { borderColor: Colors.light.mediumBlue }
                   ]}
                   maxLength={1}
-                  keyboardType= {Platform.OS === 'ios' ? 'number-pad' : 'phone-pad'}
+                  keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'phone-pad'}
                   autoComplete={index === 0 ? 'one-time-code' : 'off'}
                   value={code[index]}
                   onFocus={() => setFocusedIndex(index)}
@@ -189,7 +254,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
             <Button
               onPressIn={handlePressIn}
               onPressOut={handlePressOut}
-              onPress={() => handleNavigation()}
+              onPress={handleNavigation}
               style={[styles.nextButton, { backgroundColor: buttonColor }]}
             >
               <ButtonText>Siguiente</ButtonText>
