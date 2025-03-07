@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, View } from 'react-native';
+import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, View, ScrollView } from 'react-native';
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
@@ -58,32 +58,34 @@ const RegistrationPhone = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 30 : 0}
         >
-          <Center style={styles.header_container}>
-            <View style={styles.image_container}>
-              <CuckooIsotipo style={styles.logo} />
-            </View>
-            <Heading style={styles.title} size='2xl'>Bienvenido</Heading>
-            <Text style={styles.text}>Para continuar, ingresa un número de celular</Text>
-            <Center style={styles.general_container}>
-              <InputPhone
-                lada={lada}
-                phone={phone}
-                onLadaChange={handleLadaChange}
-                onPhoneChange={handlePhoneChange}
-                editable={false}
-                headingText="Teléfono"
-              />
-            </Center>
-
-            {showPhoneAlert && (
-              <View style={styles.alertContainer}>
-                <Alert action="error" variant="solid" className="mt-4">
-                  <AlertIcon as={Info} />
-                  <AlertText>El número de teléfono debe contener 10 dígitos.</AlertText>
-                </Alert>
+          <ScrollView>
+            <Center style={styles.header_container}>
+              <View style={styles.image_container}>
+                <CuckooIsotipo style={styles.logo} />
               </View>
-            )}
-          </Center>
+              <Heading style={styles.title} size='2xl'>Bienvenido</Heading>
+              <Text style={styles.text}>Para continuar, ingresa un número de celular</Text>
+              <Center style={styles.general_container}>
+                <InputPhone
+                  lada={lada}
+                  phone={phone}
+                  onLadaChange={handleLadaChange}
+                  onPhoneChange={handlePhoneChange}
+                  editable={false}
+                  headingText="Teléfono"
+                />
+              </Center>
+
+              {showPhoneAlert && (
+                <View style={styles.alertContainer}>
+                  <Alert action="error" variant="solid" className="mt-4">
+                    <AlertIcon as={Info} />
+                    <AlertText>El número de teléfono debe contener 10 dígitos.</AlertText>
+                  </Alert>
+                </View>
+              )}
+            </Center>
+          </ScrollView>
           <Center style={styles.buttonContainer}>
             <Button
               onPress={handleNextPress}
@@ -114,6 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
     height: '100%',
     flex: 1,
+    padding: 100,
   },
   keyboardContainer: {
     flex: 1,
@@ -143,6 +146,7 @@ const styles = StyleSheet.create({
   general_container: {
     paddingHorizontal: 30,
     paddingTop: 30,
+    marginBottom: 20,
     width: '100%',
     height: 'auto',
   },
@@ -157,5 +161,6 @@ const styles = StyleSheet.create({
   },
   alertContainer: {
     width: '90%',
+    padding: 500,
   }
 });
