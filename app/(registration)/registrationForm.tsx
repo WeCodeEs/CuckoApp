@@ -18,19 +18,19 @@ const RegistrationForm = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [email, setEmail] = useState("");
   const [selectedSchool, setSelectedSchool] = useState("");
-  const [hasEditedEmail, setHasEditedEmail] = useState(false);
   const [showEmailAlert, setShowEmailAlert] = useState(false);
 
   const handleChangeEmail = (inputEmail: string) => {
-    setHasEditedEmail(true);
     const { sanitized, hadInvalidChars } = sanitizeEmail(inputEmail);
 
     setEmail(sanitized);
-    setShowEmailAlert(hadInvalidChars);
+    setShowEmailAlert(false); // Oculta la alerta mientras el usuario escribe
   };
 
   const handleBlurEmail = () => {
-    setEmail(sanitizeEmail(email).sanitized);
+    const { sanitized, hadInvalidChars } = sanitizeEmail(email);
+    setEmail(sanitized);
+    setShowEmailAlert(hadInvalidChars); // Solo muestra la alerta si el email sigue inválido
   };
 
   const handleSelectSchool = (school: string) => {
@@ -40,6 +40,7 @@ const RegistrationForm = () => {
   useEffect(() => {
     if (isValidEmail(email) && selectedSchool) {
       setButtonColor(Colors.light.darkBlue);
+      setShowEmailAlert(false); // Oculta la alerta si el email es válido
     } else {
       setButtonColor(Colors.light.lightGray);
     }
@@ -88,15 +89,21 @@ const RegistrationForm = () => {
               </View>
             </Center>
           </ScrollView>
-            <Center style={styles.buttonContainer}>
-              <Button
-                onPress={() => router.replace("/(tabs)/(home)")}
-                style={[styles.nextButton, { backgroundColor: buttonColor }]}
-                disabled={!isValidEmail(email) || !selectedSchool}
-              >
-                <ButtonText>Finalizar</ButtonText>
-              </Button>
-            </Center>
+          <Center style={styles.buttonContainer}>
+            <Button
+              onPress={() => {
+                if (!isValidEmail(email)) {
+                  setShowEmailAlert(true); // Muestra la alerta solo si el email sigue inválido
+                } else {
+                  router.replace("/(tabs)/(home)");
+                }
+              }}
+              style={[styles.nextButton, { backgroundColor: buttonColor }]}
+              disabled={!isValidEmail(email) || !selectedSchool}
+            >
+              <ButtonText>Finalizar</ButtonText>
+            </Button>
+          </Center>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -104,8 +111,6 @@ const RegistrationForm = () => {
 };
 
 export default RegistrationForm;
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -154,11 +159,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: '100%',
-    marginBottom: -10,
+    marginBottom: -15,
     alignSelf: 'flex-end'
   },
   nextButton: {
     borderRadius: 30,
-    width: '60%',
+    width: '60%'
   },
 });
