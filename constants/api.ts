@@ -1,8 +1,10 @@
 import { Menu, Product, User, Faculty, Category, Notification } from '@/constants/types';
+import { supabaseClient } from "@/utils/supabase";
 
 const API_URL_MENU = process.env.EXPO_PUBLIC_API_URL_MENU ?? "";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY ?? "";
 const API_URL_NOTI = process.env.EXPO_PUBLIC_API_URL_NOTI ?? "";
+const SUPA_EDGE_FUNC = process.env.EXPO_PUBLIC_SUPABASE_PROD_EDGE_FUNCTIONS_URL ?? "";
 
 if (!API_KEY || !API_URL_MENU) {
   console.error("API Key o API URL no definidos.");
@@ -252,3 +254,18 @@ export async function fetchAllNotifications(): Promise<Notification[]> {
     return [];
   }
 }
+
+export async function fetchPaymentIntent() : Promise<string> {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("create-payment-intent", {
+      body:  { amount: 1000, currency: 'mxn' },
+    });
+
+    if (error) throw new Error(error);
+
+    return data.clientSecret;
+  } catch (error) {
+    console.error("Error al llamar fetchPaymentIntent:", error);
+    return "";
+  }
+};

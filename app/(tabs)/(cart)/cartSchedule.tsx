@@ -11,6 +11,8 @@ import { Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBac
 import { ChevronDownIcon } from "@/components/ui/icon";
 import { Colors } from "@/constants/Colors";
 import { Clock, ShoppingBag, CircleAlert } from "lucide-react-native";
+import { useStripe } from '@stripe/stripe-react-native';
+import { fetchPaymentIntent } from "@/constants/api";
 
 const places = [
   { label: "Cuckoo Resto", value: "resto" },
@@ -57,12 +59,34 @@ export default function ScheduleOrderScreen() {
   const [selectedPlace, setSelectedPlace] = useState("");
   const [timeSlots, setTimeSlots] = useState(generateTimeSlots);
   const [selectedTime, setSelectedTime] = useState("");
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [clientSecret, setClientSecret] = useState<string>();
 
   useEffect(() => {
     setTimeSlots(generateTimeSlots());
   }, []);
 
   const formattedDate = new Date().toLocaleDateString("es-MX");
+
+  const handlePayment = async () => {
+    const clientSecret = await fetchPaymentIntent();
+    if (!clientSecret) return;
+
+    setClientSecret(clientSecret);
+    const { error } = await initPaymentSheet({ paymentIntentClientSecret: clientSecret, merchantDisplayName: "Cuckoo Coffee & Resto ®"});
+
+    if (error) {
+      console.error("Error con mensaje: ", error.message);
+      return;
+    }
+
+    const { error: paymentError} = await presentPaymentSheet();
+    if (paymentError) {
+      console.error("Error con el pago: ", paymentError.message);
+    } else {
+      console.log("Pago completado con exito: ");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -128,7 +152,7 @@ export default function ScheduleOrderScreen() {
             <Text size="sm" style={styles.summaryText}>{selectedPlace ? places.find(p => p.value === selectedPlace)?.label : ""}</Text>
           </VStack>
           <Center>
-            <Button size="md" style={styles.paymentButton}>
+            <Button size="md" style={styles.paymentButton} onPress={handlePayment}>
               <ButtonText size="sm" style={styles.paymentButtonText}>CONFIRMAR</ButtonText>
             </Button>
           </Center>
