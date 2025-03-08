@@ -217,7 +217,6 @@ export async function fetchAllFaculties(): Promise<any[]> {
   }
 }
 
-
 export async function fetchFacultyById(facultyId: number): Promise<Faculty | undefined> {
   try {
     const faculties = await fetchAllFaculties();
