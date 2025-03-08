@@ -1,5 +1,6 @@
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+// order_details.tsx
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
 import { View } from "@/components/ui/view";
@@ -8,26 +9,62 @@ import { Soup, ClipboardList } from 'lucide-react-native';
 import { Clock, CheckCircle, ShoppingBag } from 'lucide-react-native';
 import { useLocalSearchParams } from "expo-router";
 import { Colors } from '@/constants/Colors';
-
-interface Pedido {
-  id: number;
-  platillos: { id: number, cantidad: number }[];
-  precioFinal: number;
-  fecha: string;
-  hora: string;
-  estado: string;
-}
+import { useToast } from '@/components/ui/toast';
+import ErrorToast from '@/components/ErrorToast';
+import { Order } from '@/constants/types';
+import { fetchOrderById } from '@/constants/api';
 
 const OrderDetailsScreen: React.FC = () => {
-  const { pedido } = useLocalSearchParams();
-  const parsedPedido: Pedido = pedido ? JSON.parse(pedido as string) : null;
+  const { orderId } = useLocalSearchParams();
+  const toast = useToast();
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  if (!parsedPedido) {
-    return <Text>No se encontró el pedido.</Text>;
+  useEffect(() => {
+    const loadOrder = async () => {
+      try {
+        const fetchedOrder = await fetchOrderById(Number(orderId));
+        if (!fetchedOrder) {
+          throw new Error("Pedido no encontrado");
+        }
+        setOrder(fetchedOrder);
+      } catch (error) {
+        console.error("Error verificando la existencia del pedido:", error);
+        toast.show({
+          id: "order-error",
+          placement: 'top',
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Pedido no encontrado"
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOrder();
+  }, [orderId]);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color={Colors.light.darkBlue} />;
+  }
+
+  if (!order) {
+    return (
+      <View style={styles.container}>
+        <Text>Pedido no encontrado</Text>
+      </View>
+    );
   }
 
   const getBackgroundColor = () => {
-    switch (parsedPedido.estado) {
+    switch (order.status) {
+      case 'Esperando confirmación': return Colors.light.lightGray;
       case 'En preparación': return Colors.light.preparingBackground;
       case 'Listo': return Colors.light.readyBackground;
       case 'Entregado': return Colors.light.deliveredBackground;
@@ -36,7 +73,8 @@ const OrderDetailsScreen: React.FC = () => {
   };
 
   const getTextColor = () => {
-    switch (parsedPedido.estado) {
+    switch (order.status) {
+      case 'Esperando confirmación': return Colors.light.ash;
       case 'En preparación': return Colors.light.preparing;
       case 'Listo': return Colors.light.ready;
       case 'Entregado': return Colors.light.delivered;
@@ -46,39 +84,39 @@ const OrderDetailsScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Heading size={"2xl"} style={styles.order_id}>Pedido {parsedPedido.id}</Heading>
-      <Text size={"md"} style={styles.date}>{parsedPedido.fecha}, {parsedPedido.hora}</Text>
+      <Heading size={"2xl"} style={styles.orderId}>Pedido {order.id}</Heading>
+      <Text size={"md"} style={styles.date}>{order.date}, {order.time}</Text>
 
       <View style={{ alignSelf: 'center' }}>
         <View style={[styles.statusContainer, { backgroundColor: getBackgroundColor() }]}>
-          {parsedPedido.estado === 'En preparación' ? <Clock size={16} color={getTextColor()}/>
-          : parsedPedido.estado === 'Listo' ? <ShoppingBag size={16} color={getTextColor()}/>
+          {(order.status === 'En preparación' || order.status === 'Esperando confirmación') ? <Clock size={16} color={getTextColor()}/>
+          : order.status === 'Listo' ? <ShoppingBag size={16} color={getTextColor()}/>
           : <CheckCircle size={16} color={getTextColor()}/>}
-          <Text size='md' style={[styles.status, { color: getTextColor(), marginLeft: 6 }]}>{parsedPedido.estado}</Text>
+          <Text size='md' style={[styles.status, { color: getTextColor(), marginLeft: 6 }]}>{order.status}</Text>
         </View>
       </View>
 
-      <View style={[styles.subtitle_container, { marginHorizontal: 30 }]}>
+      <View style={[styles.subtitleContainer, { marginHorizontal: 30 }]}>
         <Soup size={30} color={Colors.light.darkBlue} style={styles.icon}/>
-        <Heading size={"xl"} style={styles.subtitle}>Productos ordenados</Heading>
+        <Heading size={"xl"} style={styles.subtitle}>Productos Ordenados</Heading>
       </View>
 
       <VStack space='xl'>
-        {parsedPedido.platillos.map((platillo, index) => (
-          <View key={index} style={styles.details_row}>
-            <Text size={"xs"} style={styles.count}>x{platillo.cantidad}</Text>
-            <Text size={"lg"} style={styles.dish}>Platillo ejemplo {platillo.id}</Text>
-            <Text size={"lg"} style={styles.dish_price}>$10.00</Text>
+        {order.items.map((item, index) => (
+          <View key={index} style={styles.detailsRow}>
+            <Text size={"xs"} style={styles.count}>x{item.quantity}</Text>
+            <Text size={"lg"} style={styles.dish}>Platillo ejemplo {item.id}</Text>
+            <Text size={"lg"} style={styles.dishPrice}>$10.00</Text>
           </View>
         ))}
       </VStack>
 
-      <View style={[styles.details_row, { alignItems: 'center' }]}>
-        <View style={styles.subtitle_container}>
+      <View style={[styles.detailsRow, { alignItems: 'center' }]}>
+        <View style={styles.subtitleContainer}>
           <ClipboardList size={27} color={Colors.light.darkBlue} style={styles.icon}/>
           <Heading size={"xl"} style={styles.subtitle}>Total</Heading>
         </View>
-        <Heading size={"xl"} style={styles.price}>${parsedPedido.precioFinal.toFixed(2)}</Heading>
+        <Heading size={"xl"} style={styles.price}>${order.finalPrice.toFixed(2)}</Heading>
       </View>
     </ScrollView>
   );
@@ -89,7 +127,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light.background,
   },
-  order_id: {
+  orderId: {
     color: Colors.light.darkBlue,
     paddingTop: 20,
     alignSelf: 'center',
@@ -99,7 +137,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 10,
     fontSize: 16,
-    color:  Colors.light.ash,
+    color: Colors.light.ash,
   },
   statusContainer: { 
     flexDirection: 'row', 
@@ -115,7 +153,7 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     paddingRight: 2,
   },
-  subtitle_container: {
+  subtitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 35,
@@ -126,12 +164,12 @@ const styles = StyleSheet.create({
   },  
   subtitle: {
     fontWeight: 'normal',
-    color:  Colors.light.darkBlue,
+    color: Colors.light.darkBlue,
     paddingLeft: 6,
     textAlignVertical: 'bottom',
     paddingTop: 5,
   },
-  details_row: {
+  detailsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 30,
@@ -152,7 +190,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     color: Colors.light.ash,
   },
-  dish_price: {
+  dishPrice: {
     color: Colors.light.ash,
     height: 30,
     width: '25%',

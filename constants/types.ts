@@ -68,3 +68,12 @@ export interface CartItem {
   selectedVariant: Variant | undefined;
   ingredients: CustomizableIngredient[] | undefined;
 };
+
+export interface Order {
+  id: number;
+  items: { id: number; quantity: number }[];
+  finalPrice: number;
+  date: string;
+  time: string;
+  status: string;
+}

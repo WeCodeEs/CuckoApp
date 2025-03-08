@@ -1,4 +1,4 @@
-import { Menu, Product, User, Faculty, Category } from '@/constants/types';
+import { Menu, Product, User, Faculty, Category, Order } from '@/constants/types';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY ?? "";
@@ -16,9 +16,7 @@ export async function fetchAllMenus(): Promise<Menu[]> {
       }
     });
     const data = await response.json();
-
     const menus = data.record?.menus;
-
     if (Array.isArray(menus)) {
       return menus;
     } else {
@@ -44,12 +42,10 @@ export async function fetchAllCategories(): Promise<Category[]> {
 export async function fetchMenuById(menuId: number): Promise<Menu | null> {
   try {
     const menus: Menu[] = await fetchAllMenus();
-
     if (!menus || menus.length === 0) {
       console.error("No se encontraron menús o la respuesta está vacía.");
       return null;
     }
-
     const menu = menus.find((menu) => menu.id === menuId);
     return menu || null;
   } catch (error) {
@@ -61,24 +57,18 @@ export async function fetchMenuById(menuId: number): Promise<Menu | null> {
 export async function fetchProductsByMenuId(menuId: number): Promise<Product[]> {
   try {
     const allCategories = await fetchAllCategories();
-
     const menuCategories = allCategories.filter((category: Category) => category.menuId === menuId);
-
     if (menuCategories.length === 0) {
       console.error(`No se encontraron categorías para el menú con ID ${menuId}.`);
       return [];
     }
-
     const allProducts = await fetchAllProducts();
-
     const menuProducts: Product[] = allProducts.filter((product: Product) =>
       menuCategories.some((category: Category) => category.id === product.categoryId)
     );
-
     if (menuProducts.length === 0) {
       console.error(`No se encontraron productos para el menú con ID ${menuId}.`);
     }
-
     return menuProducts;
   } catch (error) {
     console.error("Error al obtener los productos del menú:", error);
@@ -86,31 +76,30 @@ export async function fetchProductsByMenuId(menuId: number): Promise<Product[]> 
   }
 }
 
-
 export async function fetchAllProducts(): Promise<Product[]> {
-    try {
-      const response = await fetch(API_URL, {
-        headers: {
-          "X-Master-Key": API_KEY
-        }
-      });
-      const data = await response.json();
-      return data.record.products;
-    } catch (error) {
-      console.error("Error al obtener todos los productos:", error);
-      throw error;
-    }
+  try {
+    const response = await fetch(API_URL, {
+      headers: {
+        "X-Master-Key": API_KEY
+      }
+    });
+    const data = await response.json();
+    return data.record.products;
+  } catch (error) {
+    console.error("Error al obtener todos los productos:", error);
+    throw error;
   }
+}
 
 export async function fetchProductById(productId: number): Promise<Product | undefined> {
-    try {
-      const products = await fetchAllProducts();
-      const product = products.find((product) => product.id === productId);
-      return product;
-    } catch (error) {
-      console.error("Error al obtener el producto por ID:", error);
-      throw error;
-    }
+  try {
+    const products = await fetchAllProducts();
+    const product = products.find((product) => product.id === productId);
+    return product;
+  } catch (error) {
+    console.error("Error al obtener el producto por ID:", error);
+    throw error;
+  }
 }
 
 export async function fetchVariantsByProductId(productId: number) {
@@ -192,9 +181,7 @@ export async function fetchAllUsers(): Promise<any[]> {
 export async function fetchUserByPhoneNumber(phoneNumber: string): Promise<User | undefined> {
   try {
     const users = await fetchAllUsers();
-
     const user = users.find((user) => user.phone === phoneNumber);
-
     return user;
   } catch (error) {
     console.error("Error al obtener el usuario por número de teléfono:", error);
@@ -225,5 +212,28 @@ export async function fetchFacultyById(facultyId: number): Promise<Faculty | und
   } catch (error) {
     console.error("Error al obtener la facultad por ID:", error);
     throw error;
+  }
+}
+
+export async function fetchAllOrders(): Promise<Order[]> {
+  try {
+    const response = await fetch(API_URL, {
+      headers: { "X-Master-Key": API_KEY }
+    });
+    const data = await response.json();
+    return data.record.orders;
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return [];
+  }
+}
+
+export async function fetchOrderById(orderId: number): Promise<Order | undefined> {
+  try {
+    const orders = await fetchAllOrders();
+    return orders.find(order => order.id === orderId);
+  } catch (error) {
+    console.error("Error fetching order by ID:", error);
+    return undefined;
   }
 }
