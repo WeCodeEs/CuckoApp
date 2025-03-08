@@ -6,11 +6,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
+import WebBrowser from "expo-web-browser";
 
 
 export default function SettingsScreen() {
-  const router = useRouter();
   const [pushNotifications, setPushNotifications] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
 
@@ -21,22 +20,24 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Heading style={styles.header}>Configuración</Heading>
-
       <View style={styles.section}>
         <Heading style={styles.sectionTitle}>Notificaciones</Heading>
         <View style={styles.option}>
           <Text style={styles.optionText}>Notificaciones Push</Text>
           <Switch
             value={pushNotifications}
-            onValueChange={(value) => setPushNotifications(value)}
+            onValueChange={setPushNotifications}
+            trackColor={switchStyles.trackColor}
+            thumbColor={pushNotifications ? switchStyles.thumbColor.active : switchStyles.thumbColor.inactive}
           />
         </View>
         <View style={styles.option}>
           <Text style={styles.optionText}>Notificaciones por Correo</Text>
           <Switch
             value={emailNotifications}
-            onValueChange={(value) => setEmailNotifications(value)}
+            onValueChange={setEmailNotifications}
+            trackColor={switchStyles.trackColor}
+            thumbColor={emailNotifications ? switchStyles.thumbColor.active : switchStyles.thumbColor.inactive}
           />
         </View>
       </View>
@@ -59,6 +60,14 @@ export default function SettingsScreen() {
   );
 }
 
+const switchStyles = {
+  trackColor: { false: Colors.light.borderBox, true: Colors.light.lightBlue },
+  thumbColor: {
+    active: Colors.light.mediumDarkBlue,
+    inactive: Colors.dark.text,
+  },
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -68,18 +77,11 @@ const styles = StyleSheet.create({
   backButton: {
     marginBottom: 20,
   },
-  header: {
-    fontSize: 22,
-    fontWeight: "normal",
-    color: Colors.light.text,
-    marginBottom: 20,
-    paddingVertical: 10,
-  },
   section: {
     marginBottom: 25,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 19,
     fontWeight: "normal",
     marginBottom: 10,
     color: Colors.light.text,
