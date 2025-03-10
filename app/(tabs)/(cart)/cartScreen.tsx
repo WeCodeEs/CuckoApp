@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   hourButton: {
     borderRadius: 30,
-    backgroundColor: Colors.light.mediumDarkBlue,
+    backgroundColor: Colors.light.mediumBlue,
     marginTop: 4,
     marginBottom: 12,
     alignContent: 'center',
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'space-between',
     backgroundColor: Colors.light.tabIconSelected,
-    shadowColor: '#000',
+    shadowColor: Colors.light.text,
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
