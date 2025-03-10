@@ -1,16 +1,19 @@
-import { Menu, Product, User, Faculty, Category } from '@/constants/types';
+import { Menu, Product, User, Faculty, Category, Notification } from '@/constants/types';
+import { supabaseClient } from "@/utils/supabase";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "";
+const API_URL_MENU = process.env.EXPO_PUBLIC_API_URL_MENU ?? "";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY ?? "";
+const API_URL_NOTI = process.env.EXPO_PUBLIC_API_URL_NOTI ?? "";
+const SUPA_EDGE_FUNC = process.env.EXPO_PUBLIC_SUPABASE_PROD_EDGE_FUNCTIONS_URL ?? "";
 
-if (!API_KEY || !API_URL) {
+if (!API_KEY || !API_URL_MENU) {
   console.error("API Key o API URL no definidos.");
   throw new Error("Las variables de entorno API_KEY o API_URL no están definidas.");
 }
 
 export async function fetchAllMenus(): Promise<Menu[]> {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -32,7 +35,7 @@ export async function fetchAllMenus(): Promise<Menu[]> {
 }
 
 export async function fetchAllCategories(): Promise<Category[]> {
-  const response = await fetch(API_URL, {
+  const response = await fetch(API_URL_MENU, {
     headers: {
       "X-Master-Key": API_KEY
     }
@@ -89,7 +92,7 @@ export async function fetchProductsByMenuId(menuId: number): Promise<Product[]> 
 
 export async function fetchAllProducts(): Promise<Product[]> {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(API_URL_MENU, {
         headers: {
           "X-Master-Key": API_KEY
         }
@@ -115,7 +118,7 @@ export async function fetchProductById(productId: number): Promise<Product | und
 
 export async function fetchVariantsByProductId(productId: number) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -131,7 +134,7 @@ export async function fetchVariantsByProductId(productId: number) {
 
 export async function fetchCustomizableIngredientsByProductId(productId: number) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -149,7 +152,7 @@ export async function fetchCustomizableIngredientsByProductId(productId: number)
 
 export async function fetchIngredientInfo(ingredientId: number) {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -176,7 +179,7 @@ export async function checkPhoneNumberRegistration(phoneNumber: string): Promise
 
 export async function fetchAllUsers(): Promise<any[]> {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -204,7 +207,7 @@ export async function fetchUserByPhoneNumber(phoneNumber: string): Promise<User 
 
 export async function fetchAllFaculties(): Promise<any[]> {
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_URL_MENU, {
       headers: {
         "X-Master-Key": API_KEY
       }
@@ -228,3 +231,41 @@ export async function fetchFacultyById(facultyId: number): Promise<Faculty | und
     throw error;
   }
 }
+
+export async function fetchAllNotifications(): Promise<Notification[]> {
+  try {
+    const response = await fetch(API_URL_NOTI, {
+      headers: {
+        "X-Master-Key": API_KEY
+      }
+    });
+    const data = await response.json();
+
+    const notifications = data.record?.notifications;
+
+    if (Array.isArray(notifications)) {
+      return notifications;
+    } else {
+      console.error("La respuesta no contiene un arreglo de notificaciones:", data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error al obtener las notificaciones:", error);
+    return [];
+  }
+}
+
+export async function fetchPaymentIntent() : Promise<string> {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("create-payment-intent", {
+      body:  { amount: 1000, currency: 'mxn' },
+    });
+
+    if (error) throw new Error(error);
+
+    return data.clientSecret;
+  } catch (error) {
+    console.error("Error al llamar fetchPaymentIntent:", error);
+    return "";
+  }
+};
