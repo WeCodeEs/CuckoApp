@@ -16,10 +16,11 @@ import { useRouter } from "expo-router";
 import { useState, useEffect } from "react";
 import { Search, Coffee, Sandwich, ChefHat, Salad, ForkKnife, GlassWater, Croissant } from "lucide-react-native";
 import { Colors } from "@/constants/Colors";
-import { fetchAllProducts, fetchAllCategories, fetchAllMenus } from '@/constants/api';
+import { fetchAllMenus, fetchAllCategories, fetchAllProducts, fetchProductById } from '@/constants/api';
 import { Product, Menu } from "@/constants/types";
 import Carrusel from "@/components/Carrousel";
 import SearchProducts from "@/components/SearchProducts";
+import ErrorToast from "@/components/ErrorToast";
 
 const MenuScreen = () => {
   const router: any = useRouter();
@@ -28,6 +29,7 @@ const MenuScreen = () => {
   const [menus, setMenus] = useState<Menu[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -51,8 +53,20 @@ const MenuScreen = () => {
     loadData();
   }, []);
 
-  const handleNavigation = (productId: number) => {
-    router.push(`/detail_product?id=${productId}`);
+  const handleNavigation = async (productId: number) => {
+    try {
+      const productDetail = await fetchProductById(productId);
+      if (!productDetail) {
+        setErrorMessage("Producto no encontrado");
+        return;
+      }
+      router.push(
+        `/detail_product?product=${encodeURIComponent(JSON.stringify(productDetail))}`
+      );
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      setErrorMessage("Error al obtener el producto");
+    }
   };
 
   const filteredProducts =
@@ -69,6 +83,13 @@ const MenuScreen = () => {
   return (
     <View style={styles.container}>
       {searchTerm.trim() !== "" && <SearchProducts searchTerm={searchTerm} />}
+      {errorMessage && (
+        <ErrorToast
+          id="error1"
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+        />
+      )}
       <ActionsheetScrollView contentContainerStyle={styles.scrollViewContent}>
         <Center style={styles.center}>
           <Box style={styles.box}>
@@ -102,21 +123,30 @@ const MenuScreen = () => {
                 <HStack space="sm" style={styles.buttonRow}>
                   {menus.map((menu) => (
                     <VStack key={menu.id} style={{ alignItems: "center" }}>
-                      <Button
-                        onPress={() => setActiveMenuId(menu.id)}
-                        variant="link">
+                      <Button onPress={() => setActiveMenuId(menu.id)} variant="link">
                         <Box
-                          style={[styles.iconContainer, activeMenuId === menu.id && styles.activeIconContainer]}>
+                          style={[
+                            styles.iconContainer,
+                            activeMenuId === menu.id && styles.activeIconContainer,
+                          ]}
+                        >
                           <Icon
                             as={
-                              menu.name.includes("Desayunos") ? ChefHat
-                              : menu.name.includes("Antojitos") ? Sandwich
-                              : menu.name.includes("Café") ? Coffee
-                              : menu.name.includes("Ensaladas") ? Salad
-                              : menu.name.includes("Platillos") ? ForkKnife
-                              : menu.name.includes("Bebidas") ? GlassWater
-                              : Croissant
-                            } size="xl"
+                              menu.name.includes("Desayunos")
+                                ? ChefHat
+                                : menu.name.includes("Antojitos")
+                                ? Sandwich
+                                : menu.name.includes("Café")
+                                ? Coffee
+                                : menu.name.includes("Ensaladas")
+                                ? Salad
+                                : menu.name.includes("Platillos")
+                                ? ForkKnife
+                                : menu.name.includes("Bebidas")
+                                ? GlassWater
+                                : Croissant
+                            }
+                            size="xl"
                           />
                         </Box>
                       </Button>
@@ -131,12 +161,14 @@ const MenuScreen = () => {
                   <VStack key={product.id} style={styles.vStackItem}>
                     <Pressable
                       onPress={() => handleNavigation(product.id)}
-                      style={styles.TouchableOpacity} >
+                      style={styles.TouchableOpacity}
+                    >
                       <Image
                         size="xl"
                         source={{ uri: product.image }}
                         alt={product.name}
-                        style={styles.image}/>
+                        style={styles.image}
+                      />
                       <Text size="lg" bold={true} style={styles.itemText}>
                         {product.name}
                       </Text>
@@ -148,7 +180,8 @@ const MenuScreen = () => {
                     <Button
                       size="sm"
                       style={styles.addButton}
-                      onPress={() => handleNavigation(product.id)}>
+                      onPress={() => handleNavigation(product.id)}
+                    >
                       <Text style={styles.addButtonText}>+</Text>
                     </Button>
                   </VStack>
@@ -165,12 +198,8 @@ const MenuScreen = () => {
 export default MenuScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollViewContent: {
-    padding: 0,
-  },
+  container: { flex: 1 },
+  scrollViewContent: { padding: 0 },
   scrollCategoryViewContent: {
     flexGrow: 1,
     justifyContent: "center",
@@ -192,19 +221,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
     flex: 1,
   },
-  vStack: {
-    paddingBottom: 24,
-    flex: 1,
-  },
-  menuContainer: {
-    flex: 1,
-    position: "static",
-    zIndex: 1000,
-  },
-  headingBox: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-  },
+  vStack: { paddingBottom: 24, flex: 1 },
+  menuContainer: { flex: 1, position: "static", zIndex: 1000 },
+  headingBox: { flexDirection: "row", justifyContent: "flex-start" },
   headingLeft: {
     textAlign: "left",
     marginLeft: 5,
@@ -260,14 +279,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: "center",
   },
-  TouchableOpacity: {
-    alignItems: "center",
-    width: "100%",
-  },
-  image: {
-    width: 100,
-    height: 100,
-  },
+  TouchableOpacity: { alignItems: "center", width: "100%" },
+  image: { width: 100, height: 100 },
   itemText: {
     textAlign: "center",
     fontWeight: "bold",

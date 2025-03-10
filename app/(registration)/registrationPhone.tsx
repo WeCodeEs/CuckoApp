@@ -1,28 +1,43 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { View } from "@/components/ui/view";
-import { Text } from '@/components/ui/text';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, View, ScrollView } from 'react-native';
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
+import { Text } from "@/components/ui/text";
 import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
 import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import RegistrationActionSheet from '@/components/RegistrationActionSheet';
-
+import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
 
 const RegistrationPhone = () => {
-  const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
+  const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [showActionsheet, setShowActionsheet] = useState(false);
   const [lada, setLada] = useState("52");
-  const [phone, setPhone] = useState("9511234567");
+  const [phone, setPhone] = useState("");
 
-  const handleLadaChange = (newLada: string) => setLada(newLada);
-  const handlePhoneChange = (newPhone: string) => setPhone(newPhone);
-
-  const handleCancelEdit = () => {
-    console.log("Edición cancelada");
+  const handleLadaChange = (newLada: string) => {
+    setLada(sanitizeLada(newLada));
   };
+
+  const handlePhoneChange = (newPhone: string) => {
+    const sanitizedPhone = sanitizePhoneNumber(newPhone);
+    setPhone(sanitizedPhone);
+  };
+
+  const handleNextPress = () => {
+    if (isValidPhoneNumber(phone)) {
+      setShowActionsheet(true);
+    }
+  };
+
+  useEffect(() => {
+    if (isValidPhoneNumber(phone)) {
+      setButtonColor(Colors.light.darkBlue);
+    } else {
+      setButtonColor(Colors.light.lightGray);
+    }
+  }, [phone]);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -32,32 +47,34 @@ const RegistrationPhone = () => {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 30 : 0}
         >
-          <Center style={styles.header_container}>
-            <View style={styles.image_container}>
-              <CuckooIsotipo style={styles.logo} />
-            </View>
-            <Heading style={styles.title} size='2xl'>Bienvenido</Heading>
-            <Text style={styles.text}>Para continuar, ingresa un número de celular</Text>
-            <Center style={styles.general_container}>
-              <InputPhone
-                lada={lada}
-                phone={phone}
-                onLadaChange={handleLadaChange}
-                onPhoneChange={handlePhoneChange}
-                editable={false}
-                headingText="Teléfono"
-              />
+          <ScrollView>
+            <Center style={styles.header_container}>
+              <View style={styles.image_container}>
+                <CuckooIsotipo style={styles.logo} />
+              </View>
+              <Heading style={styles.title} size='2xl'>Bienvenido</Heading>
+              <Text style={styles.text}>Para continuar, ingresa un número de celular</Text>
+              <Center style={styles.general_container}>
+                <InputPhone
+                  lada={lada}
+                  phone={phone}
+                  onLadaChange={handleLadaChange}
+                  onPhoneChange={handlePhoneChange}
+                  editable={false}
+                  headingText="Teléfono"
+                />
+              </Center>
             </Center>
+          </ScrollView>
+          <Center style={styles.buttonContainer}>
+            <Button
+              onPress={handleNextPress}
+              style={[styles.nextButton, { backgroundColor: buttonColor }]}
+              disabled={!isValidPhoneNumber(phone)}
+            >
+              <ButtonText>Siguiente</ButtonText>
+            </Button>
           </Center>
-
-          <Button
-            onPressIn={() => setButtonColor(Colors.light.mediumBlue)}
-            onPressOut={() => setButtonColor(Colors.light.darkBlue)}
-            onPress={() => setShowActionsheet(true)}
-            style={[styles.nextButton, { backgroundColor: buttonColor }]}
-          >
-            <ButtonText>Siguiente</ButtonText>
-          </Button>
           <RegistrationActionSheet
             isOpen={showActionsheet}
             onClose={() => setShowActionsheet(false)}
@@ -93,7 +110,7 @@ const styles = StyleSheet.create({
   logo: {
     position: 'relative',
     width: '60%',
-    aspectRatio: '1/1',
+    aspectRatio: 1,
   },
   title: {
     marginTop: -40,
@@ -104,12 +121,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   general_container: {
-    padding: 30,
+    paddingHorizontal: 30,
+    paddingTop: 30,
+    marginBottom: 20,
     width: '100%',
     height: 'auto',
   },
+  buttonContainer: {
+    width: '100%',
+    marginBottom: -15,
+    alignSelf: 'flex-end'
+  },
   nextButton: {
     borderRadius: 30,
-    marginHorizontal: 30,
+    width: '60%'
   },
 });
