@@ -1,39 +1,28 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, ScrollView } from 'react-native';
-import { View } from "@/components/ui/view";
-import { Text } from '@/components/ui/text';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, ScrollView, View } from 'react-native';
 import { Center } from "@/components/ui/center";
 import { Heading } from "@/components/ui/heading";
-import { Input, InputField } from '@/components/ui/input';
+import { Text } from "@/components/ui/text";
 import { Colors } from '@/constants/Colors';
 import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { useRouter } from "expo-router";
-
-
+import InputInfo from '@/components/InputInfo';
+import { isValidName } from '@/constants/validations';
 
 const RegistrationName = () => {
   const router = useRouter();
-  const [buttonColor, setButtonColor] = useState(Colors.light.darkBlue);
+  const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
 
-
-  const handlePressIn = () => {
-    setButtonColor(Colors.light.mediumBlue);
-  };
-
-  const handlePressOut = () => {
-    setButtonColor(Colors.light.darkBlue);
-  };
-
-  const handleCancelEdit = () => {
-    console.log("Edición cancelada");
-  };
-
-  const handleChangeName = (inputName: string) => {
-    setName(inputName);
-  };
+  useEffect(() => {
+    if (isValidName(name) && isValidName(lastName) && name.length > 0 && lastName.length > 0) {
+      setButtonColor(Colors.light.darkBlue);
+    } else {
+      setButtonColor(Colors.light.lightGray);
+    }
+  }, [name, lastName]);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -49,36 +38,46 @@ const RegistrationName = () => {
                 <CuckooIsotipo style={styles.logo} />
               </View>
               <Heading style={styles.title} size='2xl'>¡Genial!</Heading>
-              <Text style={styles.text}>Ahora, dinos como te llamas...</Text>
+              <Text style={styles.text}>Ahora, dinos cómo te llamas...</Text>
               <View style={styles.field_container}>
-                <Heading style={styles.subtitle} size={"lg"}>Nombre</Heading>
-                <Input variant="underlined" size="md" isDisabled={false} isInvalid={false} isReadOnly={false} >
-                  <InputField
-                    placeholder='Juan'
-                    onChangeText={(text) => handleChangeName(text)}
-                  />
-                </Input>
+                <InputInfo
+                  initialValue={name}
+                  editable={true}
+                  alwaysEditable={true}
+                  isEmail={false}
+                  headingText="Nombre"
+                  placeholder="Juan Alejandro"
+                  onEditComplete={(newValue) => setName(newValue)}
+                  onCancelEdit={() => {}}
+                />
               </View>
               <View style={styles.field_container}>
-                <Heading style={styles.subtitle} size={"lg"}>Apellidos</Heading>
-                <Input variant="underlined" size="md" isDisabled={false} isInvalid={false} isReadOnly={false} >
-                  <InputField
-                    placeholder='Pérez'
-                  />
-                </Input>
+                <InputInfo
+                  initialValue={lastName}
+                  editable={true}
+                  alwaysEditable={true}
+                  isEmail={false}
+                  headingText="Apellidos"
+                  placeholder="Pérez López"
+                  onEditComplete={(newValue) => setLastName(newValue)}
+                  onCancelEdit={() => {}}
+                />
               </View>
             </Center>
-
           </ScrollView>
-
-          <Button
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-            onPress={() => router.push({pathname: "/(registration)/registrationForm", params: {name: name}})}
-            style={[styles.nextButton, { backgroundColor: buttonColor }]}
-          >
-            <ButtonText>Continuar</ButtonText>
-          </Button>
+          <Center style={styles.buttonContainer}>
+            <Button
+              onPress={() => {
+                if (isValidName(name) && isValidName(lastName)) {
+                  router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
+                }
+              }}
+              style={[styles.nextButton, { backgroundColor: buttonColor }]}
+              disabled={!isValidName(name) || !isValidName(lastName)}
+            >
+              <ButtonText>Continuar</ButtonText>
+            </Button>
+          </Center>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </TouchableWithoutFeedback>
@@ -108,33 +107,29 @@ const styles = StyleSheet.create({
   logo: {
     position: 'relative',
     width: '60%',
-    aspectRatio: '1/1',
+    aspectRatio: 1,
   },
   title: {
     marginBottom: 10,
   },
-  subtitle: {
-    marginBottom: 10,
-    marginTop: 20,
-  },
   text: {
     marginHorizontal: 20,
+    marginBottom: 30,
     textAlign: 'center',
-  },
-  general_container: {
-    padding: 30,
-    width: '100%',
-    height: 'auto',
   },
   field_container: {
     paddingHorizontal: 30,
     paddingBottom: 10,
     marginBottom: 10,
     width: '100%',
-    height: 'auto',
+  },
+  buttonContainer: {
+    width: '100%',
+    marginBottom: -15,
+    alignSelf: 'flex-end'
   },
   nextButton: {
     borderRadius: 30,
-    marginHorizontal: 30,
+    width: '60%'
   },
 });

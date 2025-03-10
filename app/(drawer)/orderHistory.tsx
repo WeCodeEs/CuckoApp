@@ -1,55 +1,61 @@
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { VStack } from '@/components/ui/vstack';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
-import { View } from "@/components/ui/view";
+import { View } from '@/components/ui/view';
 import { Pressable } from '@/components/ui/pressable';
 import { Clock, ChevronRight, CheckCircle, ShoppingBag } from 'lucide-react-native';
 import { useRouter } from "expo-router"; 
 import { Colors } from '@/constants/Colors';
+import { Order } from '@/constants/types';
+import { fetchAllOrders, fetchOrderById } from '@/constants/api';
+import { useToast } from '@/components/ui/toast';
+import ErrorToast from '@/components/ErrorToast';
 
-interface Pedido {
-  id: number;
-  platillos: { id: number, cantidad: number }[];
-  precioFinal: number;
-  fecha: string;
-  hora: string;
-  estado: string;
-}
-
-const pedidos: Pedido[] = [
-  {
-    id: 1003,
-    platillos: [{ id: 1, cantidad: 2 }, { id: 4, cantidad: 1 }],
-    precioFinal: 150.00,
-    fecha: '09 Oct 2024',
-    hora: '3:16 PM',
-    estado: 'En preparación',
-  },
-  {
-    id: 1002,
-    platillos: [{ id: 3, cantidad: 1 }, { id: 2, cantidad: 3 }],
-    precioFinal: 80.00,
-    fecha: '09 Oct 2024',
-    hora: '2:30 PM',
-    estado: 'Listo',
-  },
-  {
-    id: 1001,
-    platillos: [{ id: 4, cantidad: 4 }, { id: 2, cantidad: 1 }],
-    precioFinal: 120.00,
-    fecha: '08 Oct 2024',
-    hora: '8:12 AM',
-    estado: 'Entregado',
-  },
-];
-
-const PedidoCard: React.FC<{ pedido: Pedido }> = ({ pedido }) => {
+const OrderHistoryScreen: React.FC = () => {
   const router = useRouter();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const toast = useToast();
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      try {
+        const fetchedOrders = await fetchAllOrders();
+        setOrders([...fetchedOrders]);
+      } catch (error) {
+        console.error("Error retornando los pedidos", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOrders();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color={Colors.light.darkBlue} />;
+  }
+
+  return (
+    <ScrollView style={styles.container}>
+      <VStack space={"lg"}>
+        {orders.map((order) => (
+          <OrderCard key={order.id} order={order} />
+        ))}
+      </VStack>
+    </ScrollView>
+  );
+};
+
+const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
+  const router = useRouter();
+  const toast = useToast();
 
   const getBackgroundColor = () => {
-    switch (pedido.estado) {
+    switch (order.status) {
+      case 'Esperando confirmación': return Colors.light.lightGray;
       case 'En preparación': return Colors.light.preparingBackground;
       case 'Listo': return Colors.light.readyBackground;
       case 'Entregado': return Colors.light.deliveredBackground;
@@ -58,7 +64,8 @@ const PedidoCard: React.FC<{ pedido: Pedido }> = ({ pedido }) => {
   };
 
   const getTextColor = () => {
-    switch (pedido.estado) {
+    switch (order.status) {
+      case 'Esperando confirmación': return Colors.light.ash;
       case 'En preparación': return Colors.light.preparing;
       case 'Listo': return Colors.light.ready;
       case 'Entregado': return Colors.light.delivered;
@@ -66,38 +73,67 @@ const PedidoCard: React.FC<{ pedido: Pedido }> = ({ pedido }) => {
     }
   };
 
+  const handlePress = async () => {
+    try {
+      const orderFromDB = await fetchOrderById(order.id);
+      if (!orderFromDB) {
+        toast.show({
+          id: "order-not-found",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Pedido no encontrado"
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+        return;
+      }
+      router.push({ pathname: "/(drawer)/order_details", params: { orderId: order.id } });
+    } catch (error) {
+      console.error("Error verificando la existencia del pedido:", error);
+      toast.show({
+        id: "order-error",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Error verificando el pedido"
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    }
+  };
+
   return (
-    <Pressable 
-      style={styles.card} 
-      onPress={() => router.push({ pathname: "/(drawer)/order_details", params: { pedido: JSON.stringify(pedido) } })}
-    >
+    <Pressable style={styles.card} onPress={handlePress}>
       <View style={{ maxWidth: '68%' }}>
-        <Heading style={styles.order} size='lg'>Pedido {pedido.id}</Heading>
+        <Heading style={styles.orderText} size='lg'>Pedido {order.id}</Heading>
         <View style={{ alignSelf: 'flex-start' }}>
-          <View style={[styles.status_container, { backgroundColor: getBackgroundColor() }]}>
-            {pedido.estado === 'En preparación' ? <Clock size={14} color={getTextColor()} style={styles.icon}/>
-            : pedido.estado === 'Listo' ? <ShoppingBag size={14} color={getTextColor()} style={styles.icon}/>
-            : <CheckCircle size={14} color={getTextColor()} style={styles.icon}/>}
-            <Text size='sm' style={[styles.status, { color: getTextColor(), marginLeft: 6 }]}>{pedido.estado}</Text>
+          <View style={[styles.statusContainer, { backgroundColor: getBackgroundColor() }]}>
+            {(order.status === 'En preparación' || order.status === 'Esperando confirmación') ? (
+              <Clock size={14} color={getTextColor()} style={styles.icon}/>
+            ) : order.status === 'Listo' ? (
+              <ShoppingBag size={14} color={getTextColor()} style={styles.icon}/>
+            ) : (
+              <CheckCircle size={14} color={getTextColor()} style={styles.icon}/>
+            )}
+            <Text size='sm' style={[styles.status, { color: getTextColor(), marginLeft: 6 }]}>{order.status}</Text>
           </View>
         </View>
-        <Text style={styles.date}>{pedido.fecha}</Text>
+        <Text style={styles.date}>{order.date}</Text>
       </View>
       <View style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-end', maxWidth: '35%' }}>
         <ChevronRight size={30} color={Colors.light.darkBlue}/>
-        <Heading size='lg' style={styles.price}>${pedido.precioFinal.toFixed(2)}</Heading>
+        <Heading size='lg' style={styles.price}>${order.finalPrice.toFixed(2)}</Heading>
       </View>
     </Pressable>
   );
 };
-
-const OrderHistoryScreen: React.FC = () => (
-  <ScrollView style={styles.container}>
-    <VStack space={"lg"}>
-      {pedidos.map((pedido) => <PedidoCard key={pedido.id} pedido={pedido}/>)}
-    </VStack>
-  </ScrollView>
-);
 
 const styles = StyleSheet.create({
   container: {
@@ -115,27 +151,27 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 2,
     margin: 1,
-    flexDirection:'row',
+    flexDirection: 'row',
     justifyContent: 'space-between',
     textAlignVertical: 'center',
   },
-  order: {
-    color:  Colors.light.darkBlue,
+  orderText: {
+    color: Colors.light.darkBlue,
     padding: 2,
-    paddingLeft: 6, 
+    paddingLeft: 6,
     fontWeight: 'normal',
   },
   icon: {
-   marginVertical: 'auto',
-   alignSelf: 'flex-start',
+    marginVertical: 'auto',
+    alignSelf: 'flex-start',
   },
-  status_container: {
-    flexDirection: 'row', 
+  statusContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 5, 
-    paddingVertical: 2, 
-    borderRadius: 20, 
-    marginBottom: 18, 
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 20,
+    marginBottom: 18,
     alignSelf: 'flex-start'
   },
   status: {
@@ -143,7 +179,7 @@ const styles = StyleSheet.create({
     paddingRight: 2,
   },
   date: {
-    paddingLeft: 6, 
+    paddingLeft: 6,
     fontSize: 12,
     lineHeight: 20,
     color: Colors.light.ash,
@@ -152,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     fontWeight: 'normal',
-    color:  Colors.light.darkBlue,
+    color: Colors.light.darkBlue,
   },
 });
 
