@@ -17,6 +17,8 @@ import { Divider } from '@/components/ui/divider';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { Clock, ChevronDown } from 'lucide-react-native';
 import DeliveryTimeModal from '@/components/DeliveryTimeModal';
+import { useStripe } from '@stripe/stripe-react-native';
+import { fetchPaymentIntent } from "@/constants/api";
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
@@ -27,6 +29,9 @@ const CartScreen: React.FC = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState("Preparación Inmediata");
+
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [clientSecret, setClientSecret] = useState<string>();
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -67,8 +72,24 @@ const CartScreen: React.FC = () => {
     setShowModal(false);
   };
 
-  const handleContinuePress = () => {
-    return;
+  const handlePayment = async () => {
+    const clientSecret = await fetchPaymentIntent();
+    if (!clientSecret) return;
+
+    setClientSecret(clientSecret);
+    const { error } = await initPaymentSheet({ paymentIntentClientSecret: clientSecret, merchantDisplayName: "Cuckoo Coffee & Resto ®"});
+
+    if (error) {
+      console.error("Error con mensaje: ", error.message);
+      return;
+    }
+
+    const { error: paymentError} = await presentPaymentSheet();
+    if (paymentError) {
+      console.error("Error con el pago: ", paymentError.message);
+    } else {
+      console.log("Pago completado con exito: ");
+    }
   };
 
   return (
@@ -122,9 +143,9 @@ const CartScreen: React.FC = () => {
               </Heading>
             </VStack>
             <Center>
-              <Button size="md" style={styles.paymentButton} onPress={handleContinuePress}>
+              <Button size="md" style={styles.paymentButton} onPress={handlePayment}>
                 <ButtonText size="sm" style={styles.paymentButtonText}>
-                  CONTINUAR
+                  CONFIRMAR
                 </ButtonText>
               </Button>
             </Center>
