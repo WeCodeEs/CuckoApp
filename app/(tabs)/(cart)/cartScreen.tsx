@@ -19,6 +19,8 @@ import { Clock, ChevronDown } from 'lucide-react-native';
 import DeliveryTimeModal from '@/components/DeliveryTimeModal';
 import { useStripe } from '@stripe/stripe-react-native';
 import { fetchPaymentIntent } from "@/constants/api";
+import ErrorToast from '@/components/ErrorToast';
+import { useToast } from '@/components/ui/toast';
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
@@ -32,6 +34,8 @@ const CartScreen: React.FC = () => {
 
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [clientSecret, setClientSecret] = useState<string>();
+
+  const toast = useToast();
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -88,7 +92,47 @@ const CartScreen: React.FC = () => {
     if (paymentError) {
       console.error("Error con el pago: ", paymentError.message);
     } else {
-      console.log("Pago completado con exito: ");
+      console.log("Pago completado con éxito: ");
+
+      // TODO: Construir un objeto de tipo order
+      // const now = new Date();
+      // const newOrder = {
+      //   items: cartItems.map(cartItem => ({
+      //     id: cartItem.product.id,
+      //     quantity: cartItem.quantity ?? 1, 
+      //   })),
+      //   finalPrice: totalCartValue,
+      //   date: now.toLocaleDateString(),
+      //   time: now.toLocaleTimeString(),
+      //   status: "Esperando confirmación",
+      // };
+
+      try {
+
+        // TODO: Insertar la orden en la Base de Datos y
+        // usar esa fila insertada para alimentar order_details.tsx
+        // const createdOrder = await createOrder(newOrder);
+        emptyCart();
+        router.push({ 
+          pathname: '/(tabs)/(home)/order_details', 
+          params: { orderId: 1 , paymentSuccess: true } 
+          // params: { orderId: createdOrder.id } 
+        });
+      } catch (error) {
+        console.error("Error creando el pedido:", error);
+        toast.show({
+          id: "order-create-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Error al crear el pedido"
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      }
     }
   };
 
