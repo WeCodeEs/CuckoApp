@@ -57,6 +57,8 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
   };
 
   const handleNavigation = (route: DrawerRoutes) => {   
+    router.dismissTo('/(tabs)/(home)');
+
     router.push({ pathname: route });
     setTimeout(() => {
       onClose();
