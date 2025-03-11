@@ -20,6 +20,7 @@ import { sanitizeOTP, isAllDigitsEqual } from '@/constants/validations';
 import { useToast } from '@/components/ui/toast';
 import ErrorToast from '@/components/ErrorToast';
 import { TextInput as RNTextInput } from 'react-native';
+import { verifyOtp } from "@/constants/api";
 
 interface RegistrationActionSheetProps {
   isOpen: boolean;
@@ -36,8 +37,10 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     useRef<RNTextInput>(null),
     useRef<RNTextInput>(null),
     useRef<RNTextInput>(null),
+    useRef<RNTextInput>(null),
+    useRef<RNTextInput>(null),
   ];
-  const [code, setCode] = useState(['', '', '', '']);
+  const [code, setCode] = useState(['', '', '', '', '', '']);
   const navigation = useNavigation();
   const router = useRouter();
   const toast = useToast();
@@ -111,8 +114,10 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
 
   const handleNavigation = async () => {
     const fullCode = code.join('');
-    if (fullCode.length === 4) {
-      if (!isAllDigitsEqual(fullCode)) {
+    const userRetrieved = await verifyOtp(phone, fullCode);
+
+    if (fullCode.length === 6) {
+      if (userRetrieved == null) {
         toast.show({
           id: "otp-invalid",
           placement: 'top',
@@ -120,12 +125,12 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
           render: ({ id }) => (
             <ErrorToast
               id={id}
-              message="Código de verificación inválido. Intenta de nuevo o genera un nuevo código de verificación"
+              message="El código ingresado ha expirado o es inválido. Intenta de nuevo o genera un nuevo código de verificación"
               onClose={() => toast.close(id)}
             />
           ),
         });
-        setCode(['', '', '', '']);
+        setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         inputRefs[0].current?.focus();
       } else if (fullCode === "0000") {
@@ -141,11 +146,11 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
             />
           ),
         });
-        setCode(['', '', '', '']);
+        setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         inputRefs[0].current?.focus();
       } else {
-        setCode(['', '', '', '']);
+        setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         try {
           const isUserRegistered = await checkUserRegistration();
@@ -169,12 +174,12 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         render: ({ id }) => (
           <ErrorToast
             id={id}
-            message="Ingresa un código de 4 dígitos."
+            message="Ingresa un código de 6 dígitos."
             onClose={() => toast.close(id)}
           />
         ),
       });
-      setCode(['', '', '', '']);
+      setCode(['', '', '', '', '', '']);
       inputRefs.forEach(ref => ref.current?.clear());
       inputRefs[0].current?.focus();
     }
@@ -258,8 +263,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   otpInput: {
-    width: 60,
-    height: 60,
+    width: 55,
+    height: 55,
     borderWidth: 1,
     borderColor: Colors.light.borderBox,
     borderRadius: 4,

@@ -1,5 +1,6 @@
 import { Menu, Product, User, Faculty, Category, Notification, Order } from '@/constants/types';
 import { supabaseClient } from "@/utils/supabase";
+import { User as SupabaseUser } from "@supabase/auth-js";
 
 const API_URL_MENU = process.env.EXPO_PUBLIC_API_URL_MENU ?? "";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY ?? "";
@@ -278,3 +279,47 @@ export async function fetchOrderById(orderId: number): Promise<Order | undefined
     return undefined;
   }
 }
+
+export async function signInWithOtp(phoneNumber: string) : Promise<any | null> {
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithOtp({
+      phone: phoneNumber,
+    });
+
+    if (error) {
+      console.error("Error al registrar usuario:", error.message);
+      return null; 
+    }
+
+    console.log("signInWithOtp returned: ", data);
+    return data ?? null;
+
+  } catch (error) {
+    console.error("Error al registrar usuario:", error);
+    return null;
+  }
+};
+
+
+export async function verifyOtp(phoneNumber: string, token: string) : Promise<SupabaseUser | null> {
+  try {
+    const { data, error } = await supabaseClient.auth.verifyOtp({
+      phone: phoneNumber,
+      token: token,
+      type: 'sms',
+
+    });
+
+    if (error) {
+      console.error("Error al verificar OTP:", error.message);
+      return null; 
+    }
+
+    console.log("verifyOtp returned: ", data);
+    return data?.user ?? null;
+
+  } catch (error) {
+    console.error("Error al verificar OTP:", error);
+    return null;
+  }
+};

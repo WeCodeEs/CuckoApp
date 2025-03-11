@@ -45,5 +45,5 @@ export const sanitizeOTP = (input: string): string => {
 };
 
 export const isAllDigitsEqual = (code: string): boolean => {
-  return code.length === 4 && code.split('').every(digit => digit === code[0]);
+  return code.length === 6 && code.split('').every(digit => digit === code[0]);
 };
