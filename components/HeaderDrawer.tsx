@@ -30,11 +30,11 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
 
 
   type DrawerRoutes = 
-  | '/(drawer)/profile'
-  | '/(drawer)/configuration'
-  | '/(drawer)/paymentMethods'
-  | '/(drawer)/orderHistory'
-  | '/(drawer)/shareApp';
+  | '/(tabs)/(home)/profile'
+  | '/(tabs)/(home)/configuration'
+  | '/(tabs)/(home)/paymentMethods'
+  | '/(tabs)/(home)/orderHistory'
+  | '/(tabs)/(home)/shareApp';
 
   type RegistrationRoutes = 
   | '/(registration)/registrationPhone'
@@ -56,14 +56,13 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
     setVariant("outline");
   };
 
-  const handleNavigation = (route: DrawerRoutes) => {
-    router.push(route);
-
+  const handleNavigation = (route: DrawerRoutes) => {   
+    router.push({ pathname: route });
     setTimeout(() => {
       onClose();
-    }, 300); 
-  }
-
+    }, 300);
+  };
+  
   const handleNavigationButton = (route: RegistrationRoutes) => {
     router.replace(route);
 
@@ -95,7 +94,7 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
           <Pressable
             onPressIn={() => handlePressIn('profile')}
             onPressOut={() => handlePressOut('profile')}
-            onPress={() => handleNavigation('/(drawer)/profile')}  
+            onPress={() => handleNavigation('/(tabs)/(home)/profile')}  
             style={[styles.pressable, { backgroundColor: bgColor.profile }]}
           >
             <View style={styles.row}>
@@ -106,7 +105,7 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
           <Pressable
             onPressIn={() => handlePressIn('config')}
             onPressOut={() => handlePressOut('config')}
-            onPress={() => handleNavigation('/(drawer)/configuration')}  
+            onPress={() => handleNavigation('/(tabs)/(home)/configuration')}  
             style={[styles.pressable, { backgroundColor: bgColor.config }]}
           >
             <View style={styles.row}>
@@ -117,7 +116,7 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
           <Pressable
             onPressIn={() => handlePressIn('payment')}
             onPressOut={() => handlePressOut('payment')}
-            onPress={() => handleNavigation('/(drawer)/paymentMethods')}  
+            onPress={() => handleNavigation('/(tabs)/(home)/paymentMethods')}  
             style={[styles.pressable, { backgroundColor: bgColor.payment }]}
           >
             <View style={styles.row}>
@@ -128,7 +127,7 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
           <Pressable
             onPressIn={() => handlePressIn('history')}
             onPressOut={() => handlePressOut('history')}
-            onPress={() => handleNavigation('/(drawer)/orderHistory')}  
+            onPress={() => handleNavigation('/(tabs)/(home)/orderHistory')}  
             style={[styles.pressable, { backgroundColor: bgColor.history }]}
           >
             <View style={styles.row}>
@@ -139,7 +138,7 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
           <Pressable
             onPressIn={() => handlePressIn('share')}
             onPressOut={() => handlePressOut('share')}
-            onPress={() => handleNavigation('/(drawer)/shareApp')}  
+            onPress={() => handleNavigation('/(tabs)/(home)/shareApp')}  
             style={[styles.pressable, { backgroundColor: bgColor.share }]}
             >
             <View style={styles.row}>
