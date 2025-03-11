@@ -13,7 +13,6 @@ export default function CartStack() {
         }}
       >
         <Stack.Screen name="cartScreen" options={{ title: 'Carrito', headerShown: false}} />
-        <Stack.Screen name="cartSchedule" options={{ title: 'Programar entrega', headerShown: false}} />
       </Stack>
     </StripeProvider>
   );
