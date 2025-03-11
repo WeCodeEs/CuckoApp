@@ -91,7 +91,7 @@ const OrderCard: React.FC<{ order: Order }> = ({ order }) => {
         });
         return;
       }
-      router.push({ pathname: "/(drawer)/order_details", params: { orderId: order.id } });
+      router.push({ pathname: "/(tabs)/(home)/order_details", params: { orderId: order.id } });
     } catch (error) {
       console.error("Error verificando la existencia del pedido:", error);
       toast.show({
