@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { StyleSheet, ScrollView } from 'react-native';
 import { Text } from "@/components/ui/text";
 import { View } from "@/components/ui/view";
-import { CartItem } from '@/constants/types'; 
+import { CartItem } from '@/constants/types';
 import { VStack } from '@/components/ui/vstack';
 import CartModal from '@/components/CartModal';
 import CartItemCard from '@/components/CartItemCard';
@@ -15,6 +15,8 @@ import { Center } from '@/components/ui/center';
 import { useCart } from '@/contexts/CartContext';
 import { Divider } from '@/components/ui/divider';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
+import { Clock, ChevronDown } from 'lucide-react-native';
+import DeliveryTimeModal from '@/components/DeliveryTimeModal';
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
@@ -22,6 +24,18 @@ const CartScreen: React.FC = () => {
   const [selectedCartItem, setSelectedCartItem] = useState<CartItem | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isEmptyCartModal, setIsEmptyCartModal] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [deliveryTime, setDeliveryTime] = useState("Preparación Inmediata");
+
+  const handleOpenModal = () => {
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = (selectedTime: string | null) => {
+    setModalVisible(false);
+    setDeliveryTime(selectedTime ? `Pedido para las ${selectedTime}` : "Preparación Inmediata");
+  };
 
   const handleCardClick = (productId: number) => {
     router.push(`/detail_product?id=${productId}`);
@@ -54,9 +68,7 @@ const CartScreen: React.FC = () => {
   };
 
   const handleContinuePress = () => {
-    router.push({
-      pathname: "/(cart)/cartSchedule",
-    });
+    return;
   };
 
   return (
@@ -64,12 +76,18 @@ const CartScreen: React.FC = () => {
       {cartItems.length > 0 ? (
         <>
           <ScrollView contentContainerStyle={styles.scrollContent}>
+            <Center>
+              <Button size="md" style={styles.hourButton} onPress={handleOpenModal}>
+                <Clock size={16} color={Colors.light.background} />
+                <Text size="md" style={styles.hourButtonText}>{deliveryTime}</Text>
+                <ChevronDown size={20} color={Colors.light.background} />
+              </Button>
+            </Center>
             <VStack space="md">
               {cartItems.map((cartItem) => (
                 <CartItemCard
-                  key={`${cartItem.product.id}-${cartItem.selectedVariant?.id ?? 'default'}-${
-                    cartItem.ingredients ? cartItem.ingredients.map(ing => ing.id).join('-') : 'noIngredients'
-                  }`}
+                  key={`${cartItem.product.id}-${cartItem.selectedVariant?.id ?? 'default'}-${cartItem.ingredients ? cartItem.ingredients.map(ing => ing.id).join('-') : 'noIngredients'
+                    }`}
                   cartItem={cartItem}
                   onCardPress={handleCardClick}
                   onRemove={() => handleRemoveFromCart(cartItem)}
@@ -77,7 +95,7 @@ const CartScreen: React.FC = () => {
               ))}
             </VStack>
             <View style={styles.dividerContainer}>
-              <Divider/>
+              <Divider />
             </View>
             <View style={styles.emptyCartButtonContainer}>
               <Button size="md" variant="link" action="negative" onPress={handleEmptyCart}>
@@ -93,6 +111,7 @@ const CartScreen: React.FC = () => {
               isEmptyCartModal={isEmptyCartModal}
             />
           </ScrollView>
+          <DeliveryTimeModal isVisible={modalVisible} onClose={handleCloseModal}/>
           <HStack style={styles.paymentBar}>
             <VStack style={styles.subtotalContainer}>
               <Text size="sm" style={styles.subtotalText}>
@@ -116,10 +135,10 @@ const CartScreen: React.FC = () => {
           <Center style={styles.emptyCartContainer}>
             <CuckooIsotipo style={styles.svg} />
             <Text style={styles.emptyText}>
-              Aún no tienes productos en el carrito. 
+              Aún no tienes productos en el carrito.
             </Text>
             <Heading size='md' style={styles.emptyText}>
-              ¡Comienza a agregar! 
+              ¡Comienza a agregar!
             </Heading>
           </Center>
         </View>
@@ -135,6 +154,19 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: Colors.light.background,
     padding: 10,
+  },
+  hourButton: {
+    borderRadius: 30,
+    backgroundColor: Colors.light.mediumBlue,
+    marginTop: 4,
+    marginBottom: 12,
+    alignContent: 'center',
+    textAlign: 'center',
+    textAlignVertical: 'center'
+  },
+  hourButtonText: {
+    color: Colors.light.background,
+    marginHorizontal: 10,
   },
   emptyContainer: {
     flex: 1,
@@ -161,8 +193,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     justifyContent: 'space-between',
     backgroundColor: Colors.light.tabIconSelected,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 }, 
+    shadowColor: Colors.light.text,
+    shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
@@ -177,7 +209,7 @@ const styles = StyleSheet.create({
   },
   paymentButton: {
     borderRadius: 30,
-    backgroundColor: Colors.light.background, 
+    backgroundColor: Colors.light.background,
   },
   paymentButtonText: {
     color: Colors.light.tabIconSelected,
