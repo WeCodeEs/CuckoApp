@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, Dimensions } from 'react-native';
 import {
   Actionsheet,
   ActionsheetBackdrop,
@@ -16,11 +16,13 @@ import { Colors } from '@/constants/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from "expo-router";
 import { checkPhoneNumberRegistration } from '@/constants/api';
-import { sanitizeOTP, isAllDigitsEqual } from '@/constants/validations';
+import { sanitizeOTP } from '@/constants/validations';
 import { useToast } from '@/components/ui/toast';
 import ErrorToast from '@/components/ErrorToast';
 import { TextInput as RNTextInput } from 'react-native';
 import { verifyOtp } from "@/constants/api";
+
+const { width } = Dimensions.get('window');
 
 interface RegistrationActionSheetProps {
   isOpen: boolean;
@@ -114,9 +116,10 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
 
   const handleNavigation = async () => {
     const fullCode = code.join('');
-    const userRetrieved = await verifyOtp(phone, fullCode);
-
+  
     if (fullCode.length === 6) {
+      const userRetrieved = await verifyOtp(phone, fullCode);
+
       if (userRetrieved == null) {
         toast.show({
           id: "otp-invalid",
@@ -126,22 +129,6 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
             <ErrorToast
               id={id}
               message="El código ingresado ha expirado o es inválido. Intenta de nuevo o genera un nuevo código de verificación"
-              onClose={() => toast.close(id)}
-            />
-          ),
-        });
-        setCode(['', '', '', '', '', '']);
-        inputRefs.forEach(ref => ref.current?.clear());
-        inputRefs[0].current?.focus();
-      } else if (fullCode === "0000") {
-        toast.show({
-          id: "otp-connection-error",
-          placement: 'top',
-          duration: 5000,
-          render: ({ id }) => (
-            <ErrorToast
-              id={id}
-              message="Ha habido un error en la verificación del código."
               onClose={() => toast.close(id)}
             />
           ),
@@ -263,8 +250,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   otpInput: {
-    width: 55,
-    height: 55,
+    width: width * 0.13,
+    height: width * 0.13,
     borderWidth: 1,
     borderColor: Colors.light.borderBox,
     borderRadius: 4,
