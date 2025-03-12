@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Drawer, DrawerBackdrop, DrawerContent, DrawerHeader, DrawerCloseButton, DrawerBody, DrawerFooter } from '@/components/ui/drawer';
+import { Drawer, DrawerBackdrop, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter } from '@/components/ui/drawer';
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { VStack } from '@/components/ui/vstack';
 import { Divider } from '@/components/ui/divider';
