@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StatusBar, StyleSheet, Platform } from 'react-native';
+import { SafeAreaView, StyleSheet, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from '@/components/ui/image';
 import { Divider } from '@/components/ui/divider';
