@@ -77,62 +77,103 @@ const CartScreen: React.FC = () => {
   };
 
   const handlePayment = async () => {
-    const clientSecret = await fetchPaymentIntent();
-    if (!clientSecret) return;
+    try {
+      const clientSecret = await fetchPaymentIntent();
+      if (!clientSecret) return;
 
-    setClientSecret(clientSecret);
-    const { error } = await initPaymentSheet({ paymentIntentClientSecret: clientSecret, merchantDisplayName: "Cuckoo Coffee & Resto ®"});
+      setClientSecret(clientSecret);
+      const { error } = await initPaymentSheet({ paymentIntentClientSecret: clientSecret, merchantDisplayName: "Cuckoo Coffee & Resto ®"});
 
-    if (error) {
-      console.error("Error con mensaje: ", error.message);
-      return;
-    }
-
-    const { error: paymentError} = await presentPaymentSheet();
-    if (paymentError) {
-      console.error("Error con el pago: ", paymentError.message);
-    } else {
-      console.log("Pago completado con éxito: ");
-
-      // TODO: Construir un objeto de tipo order
-      // const now = new Date();
-      // const newOrder = {
-      //   items: cartItems.map(cartItem => ({
-      //     id: cartItem.product.id,
-      //     quantity: cartItem.quantity ?? 1, 
-      //   })),
-      //   finalPrice: totalCartValue,
-      //   date: now.toLocaleDateString(),
-      //   time: now.toLocaleTimeString(),
-      //   status: "Esperando confirmación",
-      // };
-
-      try {
-
-        // TODO: Insertar la orden en la Base de Datos y
-        // usar esa fila insertada para alimentar order_details.tsx
-        // const createdOrder = await createOrder(newOrder);
-        emptyCart();
-        router.push({ 
-          pathname: '/(tabs)/(home)/order_details', 
-          params: { orderId: 1 , paymentSuccess: true } 
-          // params: { orderId: createdOrder.id } 
-        });
-      } catch (error) {
-        console.error("Error creando el pedido:", error);
+      if (error) {
+        console.error("Error al inicializar Payment Sheet:", error.message);
         toast.show({
-          id: "order-create-error",
+          id: "payment-init-error",
           placement: "top",
           duration: 5000,
           render: ({ id }) => (
             <ErrorToast
               id={id}
-              message="Error al crear el pedido"
+              message={`Error al inicializar el pago: ${error.message}`}
               onClose={() => toast.close(id)}
             />
           ),
         });
+        return;
       }
+
+      const { error: paymentError} = await presentPaymentSheet();
+      if (paymentError) {
+        console.error("Error durante el pago:", paymentError.code, paymentError.message);
+        toast.show({
+          id: "payment-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message={`Error durante el pago: ${paymentError.code} ${paymentError.message}`}
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      } else {
+        console.log("Pago completado con éxito: ");
+
+        // TODO: Construir un objeto de tipo order
+        // const now = new Date();
+        // const newOrder = {
+        //   items: cartItems.map(cartItem => ({
+        //     id: cartItem.product.id,
+        //     quantity: cartItem.quantity ?? 1, 
+        //   })),
+        //   finalPrice: totalCartValue,
+        //   date: now.toLocaleDateString(),
+        //   time: now.toLocaleTimeString(),
+        //   status: "Esperando confirmación",
+        // };
+
+        try {
+
+          // TODO: Insertar el pedido (order) en la Base de Datos y
+          // usar esa fila insertada para alimentar order_details.tsx
+          // const createdOrder = await createOrder(newOrder);
+          emptyCart();
+          router.push({ 
+            pathname: '/(tabs)/(home)/order_details', 
+            params: { orderId: 1 , paymentSuccess: true } 
+            // TODO: Incluir el ID del pedido en los parámetros
+            // params: { orderId: createdOrder.id } 
+          });
+        } catch (error) {
+          console.error("Error creando el pedido:", error);
+          toast.show({
+            id: "order-create-error",
+            placement: "top",
+            duration: 5000,
+            render: ({ id }) => (
+              <ErrorToast
+                id={id}
+                message="Error al crear el pedido"
+                onClose={() => toast.close(id)}
+              />
+            ),
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error general en el proceso de pago:", err);
+      toast.show({
+        id: "payment-general-error",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Ocurrió un error durante el proceso de pago."
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
     }
   };
 
