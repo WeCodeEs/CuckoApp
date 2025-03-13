@@ -32,6 +32,7 @@ const CartScreen: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState("Preparación Inmediata");
 
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [clientSecret, setClientSecret] = useState<string>();
 
@@ -77,13 +78,20 @@ const CartScreen: React.FC = () => {
   };
 
   const handlePayment = async () => {
+    if (isProcessingPayment) return;
+    
+    setIsProcessingPayment(true);
+  
     try {
       const clientSecret = await fetchPaymentIntent();
       if (!clientSecret) return;
-
+  
       setClientSecret(clientSecret);
-      const { error } = await initPaymentSheet({ paymentIntentClientSecret: clientSecret, merchantDisplayName: "Cuckoo Coffee & Resto ®"});
-
+      const { error } = await initPaymentSheet({
+        paymentIntentClientSecret: clientSecret,
+        merchantDisplayName: "Cuckoo Coffee & Resto ®",
+      });
+  
       if (error) {
         console.error("Error al inicializar Payment Sheet:", error.message);
         toast.show({
@@ -100,10 +108,10 @@ const CartScreen: React.FC = () => {
         });
         return;
       }
-
-      const { error: paymentError} = await presentPaymentSheet();
+  
+      const { error: paymentError } = await presentPaymentSheet();
       if (paymentError) {
-        console.error("Error durante el pago:", paymentError.code, paymentError.message);
+        console.error("Error durante el pago:", paymentError.code, paymentError.declineCode, paymentError.message);
         toast.show({
           id: "payment-error",
           placement: "top",
@@ -111,7 +119,7 @@ const CartScreen: React.FC = () => {
           render: ({ id }) => (
             <ErrorToast
               id={id}
-              message={`Error durante el pago: ${paymentError.code} ${paymentError.message}`}
+              message={`Error durante el pago: ${paymentError.message}`}
               onClose={() => toast.close(id)}
             />
           ),
@@ -133,7 +141,6 @@ const CartScreen: React.FC = () => {
         // };
 
         try {
-
           // TODO: Insertar el pedido (order) en la Base de Datos y
           // usar esa fila insertada para alimentar order_details.tsx
           // const createdOrder = await createOrder(newOrder);
@@ -174,8 +181,11 @@ const CartScreen: React.FC = () => {
           />
         ),
       });
+    } finally {
+      setIsProcessingPayment(false);
     }
   };
+  
 
   return (
     <>
@@ -228,7 +238,12 @@ const CartScreen: React.FC = () => {
               </Heading>
             </VStack>
             <Center>
-              <Button size="md" style={styles.paymentButton} onPress={handlePayment}>
+              <Button 
+                size="md" 
+                style={styles.paymentButton} 
+                onPress={handlePayment}
+                disabled={isProcessingPayment} 
+              >
                 <ButtonText size="sm" style={styles.paymentButtonText}>
                   CONFIRMAR
                 </ButtonText>
