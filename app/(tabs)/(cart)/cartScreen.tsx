@@ -109,9 +109,30 @@ const CartScreen: React.FC = () => {
         return;
       }
   
-      const { error: paymentError } = await presentPaymentSheet();
-      if (paymentError) {
-        console.error("Error durante el pago:", paymentError.code, paymentError.declineCode, paymentError.message);
+      const { error: presentPaymentSheetError } = await presentPaymentSheet();
+
+      if (presentPaymentSheetError) {
+        let localizedMessage = "Ocurrió un error inesperado durante el pago.";
+      
+        switch (presentPaymentSheetError.code) {
+          case "Failed":
+            localizedMessage = "El pago no se pudo completar. Inténtalo de nuevo o usa otro método de pago.";
+            break;
+          
+          case "Canceled":
+            localizedMessage = "Cancelaste el pago. Si fue un error, intenta nuevamente.";
+            break;
+      
+          case "Timeout":
+            localizedMessage = "El proceso de pago tardó demasiado y fue interrumpido. Verifica tu conexión e intenta nuevamente.";
+            break;
+      
+          default:
+            localizedMessage = `Error desconocido: ${presentPaymentSheetError.message}`;
+        }
+      
+        console.error("Error durante el pago:", "| Error.code: ", presentPaymentSheetError.code, "| Error.declineCode:",presentPaymentSheetError.declineCode, "| Error.message:",presentPaymentSheetError.message);
+        
         toast.show({
           id: "payment-error",
           placement: "top",
@@ -119,7 +140,7 @@ const CartScreen: React.FC = () => {
           render: ({ id }) => (
             <ErrorToast
               id={id}
-              message={`Error durante el pago: ${paymentError.message}`}
+              message={localizedMessage}
               onClose={() => toast.close(id)}
             />
           ),
