@@ -34,13 +34,35 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     setTotalCartValue(prev => prev + change);
   };
 
+  const isSameCartItem = (item: CartItem, newItem: CartItem): boolean => {
+    if (item.product.id !== newItem.product.id) {
+      return false;
+    }
+  
+    if (newItem.selectedVariant) {
+      if (!item.selectedVariant || item.selectedVariant.id !== newItem.selectedVariant.id) {
+        return false;
+      }
+    }
+  
+    if (newItem.ingredients && newItem.ingredients.length > 0) {
+      if (!item.ingredients || item.ingredients.length !== newItem.ingredients.length) {
+        return false;
+      }
+      const newIngredientsIds = newItem.ingredients.map(i => i.ingredientId).sort();
+      const itemIngredientsIds = item.ingredients.map(i => i.ingredientId).sort();
+      if (JSON.stringify(newIngredientsIds) !== JSON.stringify(itemIngredientsIds)) {
+        return false;
+      }
+    }
+  
+    return true;
+  };
+  
+
   const addCartItem = (newItem: CartItem) => {
     setCartItems(prevItems => {
-      const index = prevItems.findIndex(item =>
-        JSON.stringify(item.product) === JSON.stringify(newItem.product) &&
-        JSON.stringify(item.selectedVariant) === JSON.stringify(newItem.selectedVariant) &&
-        JSON.stringify(item.ingredients) === JSON.stringify(newItem.ingredients)
-      );
+      const index = prevItems.findIndex(item => isSameCartItem(item, newItem));
       let updatedItems = [...prevItems];
       if (index >= 0) {
         updatedItems[index].quantity += newItem.quantity;
@@ -51,6 +73,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       return updatedItems;
     });
   };
+  
 
   const removeCartItem = (itemToRemove: CartItem) => {
     setCartItems(prevItems => {
