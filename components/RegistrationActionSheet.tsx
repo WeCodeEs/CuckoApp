@@ -15,12 +15,15 @@ import { Button, ButtonText } from './ui/button';
 import { Colors } from '@/constants/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from "expo-router";
-import { checkPhoneNumberRegistration } from '@/constants/api';
+import { fetchUserIfRegistered } from '@/constants/api';
 import { sanitizeOTP } from '@/constants/validations';
 import { useToast } from '@/components/ui/toast';
 import ErrorToast from '@/components/ErrorToast';
 import { TextInput as RNTextInput } from 'react-native';
 import { verifyOtp } from "@/constants/api";
+import { User } from "@/constants/types";
+import { Session } from '@supabase/supabase-js';
+import { useSession } from '@/contexts/SessionContext';
 
 const { width } = Dimensions.get('window');
 
@@ -46,6 +49,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   const navigation = useNavigation();
   const router = useRouter();
   const toast = useToast();
+  const { session, user, accessToken, setSession } = useSession();
 
   useEffect(() => {
     if (isOpen) {
@@ -105,11 +109,33 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     setButtonColor(Colors.light.darkBlue);
   };
 
-  const checkUserRegistration = async (): Promise<boolean> => {
+  const checkUserRegistration = async (currentSession: Session): Promise<User | Boolean> => {
     try {
-      const isPhoneNumberRegistered = await checkPhoneNumberRegistration(phone);
-      return isPhoneNumberRegistered;
+      const currentUserString = await fetchUserIfRegistered(currentSession.access_token);
+      const currentUser = JSON.parse(currentUserString);
+
+      const isUserRegistered =
+      currentUser.email !== "" && currentUser.email !== null &&
+      currentUser.faculty_id !== 0 && currentUser.faculty_id !== null &&
+      currentUser.first_name !== "" && currentUser.first_name !== null &&
+      currentUser.last_name !== "" && currentUser.last_name !== null &&
+      currentUser.phone !== "" && currentUser.phone !== null &&
+      currentUser.uuid !== "" && currentUser.uuid !== null;
+
+      
+    return isUserRegistered
+    ? {
+        id: currentUser.uuid, 
+        firstName: currentUser.first_name,
+        lastName: currentUser.last_name,
+        email: currentUser.email,
+        phone: currentUser.phone,
+        facultyId: currentUser.faculty_id, 
+      }
+    : false;
+
     } catch (err) {
+      console.error("Error checking user registration:", err);
       return false;
     }
   };
@@ -118,9 +144,10 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     const fullCode = code.join('');
   
     if (fullCode.length === 6) {
-      const userRetrieved = await verifyOtp(phone, fullCode);
+      const otpSession = await verifyOtp(lada+phone, fullCode);
+      setSession(otpSession);
 
-      if (userRetrieved == null) {
+      if (session == null) {
         toast.show({
           id: "otp-invalid",
           placement: 'top',
@@ -140,7 +167,8 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         try {
-          const isUserRegistered = await checkUserRegistration();
+          const isUserRegistered = await checkUserRegistration(session);
+          console.log("isUserRegistered: ", isUserRegistered);
           if (isUserRegistered) {
             router.replace("/(tabs)/(home)");
           } else {

@@ -9,12 +9,17 @@ import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { useRouter } from "expo-router";
 import InputInfo from '@/components/InputInfo';
 import { isValidName } from '@/constants/validations';
+import { saveNameAndLastName } from '@/constants/api';
+import { useToast } from '@/components/ui/toast';
+import ErrorToast from '@/components/ErrorToast';
+
 
 const RegistrationName = () => {
   const router = useRouter();
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
+  const toast = useToast();
 
   useEffect(() => {
     if (isValidName(name) && isValidName(lastName) && name.length > 0 && lastName.length > 0) {
@@ -23,6 +28,28 @@ const RegistrationName = () => {
       setButtonColor(Colors.light.lightGray);
     }
   }, [name, lastName]);
+
+  const handleNavigation = async () => {
+    if (isValidName(name) && isValidName(lastName)) {
+      const isUserUpdated = await saveNameAndLastName(name, lastName);
+      if (isUserUpdated) {
+        router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
+      } else {
+        toast.show({
+          id: "registration-error",
+          placement: 'top',
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Ha habido un error registrando al usuario."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      }
+    }
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -67,11 +94,7 @@ const RegistrationName = () => {
           </ScrollView>
           <Center style={styles.buttonContainer}>
             <Button
-              onPress={() => {
-                if (isValidName(name) && isValidName(lastName)) {
-                  router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
-                }
-              }}
+              onPress={handleNavigation}
               style={[styles.nextButton, { backgroundColor: buttonColor }]}
               disabled={!isValidName(name) || !isValidName(lastName)}
             >
