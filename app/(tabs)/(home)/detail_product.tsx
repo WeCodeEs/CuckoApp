@@ -170,7 +170,7 @@ const Detail_product = () => {
 
   const handlePressCart = () => {
     const orderedIngredients = [...selectedIngredients].sort((a, b) => a.ingredientId - b.ingredientId);
-    if (product && selectedVariant) {
+    if (product) {
       addCartItem({
         product: product,
         quantity: quantity,
