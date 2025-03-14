@@ -279,18 +279,3 @@ export async function fetchOrderById(orderId: number): Promise<Order | undefined
   }
 }
 
-
-// TODO: Definir la función createOrder que permita insertar una orden en la Base de Datos
-// export async function createOrder(order: Omit<Order, 'id'>): Promise<Order> {
-//   try {
-//     const { data, error } = await supabaseClient
-//       .from('orders')
-//       .insert(order)
-//       .select();
-//     if (error) throw error;
-//     return data[0];
-//   } catch (error) {
-//     console.error("Error creando el pedido:", error);
-//     throw error;
-//   }
-// }
