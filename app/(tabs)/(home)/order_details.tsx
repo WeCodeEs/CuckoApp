@@ -1,4 +1,3 @@
-// order_details.tsx
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { Heading } from '@/components/ui/heading';
@@ -15,7 +14,7 @@ import { Order } from '@/constants/types';
 import { fetchOrderById } from '@/constants/api';
 
 const OrderDetailsScreen: React.FC = () => {
-  const { orderId } = useLocalSearchParams();
+  const { orderId, paymentSuccess } = useLocalSearchParams();
   const toast = useToast();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,6 +48,24 @@ const OrderDetailsScreen: React.FC = () => {
 
     loadOrder();
   }, [orderId]);
+
+  useEffect(() => {
+    if (order && paymentSuccess === 'true') {
+      toast.show({
+        id: "payment-success",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Pago completado con éxito"
+            variant="success"
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    }
+  }, [order, paymentSuccess]);
 
   if (loading) {
     return <ActivityIndicator size="large" color={Colors.light.darkBlue} />;
