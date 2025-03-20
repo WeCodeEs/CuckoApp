@@ -30,15 +30,12 @@ export interface Ingredient {
 }
 
 export interface User {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
-  lada: string;
   phone: string;
-  role: string;
   facultyId: number | null;
-  creationDate: string;
 }
 
 export interface Faculty {
