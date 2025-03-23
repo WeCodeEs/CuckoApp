@@ -23,7 +23,6 @@ import { TextInput as RNTextInput } from 'react-native';
 import { verifyOtp } from "@/constants/api";
 import { User } from "@/constants/types";
 import { Session } from '@supabase/supabase-js';
-import { useSession } from '@/contexts/SessionContext';
 
 const { width } = Dimensions.get('window');
 
@@ -49,7 +48,6 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   const navigation = useNavigation();
   const router = useRouter();
   const toast = useToast();
-  const { session, user, accessToken, setSession } = useSession();
 
   useEffect(() => {
     if (isOpen) {
@@ -145,9 +143,8 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   
     if (fullCode.length === 6) {
       const otpSession = await verifyOtp(lada+phone, fullCode);
-      setSession(otpSession);
 
-      if (session == null) {
+      if (otpSession == null) {
         toast.show({
           id: "otp-invalid",
           placement: 'top',
@@ -167,7 +164,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         try {
-          const isUserRegistered = await checkUserRegistration(session);
+          const isUserRegistered = await checkUserRegistration(otpSession);
           console.log("isUserRegistered: ", isUserRegistered);
           if (isUserRegistered) {
             router.replace("/(tabs)/(home)");

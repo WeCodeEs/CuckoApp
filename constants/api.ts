@@ -308,11 +308,10 @@ export async function verifyOtp(phoneNumber: string, token: string) : Promise<Se
       phone: phoneNumber,
       token: token,
       type: 'sms',
-
     });
 
     if (error) {
-      console.error(`Error al verificar OTP: ${error.message}. OTP usado: ${token}. Telefono usado: ${phoneNumber}.`);
+      console.error(`Error al verificar OTP: ${error.message}. OTP usado: ${token} Telefono usado: ${phoneNumber}`);
       return null; 
     }
 
