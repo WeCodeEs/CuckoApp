@@ -19,6 +19,8 @@ import { Clock, ChevronDown } from 'lucide-react-native';
 import DeliveryTimeModal from '@/components/DeliveryTimeModal';
 import { useStripe } from '@stripe/stripe-react-native';
 import { fetchPaymentIntent } from "@/constants/api";
+import ErrorToast from '@/components/ErrorToast';
+import { useToast } from '@/components/ui/toast';
 
 const CartScreen: React.FC = () => {
   const router: any = useRouter();
@@ -30,8 +32,11 @@ const CartScreen: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [deliveryTime, setDeliveryTime] = useState("Preparación Inmediata");
 
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [clientSecret, setClientSecret] = useState<string>();
+
+  const toast = useToast();
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -73,24 +78,135 @@ const CartScreen: React.FC = () => {
   };
 
   const handlePayment = async () => {
-    const clientSecret = await fetchPaymentIntent();
-    if (!clientSecret) return;
+    if (isProcessingPayment) return;
+    
+    setIsProcessingPayment(true);
+  
+    try {
+      const clientSecret = await fetchPaymentIntent();
+      if (!clientSecret) return;
+  
+      setClientSecret(clientSecret);
+      const { error } = await initPaymentSheet({
+        paymentIntentClientSecret: clientSecret,
+        merchantDisplayName: "Cuckoo Coffee & Resto ®",
+      });
+  
+      if (error) {
+        console.error("Error al inicializar Payment Sheet:", error.message);
+        toast.show({
+          id: "payment-init-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message={`Error al inicializar el pago: ${error.message}`}
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+        return;
+      }
+  
+      const { error: presentPaymentSheetError } = await presentPaymentSheet();
 
-    setClientSecret(clientSecret);
-    const { error } = await initPaymentSheet({ paymentIntentClientSecret: clientSecret, merchantDisplayName: "Cuckoo Coffee & Resto ®"});
+      if (presentPaymentSheetError) {
+        let localizedMessage = "Ocurrió un error inesperado durante el pago.";
+      
+        switch (presentPaymentSheetError.code) {
+          case "Failed":
+            localizedMessage = "El pago no se pudo completar. Inténtalo de nuevo o usa otro método de pago.";
+            break;
+          
+          case "Canceled":
+            localizedMessage = "Cancelaste el pago. Si fue un error, intenta nuevamente.";
+            break;
+      
+          case "Timeout":
+            localizedMessage = "El proceso de pago tardó demasiado y fue interrumpido. Verifica tu conexión e intenta nuevamente.";
+            break;
+      
+          default:
+            localizedMessage = `Error desconocido: ${presentPaymentSheetError.message}`;
+        }
+      
+        console.error("Error durante el pago:", "| Error.code: ", presentPaymentSheetError.code, "| Error.declineCode:",presentPaymentSheetError.declineCode, "| Error.message:",presentPaymentSheetError.message);
+        
+        toast.show({
+          id: "payment-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message={localizedMessage}
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      } else {
+        console.log("Pago completado con éxito: ");
 
-    if (error) {
-      console.error("Error con mensaje: ", error.message);
-      return;
-    }
+        // TODO: Construir un objeto de tipo order
+        // const now = new Date();
+        // const newOrder = {
+        //   items: cartItems.map(cartItem => ({
+        //     id: cartItem.product.id,
+        //     quantity: cartItem.quantity ?? 1, 
+        //   })),
+        //   finalPrice: totalCartValue,
+        //   date: now.toLocaleDateString(),
+        //   time: now.toLocaleTimeString(),
+        //   status: "Esperando confirmación",
+        // };
 
-    const { error: paymentError} = await presentPaymentSheet();
-    if (paymentError) {
-      console.error("Error con el pago: ", paymentError.message);
-    } else {
-      console.log("Pago completado con exito: ");
+        try {
+          // TODO: Insertar el pedido (order) en la Base de Datos y
+          // usar esa fila insertada para alimentar order_details.tsx
+          // const createdOrder = await createOrder(newOrder);
+          emptyCart();
+          router.push({ 
+            pathname: '/(tabs)/(home)/order_details', 
+            params: { orderId: 1 , paymentSuccess: true } 
+            // TODO: Incluir el ID del pedido en los parámetros
+            // params: { orderId: createdOrder.id } 
+          });
+        } catch (error) {
+          console.error("Error creando el pedido:", error);
+          toast.show({
+            id: "order-create-error",
+            placement: "top",
+            duration: 5000,
+            render: ({ id }) => (
+              <ErrorToast
+                id={id}
+                message="Error al crear el pedido"
+                onClose={() => toast.close(id)}
+              />
+            ),
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error general en el proceso de pago:", err);
+      toast.show({
+        id: "payment-general-error",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Ocurrió un error durante el proceso de pago."
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    } finally {
+      setIsProcessingPayment(false);
     }
   };
+  
 
   return (
     <>
@@ -143,7 +259,12 @@ const CartScreen: React.FC = () => {
               </Heading>
             </VStack>
             <Center>
-              <Button size="md" style={styles.paymentButton} onPress={handlePayment}>
+              <Button 
+                size="md" 
+                style={styles.paymentButton} 
+                onPress={handlePayment}
+                disabled={isProcessingPayment} 
+              >
                 <ButtonText size="sm" style={styles.paymentButtonText}>
                   CONFIRMAR
                 </ButtonText>

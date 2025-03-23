@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Drawer, DrawerBackdrop, DrawerContent, DrawerHeader, DrawerCloseButton, DrawerBody, DrawerFooter } from '@/components/ui/drawer';
+import { Drawer, DrawerBackdrop, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter } from '@/components/ui/drawer';
 import { Avatar, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 import { VStack } from '@/components/ui/vstack';
 import { Divider } from '@/components/ui/divider';
@@ -8,7 +8,7 @@ import { Icon } from '@/components/ui/icon';
 import { Button, ButtonText } from '@/components/ui/button';
 import { User, Settings, CreditCard, History, Share } from "lucide-react-native";
 import { Text } from '@/components/ui/text';
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 
 interface HeaderDrawerProps {
   isOpen: boolean;
@@ -17,6 +17,7 @@ interface HeaderDrawerProps {
 
 export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
   const router = useRouter();
+  const segments = useSegments();
 
   const [bgColor, setBgColor] = useState({
     profile: 'transparent',
@@ -57,6 +58,15 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
   };
 
   const handleNavigation = (route: DrawerRoutes) => {   
+    const currentPath = `/${segments.join("/")}`;
+
+    if (currentPath === route) {
+      setTimeout(() => {
+        onClose();
+      }, 300);
+      return;
+    }
+    
     router.dismissTo('/(tabs)/(home)');
 
     router.push({ pathname: route });
