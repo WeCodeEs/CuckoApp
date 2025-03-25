@@ -10,6 +10,7 @@ import InputSelect from '@/components/InputSelect';
 import { useRouter, useLocalSearchParams } from "expo-router";
 import InputInfo from '@/components/InputInfo';
 import { isValidEmail } from '@/constants/validations';
+import { useUser } from '@/contexts/UserContext';
 
 const RegistrationForm = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const RegistrationForm = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [email, setEmail] = useState("");
   const [selectedSchool, setSelectedSchool] = useState("");
+  const { updateUser } = useUser();
 
   useEffect(() => {
     if (isValidEmail(email) && selectedSchool) {
@@ -69,6 +71,7 @@ const RegistrationForm = () => {
             <Button
               onPress={() => {
                 if (isValidEmail(email)) {
+                  updateUser({ email, school: selectedSchool });
                   router.replace("/(tabs)/(home)");
                 }
               }}

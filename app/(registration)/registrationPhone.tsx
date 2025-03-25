@@ -9,12 +9,14 @@ import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import RegistrationActionSheet from '@/components/RegistrationActionSheet';
 import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
+import { useUser } from '@/contexts/UserContext';
 
 const RegistrationPhone = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [showActionsheet, setShowActionsheet] = useState(false);
   const [lada, setLada] = useState("52");
   const [phone, setPhone] = useState("");
+  const { updateUser } = useUser();
 
   const handleLadaChange = (newLada: string) => {
     setLada(sanitizeLada(newLada));
@@ -27,6 +29,7 @@ const RegistrationPhone = () => {
 
   const handleNextPress = () => {
     if (isValidPhoneNumber(phone)) {
+      updateUser({ phone: `+${lada} ${phone}` });
       setShowActionsheet(true);
     }
   };

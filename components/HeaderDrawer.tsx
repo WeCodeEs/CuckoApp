@@ -9,6 +9,7 @@ import { Button, ButtonText } from '@/components/ui/button';
 import { User, Settings, CreditCard, History, Share } from "lucide-react-native";
 import { Text } from '@/components/ui/text';
 import { useRouter, useSegments } from "expo-router";
+import { useUser } from '@/contexts/UserContext';
 
 interface HeaderDrawerProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ interface HeaderDrawerProps {
 export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
   const router = useRouter();
   const segments = useSegments();
+  const { user, clearUser } = useUser();
 
   const [bgColor, setBgColor] = useState({
     profile: 'transparent',
@@ -89,15 +91,15 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
       <DrawerContent className="w-70 md:w-75 pt-40">
         <DrawerHeader className="justify-center flex-col gap-2">
           <Avatar size="2xl">
-            <AvatarFallbackText>Juan Pérez</AvatarFallbackText>
+          <AvatarFallbackText>{user ? `${user.name} ${user.lastName}` : 'Invitado'}</AvatarFallbackText>
             <AvatarImage
               source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU' }}
             />
           </Avatar>
           <VStack className="justify-center items-center">
-            <Text size="lg">Juan Pérez</Text>
+          <Text size="lg">{user ? `${user.name} ${user.lastName}` : 'Invitado'}</Text>
             <Text size="sm" className="text-typography-600">
-              juan@gmail.com
+              {user?.email || 'Sin correo'}
             </Text>
           </VStack>
         </DrawerHeader>

@@ -9,12 +9,14 @@ import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { useRouter } from "expo-router";
 import InputInfo from '@/components/InputInfo';
 import { isValidName } from '@/constants/validations';
+import { useUser } from '@/contexts/UserContext';
 
 const RegistrationName = () => {
   const router = useRouter();
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
+  const { updateUser } = useUser();
 
   useEffect(() => {
     if (isValidName(name) && isValidName(lastName) && name.length > 0 && lastName.length > 0) {
@@ -69,6 +71,7 @@ const RegistrationName = () => {
             <Button
               onPress={() => {
                 if (isValidName(name) && isValidName(lastName)) {
+                  updateUser({ name, lastName });
                   router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
                 }
               }}

@@ -13,40 +13,51 @@ import InputInfo from '@/components/InputInfo';
 import InputSelect from '@/components/InputSelect';
 import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
-import { isValidEmail, sanitizeEmail, isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
+import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
+import { useUser } from '@/contexts/UserContext';
 
 const ProfileScreen = () => {
-  const user = {
-    name_first: "Juan",
-    last_name_first: "Pérez",
-    mail: "juan@gmail.com",
-    faculty: "Ingeniería",
-    phone: "9511234567",
-    lada: "52",
-  };
+  const { user, setAvatar, setEmail, setPhone, setSchool } = useUser();
 
-  const [phone, setPhone] = useState(user.phone);
-  const [lada, setLada] = useState(user.lada);
-  const [mail, setMail] = useState(user.mail);
-  const [selectedAvatar, setSelectedAvatar] = useState("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU");
+  const defaultAvatar =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU";
+
+  const fullPhone = user?.phone || "";
+  const initialLada =
+    fullPhone && fullPhone.startsWith("+")
+      ? fullPhone.substring(1).split(" ")[0]
+      : fullPhone.split(" ")[0] || "52";
+  const initialPhone =
+    fullPhone && fullPhone.startsWith("+")
+      ? fullPhone.substring(1).split(" ")[1]
+      : fullPhone.split(" ")[1] || "";
+
+  const [ladaLocal, setLadaLocal] = useState<string>(initialLada);
+  const [phoneLocal, setPhoneLocal] = useState<string>(initialPhone);
   const [showModal, setShowModal] = useState(false);
 
   const handleLadaChange = (newLada: string) => {
-    setLada(sanitizeLada(newLada));
+    setLadaLocal(sanitizeLada(newLada));
   };
 
   const handlePhoneChange = (newPhone: string) => {
-    setPhone(sanitizePhoneNumber(newPhone));
+    setPhoneLocal(sanitizePhoneNumber(newPhone));
   };
 
   const handlePhoneSave = (newPhone: string) => {
     if (isValidPhoneNumber(newPhone)) {
-      setPhone(newPhone);
+      setPhone(`+${ladaLocal} ${newPhone}`);
     }
   };
 
   const handlePhoneCancel = () => {
-    setPhone(user.phone);
+    const fullPhone = user?.phone || "";
+    const parts =
+      fullPhone && fullPhone.startsWith("+")
+        ? fullPhone.substring(1).split(" ")
+        : fullPhone.split(" ");
+    setLadaLocal(parts[0] || "52");
+    setPhoneLocal(parts[1] || "");
   };
 
   return (
@@ -58,7 +69,13 @@ const ProfileScreen = () => {
         <Center style={styles.header_container}>
           <Pressable onPress={() => setShowModal(true)} style={styles.avatar_container}>
             <View style={styles.image_container}>
-              <Image className="rounded-full" style={styles.avatar_image} size="1.5xl" source={selectedAvatar} alt={"Avatar"} />
+              <Image
+                className="rounded-full"
+                style={styles.avatar_image}
+                size="1.5xl"
+                source={user?.avatar ? { uri: user.avatar } : { uri: defaultAvatar }}
+                alt={"Avatar"}
+              />
             </View>
             <View style={styles.change_av}>
               <Icon as={Pencil} size="xl" className="text-white" />
@@ -67,31 +84,33 @@ const ProfileScreen = () => {
         </Center>
         <Center style={styles.general_container}>
           <Box style={styles.content_box}>
-            <Heading style={styles.title} size={"2xl"}>{user.name_first + " " + user.last_name_first}</Heading>
+            <Heading style={styles.title} size={"2xl"}>
+              {`${user?.name || ''} ${user?.lastName || ''}`}
+            </Heading>
             <ModalAvatar 
               showModal={showModal} 
               setShowModal={setShowModal} 
-              onAvatarSelect={(src) => setSelectedAvatar(src)}
+              onAvatarSelect={(src) => setAvatar(src)}
             />
             <InputInfo 
-              initialValue={mail}
+              initialValue={user?.email || ""}
               editable={true}
               isEmail={true}
               headingText={"Correo"}
-              onEditComplete={(email) => setMail(email)}
+              onEditComplete={(email) => setEmail(email)}
               onCancelEdit={() => {}}
             />
             <InputSelect 
-              initialValue={user.faculty}
+              initialValue={user?.school || ""}
               editable={true}
               headingText="Escuela"
               items={["Comunicación", "Diseño", "Derecho", "Ingeniería", "Medicina", "Negocios", "Psicología", "Turismo"]}
-              onEditComplete={(newValue) => console.log("Opción elegida:", newValue)}
-              onCancelEdit={() => console.log("Edición cancelada")}
+              onEditComplete={(newValue) => setSchool(newValue)}
+              onCancelEdit={() => {}}
             />
             <InputPhone
-              lada={lada}
-              phone={phone}
+              lada={ladaLocal}
+              phone={phoneLocal}
               onLadaChange={handleLadaChange}
               onPhoneChange={handlePhoneChange}
               onSave={handlePhoneSave}
