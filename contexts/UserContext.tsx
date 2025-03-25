@@ -6,7 +6,7 @@ export interface User {
   lastName?: string;
   email?: string;
   school?: string;
-  avatar?: string;  
+  avatar?: number | string; 
 }
 
 interface UserContextProps {
@@ -14,8 +14,7 @@ interface UserContextProps {
   setUser: (user: User) => void;
   updateUser: (data: Partial<User>) => void;
   clearUser: () => void;
-
-  setAvatar: (avatar: string) => void;
+  setAvatar: (avatar: number | string) => void;
   setEmail: (email: string) => void;
   setPhone: (phone: string) => void;
   setSchool: (school: string) => void;
@@ -35,24 +34,30 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
+/* BORRAR USUARIO DE PRUEBA EN PRODUCCIÓN */
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const [user, setUserState] = useState<User | null>(null);
+  const [user, setUserState] = useState<User | null>({
+    name: "Juan",
+    lastName: "Pérez",
+    email: "juan@example.com",
+    school: "Ingeniería",
+    avatar: require("@/assets/images/avatars/avatar-icon-1.png"),
+    phone: "+52 9511234567",
+  });
 
   const setUser = (newUser: User) => {
     setUserState(newUser);
   };
 
   const updateUser = (data: Partial<User>) => {
-    setUserState((prev) => {
-      return { ...(prev || {}), ...data };
-    });
+    setUserState(prev => ({ ...(prev || {}), ...data }));
   };
 
   const clearUser = () => {
     setUserState(null);
   };
 
-  const setAvatar = (avatar: string) => {
+  const setAvatar = (avatar: number | string) => {
     updateUser({ avatar });
   };
 
