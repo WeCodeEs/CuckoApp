@@ -85,11 +85,15 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
   };
   
   const handleNavigationButton = (route: RegistrationRoutes) => {
+    if (route === '/(registration)/registrationPhone') {
+      clearUser();
+    }
     router.replace(route);
     setTimeout(() => {
       onClose();
     }, 300); 
   };
+  
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
