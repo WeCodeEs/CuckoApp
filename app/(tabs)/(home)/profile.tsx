@@ -19,8 +19,14 @@ import { useUser } from '@/contexts/UserContext';
 const ProfileScreen = () => {
   const { user, setAvatar, setEmail, setPhone, setSchool } = useUser();
 
-  const defaultAvatar =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU";
+  const defaultAvatar = require("@/assets/images/avatars/avatar-icon-1.png");
+
+  const getAvatarSource = () => {
+    if (!user?.avatar) {
+      return defaultAvatar;
+    }
+    return typeof user.avatar === "number" ? user.avatar : { uri: user.avatar };
+  };
 
   const fullPhone = user?.phone || "";
   const initialLada =
@@ -73,7 +79,7 @@ const ProfileScreen = () => {
                 className="rounded-full"
                 style={styles.avatar_image}
                 size="1.5xl"
-                source={user?.avatar ? { uri: user.avatar } : { uri: defaultAvatar }}
+                source={getAvatarSource()}
                 alt={"Avatar"}
               />
             </View>
