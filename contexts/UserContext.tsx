@@ -5,7 +5,7 @@ export interface User {
   name?: string;
   lastName?: string;
   email?: string;
-  school?: string;
+  school?: number;
   avatar?: number | string; 
 }
 
@@ -40,7 +40,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     name: "Juan",
     lastName: "Pérez",
     email: "juan@example.com",
-    school: "Ingeniería",
+    school: 4,
     avatar: require("@/assets/images/avatars/avatar-icon-1.png"),
     phone: "+52 9511234567",
   });
@@ -69,7 +69,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     updateUser({ phone });
   };
 
-  const setSchool = (school: string) => {
+  const setSchool = (school: number) => {
     updateUser({ school });
   };
 

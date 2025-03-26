@@ -67,12 +67,12 @@ const RegistrationForm = () => {
   };
 
   const handleNavigation = () => {
-    
     if (isValidEmail(email)) {
       updateUser({ email, school: selectedSchool });
       router.replace("/(tabs)/(home)");
     }
   };
+  
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
