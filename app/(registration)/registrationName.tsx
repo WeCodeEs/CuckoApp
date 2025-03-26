@@ -9,6 +9,9 @@ import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { useRouter } from "expo-router";
 import InputInfo from '@/components/InputInfo';
 import { isValidName } from '@/constants/validations';
+import { saveNameAndLastName } from '@/constants/api';
+import { useToast } from '@/components/ui/toast';
+import ErrorToast from '@/components/ErrorToast';
 import { useUser } from '@/contexts/UserContext';
 
 const RegistrationName = () => {
@@ -16,6 +19,7 @@ const RegistrationName = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
+  const toast = useToast();
   const { updateUser } = useUser();
 
   useEffect(() => {
@@ -25,6 +29,13 @@ const RegistrationName = () => {
       setButtonColor(Colors.light.lightGray);
     }
   }, [name, lastName]);
+
+  const handleNavigation = async () => {
+    if (isValidName(name) && isValidName(lastName)) {
+      updateUser({ name, lastName });
+      router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
+    }
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -69,12 +80,7 @@ const RegistrationName = () => {
           </ScrollView>
           <Center style={styles.buttonContainer}>
             <Button
-              onPress={() => {
-                if (isValidName(name) && isValidName(lastName)) {
-                  updateUser({ name, lastName });
-                  router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
-                }
-              }}
+              onPress={handleNavigation}
               style={[styles.nextButton, { backgroundColor: buttonColor }]}
               disabled={!isValidName(name) || !isValidName(lastName)}
             >

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, Dimensions } from 'react-native';
 import {
   Actionsheet,
   ActionsheetBackdrop,
@@ -15,11 +15,16 @@ import { Button, ButtonText } from './ui/button';
 import { Colors } from '@/constants/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from "expo-router";
-import { checkPhoneNumberRegistration } from '@/constants/api';
-import { sanitizeOTP, isAllDigitsEqual } from '@/constants/validations';
+import { fetchUserIfRegistered } from '@/constants/api';
+import { sanitizeOTP } from '@/constants/validations';
 import { useToast } from '@/components/ui/toast';
 import ErrorToast from '@/components/ErrorToast';
 import { TextInput as RNTextInput } from 'react-native';
+import { verifyOtp } from "@/constants/api";
+import { User } from "@/constants/types";
+import { Session } from '@supabase/supabase-js';
+
+const { width } = Dimensions.get('window');
 
 interface RegistrationActionSheetProps {
   isOpen: boolean;
@@ -36,8 +41,10 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     useRef<RNTextInput>(null),
     useRef<RNTextInput>(null),
     useRef<RNTextInput>(null),
+    useRef<RNTextInput>(null),
+    useRef<RNTextInput>(null),
   ];
-  const [code, setCode] = useState(['', '', '', '']);
+  const [code, setCode] = useState(['', '', '', '', '', '']);
   const navigation = useNavigation();
   const router = useRouter();
   const toast = useToast();
@@ -100,19 +107,44 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
     setButtonColor(Colors.light.darkBlue);
   };
 
-  const checkUserRegistration = async (): Promise<boolean> => {
+  const checkUserRegistration = async (currentSession: Session): Promise<User | Boolean> => {
     try {
-      const isPhoneNumberRegistered = await checkPhoneNumberRegistration(phone);
-      return isPhoneNumberRegistered;
+      const currentUserString = await fetchUserIfRegistered(currentSession.access_token);
+      const currentUser = JSON.parse(currentUserString);
+
+      const isUserRegistered =
+      currentUser.email !== "" && currentUser.email !== null &&
+      currentUser.faculty_id !== 0 && currentUser.faculty_id !== null &&
+      currentUser.first_name !== "" && currentUser.first_name !== null &&
+      currentUser.last_name !== "" && currentUser.last_name !== null &&
+      currentUser.phone !== "" && currentUser.phone !== null &&
+      currentUser.uuid !== "" && currentUser.uuid !== null;
+
+      
+    return isUserRegistered
+    ? {
+        id: currentUser.uuid, 
+        firstName: currentUser.first_name,
+        lastName: currentUser.last_name,
+        email: currentUser.email,
+        phone: currentUser.phone,
+        facultyId: currentUser.faculty_id, 
+      }
+    : false;
+
     } catch (err) {
+      console.error("Error checking user registration:", err);
       return false;
     }
   };
 
   const handleNavigation = async () => {
     const fullCode = code.join('');
-    if (fullCode.length === 4) {
-      if (!isAllDigitsEqual(fullCode)) {
+  
+    if (fullCode.length === 6) {
+      const otpSession = await verifyOtp(lada+phone, fullCode);
+
+      if (otpSession == null) {
         toast.show({
           id: "otp-invalid",
           placement: 'top',
@@ -120,35 +152,20 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
           render: ({ id }) => (
             <ErrorToast
               id={id}
-              message="Código de verificación inválido. Intenta de nuevo o genera un nuevo código de verificación"
+              message="El código ingresado ha expirado o es inválido. Intenta de nuevo o genera un nuevo código de verificación"
               onClose={() => toast.close(id)}
             />
           ),
         });
-        setCode(['', '', '', '']);
-        inputRefs.forEach(ref => ref.current?.clear());
-        inputRefs[0].current?.focus();
-      } else if (fullCode === "0000") {
-        toast.show({
-          id: "otp-connection-error",
-          placement: 'top',
-          duration: 5000,
-          render: ({ id }) => (
-            <ErrorToast
-              id={id}
-              message="Ha habido un error en la verificación del código."
-              onClose={() => toast.close(id)}
-            />
-          ),
-        });
-        setCode(['', '', '', '']);
+        setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         inputRefs[0].current?.focus();
       } else {
-        setCode(['', '', '', '']);
+        setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         try {
-          const isUserRegistered = await checkUserRegistration();
+          const isUserRegistered = await checkUserRegistration(otpSession);
+          console.log("isUserRegistered: ", isUserRegistered);
           if (isUserRegistered) {
             router.replace("/(tabs)/(home)");
           } else {
@@ -169,12 +186,12 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         render: ({ id }) => (
           <ErrorToast
             id={id}
-            message="Ingresa un código de 4 dígitos."
+            message="Ingresa un código de 6 dígitos."
             onClose={() => toast.close(id)}
           />
         ),
       });
-      setCode(['', '', '', '']);
+      setCode(['', '', '', '', '', '']);
       inputRefs.forEach(ref => ref.current?.clear());
       inputRefs[0].current?.focus();
     }
@@ -258,8 +275,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   otpInput: {
-    width: 60,
-    height: 60,
+    width: width * 0.13,
+    height: width * 0.13,
     borderWidth: 1,
     borderColor: Colors.light.borderBox,
     borderRadius: 4,

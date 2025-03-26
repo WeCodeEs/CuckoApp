@@ -9,6 +9,9 @@ import { Button, ButtonText } from '@/components/ui/button';
 import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import RegistrationActionSheet from '@/components/RegistrationActionSheet';
 import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
+import { signInWithOtp } from "@/constants/api";
+import { useToast } from '@/components/ui/toast';
+import ErrorToast from '@/components/ErrorToast';
 import { useUser } from '@/contexts/UserContext';
 
 const RegistrationPhone = () => {
@@ -16,6 +19,7 @@ const RegistrationPhone = () => {
   const [showActionsheet, setShowActionsheet] = useState(false);
   const [lada, setLada] = useState("52");
   const [phone, setPhone] = useState("");
+  const toast = useToast();
   const { updateUser } = useUser();
 
   const handleLadaChange = (newLada: string) => {
@@ -29,10 +33,30 @@ const RegistrationPhone = () => {
 
   const handleNextPress = () => {
     if (isValidPhoneNumber(phone)) {
-      updateUser({ phone: `+${lada} ${phone}` });
-      setShowActionsheet(true);
+      handleSignInWithOtp(lada+phone);
     }
   };
+
+  const handleSignInWithOtp = async (fullPhone: string) => {
+    const data = await signInWithOtp(fullPhone);
+
+    if (data != null) {
+      setShowActionsheet(true);
+    } else {
+      toast.show({
+        id: "otp-creation-error",
+        placement: 'top',
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Ha habido un error en la creación del código."
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    }
+  }
 
   useEffect(() => {
     if (isValidPhoneNumber(phone)) {

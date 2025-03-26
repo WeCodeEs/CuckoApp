@@ -1,5 +1,7 @@
 import { Menu, Product, User, Faculty, Category, Notification, Order } from '@/constants/types';
 import { supabaseClient } from "@/utils/supabase";
+import { Session } from "@supabase/auth-js";
+import { FunctionsHttpError, FunctionsRelayError, FunctionsFetchError } from '@supabase/supabase-js'
 
 const API_URL_MENU = process.env.EXPO_PUBLIC_API_URL_MENU ?? "";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY ?? "";
@@ -279,3 +281,112 @@ export async function fetchOrderById(orderId: number): Promise<Order | undefined
   }
 }
 
+export async function signInWithOtp(phoneNumber: string) : Promise<any | null> {
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithOtp({
+      phone: phoneNumber,
+    });
+
+    if (error) {
+      console.error("Error al registrar usuario:", error.message);
+      return null; 
+    }
+
+    console.log("signInWithOtp returned: ", data);
+    return data ?? null;
+
+  } catch (error) {
+    console.error("Error al registrar usuario:", error);
+    return null;
+  }
+};
+
+
+export async function verifyOtp(phoneNumber: string, token: string) : Promise<Session | null> {
+  try {
+    const { data, error } = await supabaseClient.auth.verifyOtp({
+      phone: phoneNumber,
+      token: token,
+      type: 'sms',
+    });
+
+    if (error) {
+      console.error(`Error al verificar OTP: ${error.message}. OTP usado: ${token} Telefono usado: ${phoneNumber}`);
+      return null; 
+    }
+
+    console.log("Codigo OTP verificado: ", data);
+    return data?.session ?? null;
+
+  } catch (error) {
+    console.error("Error al verificar OTP:", error);
+    return null;
+  }
+};
+
+
+export async function fetchUserIfRegistered(userToken: string) : Promise<string> {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("fetch-or-create-user-profile", {
+      body:  { userToken: userToken},
+    });
+
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json()
+      console.log('Function returned an error', errorMessage)
+    } else if (error instanceof FunctionsRelayError) {
+      console.log('Relay error:', error.message)
+    } else if (error instanceof FunctionsFetchError) {
+      console.log('Fetch error:', error.message)
+    }
+
+    return JSON.stringify(data);
+  } catch (error) {
+    console.error("Error al llamar fetchUserIfRegistered: ", error);
+    return "";
+  }
+};
+
+export async function saveNameAndLastName(userUuid: string, userName: string, userLastName: string) : Promise<string> {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("save-name-and-lastname", {
+      body:  { uuid: userUuid, name: userName, lastName: userLastName},
+    });
+
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json()
+      console.log('Function returned an error', errorMessage)
+    } else if (error instanceof FunctionsRelayError) {
+      console.log('Relay error:', error.message)
+    } else if (error instanceof FunctionsFetchError) {
+      console.log('Fetch error:', error.message)
+    }
+
+    return JSON.stringify(data);
+  } catch (error) {
+    console.error("Error al llamar saveNameAndLastName: ", error);
+    return "";
+  }
+}
+
+export async function saveEmailAndFaculty(userUuid: string, userEmail: string, userFacultyId: number) : Promise<string> {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("save-email-and-faculty", {
+      body:  { uuid: userUuid, email: userEmail, facultyId: userFacultyId},
+    });
+
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json()
+      console.log('Function returned an error', errorMessage)
+    } else if (error instanceof FunctionsRelayError) {
+      console.log('Relay error:', error.message)
+    } else if (error instanceof FunctionsFetchError) {
+      console.log('Fetch error:', error.message)
+    }
+
+    return JSON.stringify(data);
+  } catch (error) {
+    console.error("Error al llamar saveEmailAndFaculty: ", error);
+    return "";
+  }
+}
