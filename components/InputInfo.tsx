@@ -114,7 +114,7 @@ const InputInfo: React.FC<InputInfoProps> = ({
           <View style={styles.displayContainer}>
             <Text>{value}</Text>
             <Pressable onPress={() => setIsEditing(true)}>
-              <Icon style={styles.editIcon} as={Pencil} size="lg" />
+              <Icon style={styles.editIcon} as={Pencil} size="lg" className="text-typography-600" />
             </Pressable>
           </View>
         )

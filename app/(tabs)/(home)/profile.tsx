@@ -66,6 +66,21 @@ const ProfileScreen = () => {
     setPhoneLocal(parts[1] || "");
   };
 
+  const schoolOptions = [
+    { label: "Comunicación", value: 1 },
+    { label: "Diseño", value: 2 },
+    { label: "Derecho", value: 3 },
+    { label: "Ingeniería", value: 4 },
+    { label: "Medicina", value: 5 },
+    { label: "Negocios", value: 6 },
+    { label: "Psicología", value: 7 },
+    { label: "Turismo", value: 8 },
+  ];
+
+  const currentSchoolLabel = schoolOptions.find(
+    (option) => option.value === user?.school
+  )?.label || "Selecciona una opción...";
+
   return (
     <KeyboardAvoidingView
       style={styles.keyboardContainer}
@@ -107,11 +122,16 @@ const ProfileScreen = () => {
               onCancelEdit={() => {}}
             />
             <InputSelect 
-              initialValue={user?.school || ""}
+              initialValue={currentSchoolLabel}
               editable={true}
               headingText="Escuela"
-              items={["Comunicación", "Diseño", "Derecho", "Ingeniería", "Medicina", "Negocios", "Psicología", "Turismo"]}
-              onEditComplete={(newValue) => setSchool(newValue)}
+              items={schoolOptions.map(option => option.label)}
+              onEditComplete={(selectedLabel: string) => {
+                const selectedOption = schoolOptions.find(option => option.label === selectedLabel);
+                if (selectedOption) {
+                  setSchool(selectedOption.value);
+                }
+              }}
               onCancelEdit={() => {}}
             />
             <InputPhone

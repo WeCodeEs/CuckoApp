@@ -134,7 +134,7 @@ const InputPhone: React.FC<InputPhoneProps> = ({
           <View style={styles.displayContainer}>
             <Text>+{finalLada} {maskPhoneNumber(finalPhone)}</Text>
             <Pressable onPress={() => setIsEditing(true)}>
-              <Icon style={styles.editIcon} as={Pencil} size="lg" />
+              <Icon style={styles.editIcon} as={Pencil} size="lg" className="text-typography-600" />
             </Pressable>
           </View>
         )
