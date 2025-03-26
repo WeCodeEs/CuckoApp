@@ -17,7 +17,7 @@ interface UserContextProps {
   setAvatar: (avatar: number | string) => void;
   setEmail: (email: string) => void;
   setPhone: (phone: string) => void;
-  setSchool: (school: string) => void;
+  setSchool: (school: number) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
