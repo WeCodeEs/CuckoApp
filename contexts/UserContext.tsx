@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { updateUserProfile } from "@/constants/api";
 import { User } from "@/constants/types";
+import { formatPhoneNumber } from "@/constants/validations"
 import { Session } from "@supabase/auth-js";
 
 interface UserContextProps {
@@ -48,14 +49,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const setUser = (newUser: User) => {
     setUserState(newUser);
-  };
-
-  const formatPhoneNumber = (phone: string): string => {
-    if (!phone) return phone;
-    if (phone.startsWith("+")) return phone;
-    const countryCode = phone.substring(0, 2);
-    const localNumber = phone.substring(2);
-    return `+${countryCode} ${localNumber}`;
   };
 
   const setSession = (sessionData: Session) => {

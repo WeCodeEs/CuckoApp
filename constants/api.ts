@@ -1,6 +1,7 @@
 import { Menu, Product, User, Faculty, Category, Notification, Order } from '@/constants/types';
 import { supabaseClient } from "@/utils/supabase";
 import { Session } from "@supabase/auth-js";
+import { formatPhoneNumber } from "@/constants/validations"
 import { FunctionsHttpError, FunctionsRelayError, FunctionsFetchError } from '@supabase/supabase-js'
 
 const API_URL_MENU = process.env.EXPO_PUBLIC_API_URL_MENU ?? "";
@@ -430,6 +431,41 @@ export async function updateUserProfile(userUuid: string, data: Partial<User>): 
     return res;
   } catch (error) {
     console.error("Error al llamar updateUserProfile:", error);
+    return null;
+  }
+}
+
+export async function fetchUserProfile(uuid: string): Promise<User | null> {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("fetch-user-profile", {
+      body: { uuid },
+    });
+
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+      console.error("Function returned an error:", errorMessage);
+    } else if (error instanceof FunctionsRelayError) {
+      console.error("Relay error:", error.message);
+    } else if (error instanceof FunctionsFetchError) {
+      console.error("Fetch error:", error.message);
+    }
+
+    if (!data) {
+      return null;
+    }
+
+    const userData: User = {
+      uuid: data.uuid,
+      name: data.first_name,
+      lastName: data.last_name,
+      email: data.email,
+      phone: formatPhoneNumber(data.phone),
+      facultyId: data.faculty_id,
+    };
+
+    return userData;
+  } catch (error) {
+    console.error("Error al llamar fetchUserProfile:", error);
     return null;
   }
 }

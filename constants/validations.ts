@@ -44,3 +44,10 @@ export const sanitizeOTP = (input: string): string => {
   return input.replace(/[^0-9]/g, '');
 };
 
+export const formatPhoneNumber = (phone: string): string => {
+  if (!phone) return phone;
+  if (phone.startsWith("+")) return phone;
+  const countryCode = phone.substring(0, 2);
+  const localNumber = phone.substring(2);
+  return `+${countryCode} ${localNumber}`;
+};

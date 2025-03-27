@@ -20,7 +20,7 @@ import { sanitizeOTP } from '@/constants/validations';
 import { useToast } from '@/components/ui/toast';
 import ErrorToast from '@/components/ErrorToast';
 import { TextInput as RNTextInput } from 'react-native';
-import { verifyOtp } from "@/constants/api";
+import { verifyOtp, fetchUserProfile } from "@/constants/api";
 import { User } from "@/constants/types";
 import { useUser } from '@/contexts/UserContext';
 import { Session } from '@supabase/supabase-js';
@@ -49,7 +49,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   const navigation = useNavigation();
   const router = useRouter();
   const toast = useToast();
-  const { setSession } = useUser();
+  const { setUser, setSession } = useUser();
 
   useEffect(() => {
     if (isOpen) {
@@ -167,11 +167,20 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         try {
-
           const isUserRegistered = await checkUserRegistration(otpSession);
           console.log("otpSession: ", otpSession);
           console.log("isUserRegistered: ", isUserRegistered);
           if (isUserRegistered) {
+            const uuid = otpSession.user?.id; 
+            if (!uuid) {
+              console.error("La sesión no contiene un user.id");
+              return;
+            }
+            const existingUser = await fetchUserProfile(uuid);
+            console.log("existingUser:", existingUser);
+            if (existingUser) {
+              setUser(existingUser);
+            }
             router.replace("/(tabs)/(home)");
           } else {
             router.push('/(registration)/registrationName');
