@@ -50,12 +50,21 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     setUserState(newUser);
   };
 
+  const formatPhoneNumber = (phone: string): string => {
+    if (!phone) return phone;
+    if (phone.startsWith("+")) return phone;
+    const countryCode = phone.substring(0, 2);
+    const localNumber = phone.substring(2);
+    return `+${countryCode} ${localNumber}`;
+  };
+
   const setSession = (sessionData: Session) => {
     setSessionState(sessionData);
     if (sessionData && sessionData.user && sessionData.user.id) {
       const supabaseUser = sessionData.user;
       const userData: User = {
         uuid: supabaseUser.id,
+        phone: formatPhoneNumber(supabaseUser.phone!),
       };
       setUserState(userData);
     }
