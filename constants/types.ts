@@ -1,3 +1,5 @@
+import { Session } from "@supabase/auth-js";
+
 export interface Product {
   id: number;
   categoryId: number;
@@ -37,6 +39,7 @@ export interface User {
   email?: string;
   facultyId?: number;
   avatar?: number | string; 
+  session?: Session | null;
 }
 
 export interface Faculty {

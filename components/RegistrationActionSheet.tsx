@@ -22,6 +22,7 @@ import ErrorToast from '@/components/ErrorToast';
 import { TextInput as RNTextInput } from 'react-native';
 import { verifyOtp } from "@/constants/api";
 import { User } from "@/constants/types";
+import { useUser } from '@/contexts/UserContext';
 import { Session } from '@supabase/supabase-js';
 
 const { width } = Dimensions.get('window');
@@ -48,6 +49,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
   const navigation = useNavigation();
   const router = useRouter();
   const toast = useToast();
+  const { setSession } = useUser();
 
   useEffect(() => {
     if (isOpen) {
@@ -123,8 +125,8 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
       
     return isUserRegistered
     ? {
-        id: currentUser.uuid, 
-        firstName: currentUser.first_name,
+        uuid: currentUser.uuid, 
+        name: currentUser.first_name,
         lastName: currentUser.last_name,
         email: currentUser.email,
         phone: currentUser.phone,
@@ -161,9 +163,11 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         inputRefs.forEach(ref => ref.current?.clear());
         inputRefs[0].current?.focus();
       } else {
+        setSession(otpSession);
         setCode(['', '', '', '', '', '']);
         inputRefs.forEach(ref => ref.current?.clear());
         try {
+
           const isUserRegistered = await checkUserRegistration(otpSession);
           console.log("otpSession: ", otpSession);
           console.log("isUserRegistered: ", isUserRegistered);

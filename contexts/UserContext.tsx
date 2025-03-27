@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { updateUserProfile } from "@/constants/api";
 import { User } from "@/constants/types";
+import { Session } from "@supabase/auth-js";
 
 interface UserContextProps {
   user: User | null;
+  session: Session | null;
   setUser: (user: User) => void;
   updateUser: (data: Partial<User>) => void;
   clearUser: () => void;
@@ -13,6 +15,7 @@ interface UserContextProps {
   setFacultyId: (facultyId: number) => void;
   setName: (name: string) => void;
   setLastName: (lastName: string) => void;
+  setSession: (sessionData: Session) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -39,10 +42,23 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     facultyId: 1,
     avatar: require("@/assets/images/avatars/avatar-icon-1.png"),
     phone: "+52 9513952003",
+    session: null,
   });
+  const [session, setSessionState] = useState<Session | null>(null);
 
   const setUser = (newUser: User) => {
     setUserState(newUser);
+  };
+
+  const setSession = (sessionData: Session) => {
+    setSessionState(sessionData);
+    if (sessionData && sessionData.user && sessionData.user.id) {
+      const supabaseUser = sessionData.user;
+      const userData: User = {
+        uuid: supabaseUser.id,
+      };
+      setUserState(userData);
+    }
   };
 
   const updateUser = async (data: Partial<User>) => {
@@ -96,6 +112,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     <UserContext.Provider
       value={{
         user,
+        session,
         setUser,
         updateUser,
         clearUser,
@@ -105,6 +122,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setFacultyId,
         setName,
         setLastName,
+        setSession,
       }}
     >
       {children}
