@@ -52,7 +52,8 @@ const ProfileScreen = () => {
 
   const handlePhoneSave = (newPhone: string) => {
     if (isValidPhoneNumber(newPhone)) {
-      setPhone(`+${ladaLocal} ${newPhone}`);
+      // TODO: Implementar cambio de número celular en DB y Auth
+      // setPhone(`+${ladaLocal} ${newPhone}`);
     }
   };
 
