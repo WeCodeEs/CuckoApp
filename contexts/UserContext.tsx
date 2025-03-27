@@ -1,13 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-export interface User {
-  phone?: string;
-  name?: string;
-  lastName?: string;
-  email?: string;
-  school?: number;
-  avatar?: number | string; 
-}
+import { updateUserProfile } from "@/constants/api";
+import { User } from "@/constants/types";
 
 interface UserContextProps {
   user: User | null;
@@ -17,7 +10,9 @@ interface UserContextProps {
   setAvatar: (avatar: number | string) => void;
   setEmail: (email: string) => void;
   setPhone: (phone: string) => void;
-  setSchool: (school: number) => void;
+  setFacultyId: (facultyId: number) => void;
+  setName: (name: string) => void;
+  setLastName: (lastName: string) => void;
 }
 
 const UserContext = createContext<UserContextProps | undefined>(undefined);
@@ -37,21 +32,37 @@ interface UserProviderProps {
 /* BORRAR USUARIO DE PRUEBA EN PRODUCCIÓN */
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUserState] = useState<User | null>({
-    name: "Juan",
-    lastName: "Pérez",
-    email: "juan@example.com",
-    school: 4,
+    uuid: "029a4f12-a0ef-45ba-8c29-7b41faf82f0e",
+    name: "Adan",
+    lastName: "Jimenez",
+    email: "adan@mail.com",
+    facultyId: 1,
     avatar: require("@/assets/images/avatars/avatar-icon-1.png"),
-    phone: "+52 9511234567",
+    phone: "+52 9513952003",
   });
 
   const setUser = (newUser: User) => {
     setUserState(newUser);
   };
 
-  const updateUser = (data: Partial<User>) => {
-    setUserState(prev => ({ ...(prev || {}), ...data }));
+  const updateUser = async (data: Partial<User>) => {
+    const currentUuid = user?.uuid;
+    if (!currentUuid) {
+      console.error("No se encontró el UUID en el contexto de usuario");
+      return;
+    }
+  
+    setUserState((prev) => ({ ...(prev || {}), ...data }));
+  
+    try {
+      await updateUserProfile(currentUuid, data);
+      console.log("Se ejecutó updateUserProfile en UserContext.tsx");
+    } catch (e) {
+      console.error("Error al ejecutar updateUserProfile:", e);
+    }
   };
+  
+  
 
   const clearUser = () => {
     setUserState(null);
@@ -69,8 +80,16 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     updateUser({ phone });
   };
 
-  const setSchool = (school: number) => {
-    updateUser({ school });
+  const setFacultyId = (facultyId: number) => {
+    updateUser({ facultyId });
+  };
+
+  const setName = (name: string) => {
+    setUserState(prev => ({ ...(prev || {}), name }));
+  };
+
+  const setLastName = (lastName: string) => {
+    setUserState(prev => ({ ...(prev || {}), lastName }));
   };
 
   return (
@@ -83,7 +102,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         setAvatar,
         setEmail,
         setPhone,
-        setSchool,
+        setFacultyId,
+        setName,
+        setLastName,
       }}
     >
       {children}

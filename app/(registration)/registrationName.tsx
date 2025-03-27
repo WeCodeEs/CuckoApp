@@ -16,11 +16,13 @@ import { useUser } from '@/contexts/UserContext';
 
 const RegistrationName = () => {
   const router = useRouter();
-  const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
   const toast = useToast();
-  const { updateUser } = useUser();
+
+  const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
+  const [name, setNameLocal] = useState("");
+  const [lastName, setLastNameLocal] = useState("");
+
+  const { setName, setLastName, updateUser } = useUser();
 
   useEffect(() => {
     if (isValidName(name) && isValidName(lastName) && name.length > 0 && lastName.length > 0) {
@@ -32,7 +34,8 @@ const RegistrationName = () => {
 
   const handleNavigation = async () => {
     if (isValidName(name) && isValidName(lastName)) {
-      updateUser({ name, lastName });
+      setName(name);
+      setLastName(lastName);
       router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
     }
   }
@@ -60,7 +63,7 @@ const RegistrationName = () => {
                   isEmail={false}
                   headingText="Nombre"
                   placeholder="Juan Alejandro"
-                  onEditComplete={(newValue) => setName(newValue)}
+                  onEditComplete={(newValue) => setNameLocal(newValue)}
                   onCancelEdit={() => {}}
                 />
               </View>
@@ -72,7 +75,7 @@ const RegistrationName = () => {
                   isEmail={false}
                   headingText="Apellidos"
                   placeholder="Pérez López"
-                  onEditComplete={(newValue) => setLastName(newValue)}
+                  onEditComplete={(newValue) => setLastNameLocal(newValue)}
                   onCancelEdit={() => {}}
                 />
               </View>

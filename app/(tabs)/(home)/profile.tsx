@@ -17,7 +17,7 @@ import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constan
 import { useUser } from '@/contexts/UserContext';
 
 const ProfileScreen = () => {
-  const { user, setAvatar, setEmail, setPhone, setSchool } = useUser();
+  const { user, setAvatar, setEmail, setPhone, setFacultyId } = useUser();
 
   const defaultAvatar = require("@/assets/images/avatars/avatar-icon-1.png");
 
@@ -66,7 +66,7 @@ const ProfileScreen = () => {
     setPhoneLocal(parts[1] || "");
   };
 
-  const schoolOptions = [
+  const facultyIdOptions = [
     { label: "Comunicación", value: 1 },
     { label: "Diseño", value: 2 },
     { label: "Derecho", value: 3 },
@@ -77,8 +77,8 @@ const ProfileScreen = () => {
     { label: "Turismo", value: 8 },
   ];
 
-  const currentSchoolLabel = schoolOptions.find(
-    (option) => option.value === user?.school
+  const currentFacultyIdLabel = facultyIdOptions.find(
+    (option) => option.value === user?.facultyId
   )?.label || "Selecciona una opción...";
 
   return (
@@ -122,14 +122,14 @@ const ProfileScreen = () => {
               onCancelEdit={() => {}}
             />
             <InputSelect 
-              initialValue={currentSchoolLabel}
+              initialValue={currentFacultyIdLabel}
               editable={true}
               headingText="Escuela"
-              items={schoolOptions.map(option => option.label)}
+              items={facultyIdOptions.map(option => option.label)}
               onEditComplete={(selectedLabel: string) => {
-                const selectedOption = schoolOptions.find(option => option.label === selectedLabel);
+                const selectedOption = facultyIdOptions.find(option => option.label === selectedLabel);
                 if (selectedOption) {
-                  setSchool(selectedOption.value);
+                  setFacultyId(selectedOption.value);
                 }
               }}
               onCancelEdit={() => {}}

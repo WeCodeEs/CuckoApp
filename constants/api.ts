@@ -390,3 +390,46 @@ export async function saveEmailAndFaculty(userUuid: string, userEmail: string, u
     return "";
   }
 }
+
+export async function updateUserProfile(userUuid: string, data: Partial<User>): Promise<any> {
+  try {
+    const body: Record<string, unknown> = { uuid: userUuid };
+
+    if (data.name !== undefined) {
+      body.name = data.name;
+      console.log
+    }
+    if (data.lastName !== undefined) {
+      body.lastName = data.lastName;
+    }
+    if (data.email !== undefined) {
+      body.email = data.email;
+    }
+    if (data.facultyId !== undefined) {
+      body.facultyId = data.facultyId;
+    }
+    if (data.phone !== undefined) {
+      body.phone = data.phone;
+    }
+
+    console.log("Llamada a update-user-profile con el body:",body);
+
+    const { data: res, error } = await supabaseClient.functions.invoke("update-user-profile", {
+      body,
+    });
+
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+      console.error("Function returned an error:", errorMessage);
+    } else if (error instanceof FunctionsRelayError) {
+      console.error("Relay error:", error.message);
+    } else if (error instanceof FunctionsFetchError) {
+      console.error("Fetch error:", error.message);
+    }
+
+    return res;
+  } catch (error) {
+    console.error("Error al llamar updateUserProfile:", error);
+    return null;
+  }
+}

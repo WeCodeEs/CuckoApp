@@ -165,6 +165,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         inputRefs.forEach(ref => ref.current?.clear());
         try {
           const isUserRegistered = await checkUserRegistration(otpSession);
+          console.log("otpSession: ", otpSession);
           console.log("isUserRegistered: ", isUserRegistered);
           if (isUserRegistered) {
             router.replace("/(tabs)/(home)");
