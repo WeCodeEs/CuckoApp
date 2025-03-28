@@ -168,8 +168,7 @@ const RegistrationActionSheet: React.FC<RegistrationActionSheetProps> = ({ isOpe
         inputRefs.forEach(ref => ref.current?.clear());
         try {
           const isUserRegistered = await checkUserRegistration(otpSession);
-          console.log("otpSession: ", otpSession);
-          console.log("isUserRegistered: ", isUserRegistered);
+          console.log(`Is user registered: ${isUserRegistered}, OTP Session: ${otpSession}`); 
           if (isUserRegistered) {
             const uuid = otpSession.user?.id; 
             if (!uuid) {
