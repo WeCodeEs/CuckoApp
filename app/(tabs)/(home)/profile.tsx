@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from "@/components/ui/view";
 import { Image } from "@/components/ui/image";
 import { StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
@@ -15,6 +15,9 @@ import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
 import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
 import { useUser } from '@/contexts/UserContext';
+import { fetchFacultiesFromDB } from "@/constants/api";
+import { Faculty } from '@/constants/types';
+
 
 const ProfileScreen = () => {
   const { user, setAvatar, setEmail, setPhone, setFacultyId } = useUser();
@@ -41,6 +44,14 @@ const ProfileScreen = () => {
   const [ladaLocal, setLadaLocal] = useState<string>(initialLada);
   const [phoneLocal, setPhoneLocal] = useState<string>(initialPhone);
   const [showModal, setShowModal] = useState(false);
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const result = await fetchFacultiesFromDB();
+      setFaculties(result);
+    })();
+  }, []);
 
   const handleLadaChange = (newLada: string) => {
     setLadaLocal(sanitizeLada(newLada));
@@ -67,16 +78,10 @@ const ProfileScreen = () => {
     setPhoneLocal(parts[1] || "");
   };
 
-  const facultyIdOptions = [
-    { label: "Comunicación", value: 1 },
-    { label: "Diseño", value: 2 },
-    { label: "Derecho", value: 3 },
-    { label: "Ingeniería", value: 4 },
-    { label: "Medicina", value: 5 },
-    { label: "Negocios", value: 6 },
-    { label: "Psicología", value: 7 },
-    { label: "Turismo", value: 8 },
-  ];
+  const facultyIdOptions = faculties.map((f) => ({
+    label: f.name,
+    value: f.id,
+  }));
 
   const currentFacultyIdLabel = facultyIdOptions.find(
     (option) => option.value === user?.facultyId

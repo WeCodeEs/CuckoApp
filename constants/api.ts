@@ -469,3 +469,33 @@ export async function fetchUserProfile(uuid: string): Promise<User | null> {
     return null;
   }
 }
+
+export async function fetchFacultiesFromDB(): Promise<Faculty[]> {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("fetch-faculties");
+
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+      console.error("Function returned an error:", errorMessage);
+      throw new Error(`Function returned an error: ${JSON.stringify(errorMessage)}`);
+    } else if (error instanceof FunctionsRelayError) {
+      console.error("Relay error:", error.message);
+      throw new Error(`Relay error: ${error.message}`);
+    } else if (error instanceof FunctionsFetchError) {
+      console.error("Fetch error:", error.message);
+      throw new Error(`Fetch error: ${error.message}`);
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error("No faculties found in the database.");
+    }
+
+    return data.map((row: any) => ({
+      id: row.id,
+      name: row.name,
+    }));
+  } catch (error) {
+    console.error("Error calling fetchFacultiesFromDB:", error);
+    throw error;
+  }
+}

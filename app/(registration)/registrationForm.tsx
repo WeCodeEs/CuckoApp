@@ -22,6 +22,10 @@ import { isValidEmail } from "@/constants/validations";
 import { useToast } from "@/components/ui/toast";
 import ErrorToast from "@/components/ErrorToast";
 import { useUser } from '@/contexts/UserContext';
+import { fetchFacultiesFromDB } from "@/constants/api";
+import { Faculty } from '@/constants/types';
+
+
 
 const RegistrationForm = () => {
   const router = useRouter();
@@ -31,18 +35,20 @@ const RegistrationForm = () => {
   const [email, setEmailLocal] = useState("");
   const [selectedFacultyId, setSelectedFacultyId] = useState(0);
   const toast = useToast();
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
 
-  const facultyIdOptions = [
-    { label: "Comunicación", value: 1 },
-    { label: "Diseño", value: 2 },
-    { label: "Derecho", value: 3 },
-    { label: "Ingeniería", value: 4 },
-    { label: "Medicina", value: 5 },
-    { label: "Negocios", value: 6 },
-    { label: "Psicología", value: 7 },
-    { label: "Turismo", value: 8 },
-  ];
-
+  useEffect(() => {
+    async function loadFaculties() {
+      const result = await fetchFacultiesFromDB();
+      setFaculties(result);
+    }
+    loadFaculties();
+  }, []);
+  
+  const facultyIdOptions = faculties.map(f => ({
+    label: f.name,
+    value: f.id,
+  }));
   const userFacultyIdValue = user?.facultyId ?? 0;
   const foundOption = facultyIdOptions.find((opt) => opt.value === userFacultyIdValue);
   const initialLabel = foundOption ? foundOption.label : "Selecciona una opción...";
