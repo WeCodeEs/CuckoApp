@@ -9,7 +9,6 @@ import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { useRouter } from "expo-router";
 import InputInfo from '@/components/InputInfo';
 import { isValidName } from '@/constants/validations';
-import { saveNameAndLastName } from '@/constants/api';
 import { useToast } from '@/components/ui/toast';
 import ErrorToast from '@/components/ErrorToast';
 import { useUser } from '@/contexts/UserContext';
