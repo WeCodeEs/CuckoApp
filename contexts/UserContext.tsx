@@ -41,7 +41,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     lastName: "Jimenez",
     email: "adan@mail.com",
     facultyId: 1,
-    avatar: require("@/assets/images/avatars/avatar-icon-1.png"),
+    avatar: null,
     phone: "+52 9513952003",
     session: null,
   });
@@ -87,7 +87,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   const setAvatar = (avatar: number | string) => {
-    updateUser({ avatar });
+    setUserState(prev => ({ ...(prev || {}), avatar }));
   };
 
   const setEmail = (email: string) => {

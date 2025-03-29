@@ -38,7 +38,7 @@ export interface User {
   lastName?: string;
   email?: string;
   facultyId?: number;
-  avatar?: number | string; 
+  avatar?: number | string | null; 
   session?: Session | null;
 }
 
