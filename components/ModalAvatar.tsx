@@ -40,7 +40,7 @@ const ModalAvatar: React.FC<ModalAvatarProps> = ({ showModal, setShowModal, onAv
                           key={avatar.id} 
                           style={[styles.Item]}
                           onPress={() => {
-                            setSelectedAvatar(avatar.src);
+                            setSelectedAvatar(avatar.src)
                           }}
                         >
                             <Animated.View style={[

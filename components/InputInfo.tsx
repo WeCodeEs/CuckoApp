@@ -16,17 +16,20 @@ interface InputInfoProps {
   editable: boolean;
   onEditComplete: (newValue: string) => void;
   onCancelEdit: () => void;
+  onTextChange?: (newValue: string) => void;
   isEmail?: boolean;
   headingText: string;
   alwaysEditable?: boolean;
   placeholder?: string;
 }
 
+
 const InputInfo: React.FC<InputInfoProps> = ({
   initialValue,
   editable,
   onEditComplete,
   onCancelEdit,
+  onTextChange,
   isEmail,
   headingText,
   alwaysEditable,
@@ -42,12 +45,17 @@ const InputInfo: React.FC<InputInfoProps> = ({
       const { sanitized, hadInvalidChars } = sanitizeEmail(text);
       setInputValue(sanitized);
       setShowAlert(hadInvalidChars);
+      if (onTextChange) onTextChange(sanitized);
     } else {
       const { sanitized, hadInvalidChars } = sanitizeName(text, false);
       setInputValue(sanitized);
       setShowAlert(hadInvalidChars);
+      if (onTextChange && !hadInvalidChars && isValidName(sanitized)) {
+        onTextChange(sanitized);
+      }
     }
   };
+  
 
   const handleBlur = () => {
     if (isEmail) {
@@ -55,7 +63,6 @@ const InputInfo: React.FC<InputInfoProps> = ({
       setInputValue(sanitized);
       setValue(sanitized);
       setShowAlert(hadInvalidChars);
-      onEditComplete(sanitized);
     } else {
       const { sanitized, hadInvalidChars } = sanitizeName(inputValue, true);
       setInputValue(sanitized);
@@ -65,12 +72,26 @@ const InputInfo: React.FC<InputInfoProps> = ({
       } else {
         setShowAlert(false);
       }
-      onEditComplete(sanitized);
     }
   };
 
   const handleSave = () => {
-    handleBlur();
+    if (isEmail) {
+      const { sanitized, hadInvalidChars } = sanitizeEmail(inputValue);
+      setInputValue(sanitized);
+      setValue(sanitized);
+      if (hadInvalidChars) {
+        setShowAlert(true);
+        return; 
+      } else {
+        setShowAlert(false);
+        onEditComplete(sanitized);
+      }
+    } else {
+      handleBlur();
+      if (showAlert) return;
+      onEditComplete(inputValue);
+    }
     if (!alwaysEditable) {
       setIsEditing(false);
     }
@@ -114,7 +135,7 @@ const InputInfo: React.FC<InputInfoProps> = ({
           <View style={styles.displayContainer}>
             <Text>{value}</Text>
             <Pressable onPress={() => setIsEditing(true)}>
-              <Icon style={styles.editIcon} as={Pencil} size="lg" />
+              <Icon style={styles.editIcon} as={Pencil} size="lg" className="text-typography-600" />
             </Pressable>
           </View>
         )
@@ -134,7 +155,7 @@ const InputInfo: React.FC<InputInfoProps> = ({
             <AlertIcon as={Info} />
             <AlertText>
               {isEmail
-                ? 'Por favor, introduce un correo electrónico válido.'
+                ? 'Introduce un correo electrónico válido.'
                 : 'Este campo solo admite letras, espacios simples y guiones.'}
             </AlertText>
           </Alert>

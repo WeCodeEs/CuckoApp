@@ -9,6 +9,7 @@ import { Button, ButtonText } from '@/components/ui/button';
 import { User, Settings, CreditCard, History, Share } from "lucide-react-native";
 import { Text } from '@/components/ui/text';
 import { useRouter, useSegments } from "expo-router";
+import { useUser } from '@/contexts/UserContext';
 
 interface HeaderDrawerProps {
   isOpen: boolean;
@@ -18,6 +19,16 @@ interface HeaderDrawerProps {
 export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
   const router = useRouter();
   const segments = useSegments();
+  const { user, clearUser } = useUser();
+
+  const defaultAvatar = require("@/assets/images/avatars/avatar-icon-1.png");
+
+  const getAvatarSource = () => {
+    if (!user?.avatar) {
+      return defaultAvatar;
+    }
+    return typeof user.avatar === "number" ? user.avatar : { uri: user.avatar };
+  };
 
   const [bgColor, setBgColor] = useState({
     profile: 'transparent',
@@ -29,17 +40,16 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
 
   const [variant, setVariant] = useState<"outline" | "link" | "solid">("outline");
 
-
   type DrawerRoutes = 
-  | '/(tabs)/(home)/profile'
-  | '/(tabs)/(home)/configuration'
-  | '/(tabs)/(home)/paymentMethods'
-  | '/(tabs)/(home)/orderHistory'
-  | '/(tabs)/(home)/shareApp';
+    | '/(tabs)/(home)/profile'
+    | '/(tabs)/(home)/configuration'
+    | '/(tabs)/(home)/paymentMethods'
+    | '/(tabs)/(home)/orderHistory'
+    | '/(tabs)/(home)/shareApp';
 
   type RegistrationRoutes = 
-  | '/(registration)/registrationPhone'
-  | '/(registration)/registrationForm';
+    | '/(registration)/registrationPhone'
+    | '/(registration)/registrationForm';
 
   const handlePressIn = (key: string) => {
     setBgColor(prev => ({ ...prev, [key]: '#f0f0f0' }));
@@ -68,7 +78,6 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
     }
     
     router.dismissTo('/(tabs)/(home)');
-
     router.push({ pathname: route });
     setTimeout(() => {
       onClose();
@@ -76,12 +85,15 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
   };
   
   const handleNavigationButton = (route: RegistrationRoutes) => {
+    if (route === '/(registration)/registrationPhone') {
+      clearUser();
+    }
     router.replace(route);
-
     setTimeout(() => {
       onClose();
     }, 300); 
-  }
+  };
+  
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
@@ -89,20 +101,22 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
       <DrawerContent className="w-70 md:w-75 pt-40">
         <DrawerHeader className="justify-center flex-col gap-2">
           <Avatar size="2xl">
-            <AvatarFallbackText>Juan Pérez</AvatarFallbackText>
-            <AvatarImage
-              source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU' }}
-            />
+            <AvatarFallbackText>
+              {user ? `${user.name || ''} ${user.lastName || ''}` : 'Invitado'}
+            </AvatarFallbackText>
+            <AvatarImage source={getAvatarSource()} />
           </Avatar>
           <VStack className="justify-center items-center">
-            <Text size="lg">Juan Pérez</Text>
+            <Text size="lg">
+              {user ? `${user.name || ''} ${user.lastName || ''}` : 'Invitado'}
+            </Text>
             <Text size="sm" className="text-typography-600">
-              juan@gmail.com
+              {user?.email || 'Sin correo'}
             </Text>
           </VStack>
         </DrawerHeader>
         <Divider className="my-4" />
-        <DrawerBody contentContainerClassName="gap-1">  
+        <DrawerBody contentContainerClassName="gap-1">
           <Pressable
             onPressIn={() => handlePressIn('profile')}
             onPressOut={() => handlePressOut('profile')}
@@ -152,7 +166,7 @@ export function HeaderDrawer({ isOpen, onClose }: HeaderDrawerProps) {
             onPressOut={() => handlePressOut('share')}
             onPress={() => handleNavigation('/(tabs)/(home)/shareApp')}  
             style={[styles.pressable, { backgroundColor: bgColor.share }]}
-            >
+          >
             <View style={styles.row}>
               <Icon as={Share} size="lg" className="text-typography-600" />
               <Text>Compartir App</Text>

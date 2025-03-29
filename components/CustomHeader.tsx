@@ -11,10 +11,13 @@ import { HeaderDrawer } from './HeaderDrawer';
 import { Bell } from 'lucide-react-native';
 import { Colors } from '@/constants/Colors';
 import { useRouter } from "expo-router";
+import { useUser } from '@/contexts/UserContext';
 
 export function CustomHeader() {
   const router = useRouter();
   const navigation = useNavigation();
+  const { user } = useUser();
+
   const [showDrawer, setShowDrawer] = useState(false);
   const [stylesReady, setStylesReady] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
@@ -32,59 +35,66 @@ export function CustomHeader() {
     loadStyles();
   }, []);
 
+  const defaultAvatar = require('@/assets/images/avatars/avatar-icon-1.png');
+
+  const getAvatarSource = () => {
+    if (!user?.avatar) {
+      return defaultAvatar;
+    }
+    return typeof user.avatar === "number" ? user.avatar : { uri: user.avatar };
+  };
+
   if (!stylesReady) {
     return (
       <>
-        <SafeAreaView style={styles.container}/>
-        <Divider/>
+        <SafeAreaView style={styles.container} />
+        <Divider />
       </>
     );
   }
 
   return (
     <>
-    <SafeAreaView style={styles.container}>
-      <Grid className="gap-2 px-4" _extra={{ className: 'grid-cols-8' }}>
-        {/* Avatar del usuario */}
-        <GridItem className="flex items-start justify-center" _extra= {{ className: 'col-span-2' }}>
-          <Pressable onPress={() => setShowDrawer(true)} className="h-12 w-12">
-            <Avatar className="w-full h-full">
-              <AvatarFallbackText>Juan Pérez</AvatarFallbackText>
-              <AvatarImage
-                source={{
-                  uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU',
-                }}
+      <SafeAreaView style={styles.container}>
+        <Grid className="gap-2 px-4" _extra={{ className: 'grid-cols-8' }}>
+          {/* Avatar del usuario */}
+          <GridItem className="flex items-start justify-center" _extra={{ className: 'col-span-2' }}>
+            <Pressable onPress={() => setShowDrawer(true)} className="h-12 w-12">
+              <Avatar className="w-full h-full">
+                <AvatarFallbackText>
+                  {user ? `${user.name || ''} ${user.lastName || ''}` : 'Invitado'}
+                </AvatarFallbackText>
+                <AvatarImage source={getAvatarSource()} />
+              </Avatar>
+            </Pressable>
+            <HeaderDrawer isOpen={showDrawer} onClose={() => setShowDrawer(false)} />
+          </GridItem>
+
+          {/* Logo */}
+          <GridItem className="items-center" _extra={{ className: 'col-span-4' }}>
+            <Box className="w-full items-center">
+              <Image
+                className="rounded-full w-38 h-full"
+                source={require('@/assets/images/CuckoLogoTop.png')}
+                alt="Logo Superior Cuckoo"
+                resizeMode="contain"
               />
-            </Avatar>
-          </Pressable>
-          <HeaderDrawer isOpen={showDrawer} onClose={() => setShowDrawer(false)} />
-        </GridItem>
+            </Box>
+          </GridItem>
 
-        {/* Logo */}
-        <GridItem className="items-center" _extra={{ className: 'col-span-4' }}>
-          <Box className="w-full items-center">
-            <Image 
-              className="rounded-full w-38 h-full"
-              source={require('@/assets/images/CuckoLogoTop.png')} 
-              alt="Logo Superior Cuckoo"
-              resizeMode="contain"
-            />
-          </Box>
-        </GridItem>
-
-        {/* Icono de Notificaciones */}
-        <GridItem className="flex items-end justify-center" _extra={{ className: 'col-span-2' }}>
-          <Pressable 
-            onPress={() => router.push({ pathname: "/notifications" }) }
-            style={styles.notificationButton}
-          >
-            <Bell size={28} color={Colors.dark.tabIconDefault} />
-            {hasUnreadNotifications && <Box style={styles.notificationBadge} />}
-          </Pressable>
-        </GridItem>
-      </Grid>
-      <Divider/>
-    </SafeAreaView>
+          {/* Icono de Notificaciones */}
+          <GridItem className="flex items-end justify-center" _extra={{ className: 'col-span-2' }}>
+            <Pressable
+              onPress={() => router.push({ pathname: "/notifications" })}
+              style={styles.notificationButton}
+            >
+              <Bell size={28} color={Colors.dark.tabIconDefault} />
+              {hasUnreadNotifications && <Box style={styles.notificationBadge} />}
+            </Pressable>
+          </GridItem>
+        </Grid>
+        <Divider />
+      </SafeAreaView>
     </>
   );
 }

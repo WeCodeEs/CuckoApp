@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from "@/components/ui/view";
 import { Image } from "@/components/ui/image";
 import { StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
@@ -13,41 +13,170 @@ import InputInfo from '@/components/InputInfo';
 import InputSelect from '@/components/InputSelect';
 import InputPhone from '@/components/InputPhone';
 import { Colors } from '@/constants/Colors';
-import { isValidEmail, sanitizeEmail, isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
+import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constants/validations';
+import { useUser } from '@/contexts/UserContext';
+import { fetchFacultiesFromDB } from "@/constants/api";
+import { Faculty } from '@/constants/types';
+import { useToast } from "@/components/ui/toast";
+import ErrorToast from "@/components/ErrorToast";
+
 
 const ProfileScreen = () => {
-  const user = {
-    name_first: "Juan",
-    last_name_first: "Pérez",
-    mail: "juan@gmail.com",
-    faculty: "Ingeniería",
-    phone: "9511234567",
-    lada: "52",
+  const { user, setAvatar, setEmail, setPhone, setFacultyId } = useUser();
+
+  const defaultAvatar = require("@/assets/images/avatars/avatar-icon-1.png");
+
+  const getAvatarSource = () => {
+    if (!user?.avatar) {
+      return defaultAvatar;
+    }
+    return typeof user.avatar === "number" ? user.avatar : { uri: user.avatar };
   };
 
-  const [phone, setPhone] = useState(user.phone);
-  const [lada, setLada] = useState(user.lada);
-  const [mail, setMail] = useState(user.mail);
-  const [selectedAvatar, setSelectedAvatar] = useState("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmikACdClGxHZI4nCLhMqQQ5R3_o5ylS4rsW40gMbxrbQ15MJv-lWe9b69q0H8VwNaGck&usqp=CAU");
+  const fullPhone = user?.phone || "";
+  const initialLada =
+    fullPhone && fullPhone.startsWith("+")
+      ? fullPhone.substring(1).split(" ")[0]
+      : fullPhone.split(" ")[0] || "52";
+  const initialPhone =
+    fullPhone && fullPhone.startsWith("+")
+      ? fullPhone.substring(1).split(" ")[1]
+      : fullPhone.split(" ")[1] || "";
+
+  const [ladaLocal, setLadaLocal] = useState<string>(initialLada);
+  const [phoneLocal, setPhoneLocal] = useState<string>(initialPhone);
   const [showModal, setShowModal] = useState(false);
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const toast = useToast();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await fetchFacultiesFromDB();
+        setFaculties(result);
+      } catch (error) {
+        toast.show({
+          id: "fetch-faculties-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Ha habido un error cargando las facultades."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      }
+    })();
+  }, []);
+  
+
 
   const handleLadaChange = (newLada: string) => {
-    setLada(sanitizeLada(newLada));
+    setLadaLocal(sanitizeLada(newLada));
   };
 
   const handlePhoneChange = (newPhone: string) => {
-    setPhone(sanitizePhoneNumber(newPhone));
+    setPhoneLocal(sanitizePhoneNumber(newPhone));
   };
+
+  const handleEmailUpdate = async (newEmail: string) => {
+    try {
+      await setEmail(newEmail);
+      toast.show({
+        id: "profile-email-success",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            variant="success"
+            message="El correo electrónico se actualizó correctamente."
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    } catch (error) {
+      toast.show({
+        id: "profile-email-error",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Ha habido un error actualizando el correo electrónico."
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    }
+  };
+  
+  const handleFacultyUpdate = async (selectedLabel: string) => {
+    const selectedOption = facultyIdOptions.find(
+      (option) => option.label === selectedLabel
+    );
+    if (selectedOption) {
+      try {
+        await setFacultyId(selectedOption.value);
+        toast.show({
+          id: "profile-faculty-success",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              variant="success"
+              message="La escuela se actualizó correctamente."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      } catch (error) {
+        toast.show({
+          id: "profile-faculty-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Ha habido un error actualizando la escuela."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      }
+    }
+  };
+  
+  
 
   const handlePhoneSave = (newPhone: string) => {
     if (isValidPhoneNumber(newPhone)) {
-      setPhone(newPhone);
+      // TODO: Implementar cambio de número celular en DB y Auth
+      // setPhone(`+${ladaLocal} ${newPhone}`);
     }
   };
 
   const handlePhoneCancel = () => {
-    setPhone(user.phone);
+    const fullPhone = user?.phone || "";
+    const parts =
+      fullPhone && fullPhone.startsWith("+")
+        ? fullPhone.substring(1).split(" ")
+        : fullPhone.split(" ");
+    setLadaLocal(parts[0] || "52");
+    setPhoneLocal(parts[1] || "");
   };
+
+  const facultyIdOptions = faculties.map((f) => ({
+    label: f.name,
+    value: f.id,
+  }));
+
+  const currentFacultyIdLabel = facultyIdOptions.find(
+    (option) => option.value === user?.facultyId
+  )?.label || "Selecciona una opción...";
 
   return (
     <KeyboardAvoidingView
@@ -58,7 +187,13 @@ const ProfileScreen = () => {
         <Center style={styles.header_container}>
           <Pressable onPress={() => setShowModal(true)} style={styles.avatar_container}>
             <View style={styles.image_container}>
-              <Image className="rounded-full" style={styles.avatar_image} size="1.5xl" source={selectedAvatar} alt={"Avatar"} />
+              <Image
+                className="rounded-full"
+                style={styles.avatar_image}
+                size="1.5xl"
+                source={getAvatarSource()}
+                alt={"Avatar"}
+              />
             </View>
             <View style={styles.change_av}>
               <Icon as={Pencil} size="xl" className="text-white" />
@@ -67,31 +202,36 @@ const ProfileScreen = () => {
         </Center>
         <Center style={styles.general_container}>
           <Box style={styles.content_box}>
-            <Heading style={styles.title} size={"2xl"}>{user.name_first + " " + user.last_name_first}</Heading>
+            <Heading style={styles.title} size={"2xl"}>
+              {`${user?.name || ''} ${user?.lastName || ''}`}
+            </Heading>
             <ModalAvatar 
               showModal={showModal} 
               setShowModal={setShowModal} 
-              onAvatarSelect={(src) => setSelectedAvatar(src)}
+              onAvatarSelect={(src) => setAvatar(src)}
             />
             <InputInfo 
-              initialValue={mail}
+              initialValue={user?.email || ""}
               editable={true}
               isEmail={true}
               headingText={"Correo"}
-              onEditComplete={(email) => setMail(email)}
+              onEditComplete={(email) => handleEmailUpdate(email)}
               onCancelEdit={() => {}}
             />
             <InputSelect 
-              initialValue={user.faculty}
+              key={currentFacultyIdLabel}
+              initialValue={currentFacultyIdLabel}
               editable={true}
               headingText="Escuela"
-              items={["Comunicación", "Diseño", "Derecho", "Ingeniería", "Medicina", "Negocios", "Psicología", "Turismo"]}
-              onEditComplete={(newValue) => console.log("Opción elegida:", newValue)}
-              onCancelEdit={() => console.log("Edición cancelada")}
+              items={facultyIdOptions.map(option => option.label)}
+              onEditComplete={(selectedLabel: string) => {
+                handleFacultyUpdate(selectedLabel);
+              }}
+              onCancelEdit={() => {}}
             />
             <InputPhone
-              lada={lada}
-              phone={phone}
+              lada={ladaLocal}
+              phone={phoneLocal}
               onLadaChange={handleLadaChange}
               onPhoneChange={handlePhoneChange}
               onSave={handlePhoneSave}

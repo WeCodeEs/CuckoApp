@@ -12,6 +12,7 @@ import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constan
 import { signInWithOtp } from "@/constants/api";
 import { useToast } from '@/components/ui/toast';
 import ErrorToast from '@/components/ErrorToast';
+import { useUser } from '@/contexts/UserContext';
 
 const RegistrationPhone = () => {
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
@@ -19,6 +20,7 @@ const RegistrationPhone = () => {
   const [lada, setLada] = useState("52");
   const [phone, setPhone] = useState("");
   const toast = useToast();
+  const { updateUser } = useUser();
 
   const handleLadaChange = (newLada: string) => {
     setLada(sanitizeLada(newLada));

@@ -9,6 +9,7 @@ import { ThemeProvider, DefaultTheme, DarkTheme } from "@react-navigation/native
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { CartProvider } from "@/contexts/CartContext";
+import { UserProvider } from "@/contexts/UserContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,14 +42,16 @@ export default function RootLayout() {
   return (
     <GluestackUIProvider mode="light">
       <ThemeProvider value={colorScheme === "light" ? CuckoTheme : DarkTheme}>
-        <CartProvider>
+        <UserProvider>
+          <CartProvider>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="(registration)" options={{ headerShown: false }} />
               <Stack.Screen name="+not-found" />
               <Stack.Screen name="notifications" options={{ headerShown: false }} />
             </Stack>
-        </CartProvider>
+          </CartProvider>
+        </UserProvider>
       </ThemeProvider>
     </GluestackUIProvider>
   );

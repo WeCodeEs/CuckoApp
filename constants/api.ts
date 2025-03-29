@@ -1,6 +1,7 @@
 import { Menu, Product, User, Faculty, Category, Notification, Order } from '@/constants/types';
 import { supabaseClient } from "@/utils/supabase";
 import { Session } from "@supabase/auth-js";
+import { formatPhoneNumber } from "@/constants/validations"
 import { FunctionsHttpError, FunctionsRelayError, FunctionsFetchError } from '@supabase/supabase-js'
 
 const API_URL_MENU = process.env.EXPO_PUBLIC_API_URL_MENU ?? "";
@@ -347,46 +348,110 @@ export async function fetchUserIfRegistered(userToken: string) : Promise<string>
   }
 };
 
-export async function saveNameAndLastName(userUuid: string, userName: string, userLastName: string) : Promise<string> {
+export async function updateUserProfile(userUuid: string, data: Partial<User>): Promise<any> {
   try {
-    const { data, error } = await supabaseClient.functions.invoke("save-name-and-lastname", {
-      body:  { uuid: userUuid, name: userName, lastName: userLastName},
-    });
+    const body: Record<string, unknown> = { uuid: userUuid };
 
-    if (error instanceof FunctionsHttpError) {
-      const errorMessage = await error.context.json()
-      console.log('Function returned an error', errorMessage)
-    } else if (error instanceof FunctionsRelayError) {
-      console.log('Relay error:', error.message)
-    } else if (error instanceof FunctionsFetchError) {
-      console.log('Fetch error:', error.message)
+    if (data.name !== undefined) {
+      body.name = data.name;
+    }
+    if (data.lastName !== undefined) {
+      body.lastName = data.lastName;
+    }
+    if (data.email !== undefined) {
+      body.email = data.email;
+    }
+    if (data.facultyId !== undefined) {
+      body.facultyId = data.facultyId;
+    }
+    if (data.phone !== undefined) {
+      body.phone = data.phone;
     }
 
-    return JSON.stringify(data);
+    const { data: res, error } = await supabaseClient.functions.invoke("update-user-profile", {
+      body,
+    });
+
+    if (error) {
+      let errorMessage: string = "Error desconocido";
+      if (error instanceof FunctionsHttpError) {
+        errorMessage = JSON.stringify(await error.context.json());
+      } else if (error instanceof FunctionsRelayError || error instanceof FunctionsFetchError) {
+        errorMessage = error.message;
+      }
+      console.error("Error en updateUserProfile:", errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    return res;
   } catch (error) {
-    console.error("Error al llamar saveNameAndLastName: ", error);
-    return "";
+    console.error("Error al llamar updateUserProfile:", error);
+    throw error;
   }
 }
 
-export async function saveEmailAndFaculty(userUuid: string, userEmail: string, userFacultyId: number) : Promise<string> {
+
+export async function fetchUserProfile(uuid: string): Promise<User | null> {
   try {
-    const { data, error } = await supabaseClient.functions.invoke("save-email-and-faculty", {
-      body:  { uuid: userUuid, email: userEmail, facultyId: userFacultyId},
+    const { data, error } = await supabaseClient.functions.invoke("fetch-user-profile", {
+      body: { uuid },
     });
 
     if (error instanceof FunctionsHttpError) {
-      const errorMessage = await error.context.json()
-      console.log('Function returned an error', errorMessage)
+      const errorMessage = await error.context.json();
+      console.error("Function returned an error:", errorMessage);
     } else if (error instanceof FunctionsRelayError) {
-      console.log('Relay error:', error.message)
+      console.error("Relay error:", error.message);
     } else if (error instanceof FunctionsFetchError) {
-      console.log('Fetch error:', error.message)
+      console.error("Fetch error:", error.message);
     }
 
-    return JSON.stringify(data);
+    if (!data) {
+      return null;
+    }
+
+    const userData: User = {
+      uuid: data.uuid,
+      name: data.first_name,
+      lastName: data.last_name,
+      email: data.email,
+      phone: formatPhoneNumber(data.phone),
+      facultyId: data.faculty_id,
+    };
+
+    return userData;
   } catch (error) {
-    console.error("Error al llamar saveEmailAndFaculty: ", error);
-    return "";
+    console.error("Error al llamar fetchUserProfile:", error);
+    return null;
+  }
+}
+
+export async function fetchFacultiesFromDB(): Promise<Faculty[]> {
+  try {
+    const { data, error } = await supabaseClient.functions.invoke("fetch-faculties");
+
+    if (error instanceof FunctionsHttpError) {
+      const errorMessage = await error.context.json();
+      console.error("Function returned an error:", errorMessage);
+      throw new Error(`Function returned an error: ${JSON.stringify(errorMessage)}`);
+    } else if (error instanceof FunctionsRelayError) {
+      console.error("Relay error:", error.message);
+      throw new Error(`Relay error: ${error.message}`);
+    } else if (error instanceof FunctionsFetchError) {
+      console.error("Fetch error:", error.message);
+      throw new Error(`Fetch error: ${error.message}`);
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error("No faculties found in the database.");
+    }
+
+    return data.map((row: any) => ({
+      id: row.id,
+      name: row.name,
+    }));
+  } catch (error) {
+    console.error("Error calling fetchFacultiesFromDB:", error);
+    throw error;
   }
 }

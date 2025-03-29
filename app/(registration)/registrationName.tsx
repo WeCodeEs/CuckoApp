@@ -9,17 +9,19 @@ import CuckooIsotipo from '@/assets/images/vectors/CuckooIsotipo';
 import { useRouter } from "expo-router";
 import InputInfo from '@/components/InputInfo';
 import { isValidName } from '@/constants/validations';
-import { saveNameAndLastName } from '@/constants/api';
 import { useToast } from '@/components/ui/toast';
 import ErrorToast from '@/components/ErrorToast';
-
+import { useUser } from '@/contexts/UserContext';
 
 const RegistrationName = () => {
   const router = useRouter();
-  const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
   const toast = useToast();
+
+  const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
+  const [name, setNameLocal] = useState("");
+  const [lastName, setLastNameLocal] = useState("");
+
+  const { setName, setLastName, updateUser } = useUser();
 
   useEffect(() => {
     if (isValidName(name) && isValidName(lastName) && name.length > 0 && lastName.length > 0) {
@@ -31,23 +33,9 @@ const RegistrationName = () => {
 
   const handleNavigation = async () => {
     if (isValidName(name) && isValidName(lastName)) {
-      const isUserUpdated = await saveNameAndLastName(name, lastName);
-      if (isUserUpdated) {
-        router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
-      } else {
-        toast.show({
-          id: "registration-error",
-          placement: 'top',
-          duration: 5000,
-          render: ({ id }) => (
-            <ErrorToast
-              id={id}
-              message="Ha habido un error registrando al usuario."
-              onClose={() => toast.close(id)}
-            />
-          ),
-        });
-      }
+      setName(name);
+      setLastName(lastName);
+      router.push({ pathname: "/(registration)/registrationForm", params: { name, lastName } });
     }
   }
 
@@ -67,16 +55,17 @@ const RegistrationName = () => {
               <Heading style={styles.title} size='2xl'>¡Genial!</Heading>
               <Text style={styles.text}>Ahora, dinos cómo te llamas...</Text>
               <View style={styles.field_container}>
-                <InputInfo
-                  initialValue={name}
-                  editable={true}
-                  alwaysEditable={true}
-                  isEmail={false}
-                  headingText="Nombre"
-                  placeholder="Juan Alejandro"
-                  onEditComplete={(newValue) => setName(newValue)}
-                  onCancelEdit={() => {}}
-                />
+              <InputInfo
+                initialValue={name}
+                editable={true}
+                alwaysEditable={true}
+                isEmail={false}
+                headingText="Nombre"
+                placeholder="Juan Alejandro"
+                onEditComplete={(newValue) => setNameLocal(newValue)}
+                onTextChange={(newValue) => setNameLocal(newValue)}
+                onCancelEdit={() => {}}
+              />
               </View>
               <View style={styles.field_container}>
                 <InputInfo
@@ -86,7 +75,8 @@ const RegistrationName = () => {
                   isEmail={false}
                   headingText="Apellidos"
                   placeholder="Pérez López"
-                  onEditComplete={(newValue) => setLastName(newValue)}
+                  onEditComplete={(newValue) => setLastNameLocal(newValue)}
+                  onTextChange={(newValue) => setLastNameLocal(newValue)}
                   onCancelEdit={() => {}}
                 />
               </View>

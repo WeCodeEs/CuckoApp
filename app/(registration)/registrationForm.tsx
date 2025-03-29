@@ -16,71 +16,102 @@ import { Colors } from "@/constants/Colors";
 import { Button, ButtonText } from "@/components/ui/button";
 import CuckooIsotipo from "@/assets/images/vectors/CuckooIsotipo";
 import InputSelect from "@/components/InputSelect";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 import InputInfo from "@/components/InputInfo";
 import { isValidEmail } from "@/constants/validations";
-import { saveEmailAndFaculty } from "@/constants/api";
 import { useToast } from "@/components/ui/toast";
 import ErrorToast from "@/components/ErrorToast";
+import { useUser } from '@/contexts/UserContext';
+import { fetchFacultiesFromDB } from "@/constants/api";
+import { Faculty } from '@/constants/types';
+
+
 
 const RegistrationForm = () => {
   const router = useRouter();
-  const { name } = useLocalSearchParams();
+  const { user, setEmail, updateUser, setName, setLastName } = useUser();
+
   const [buttonColor, setButtonColor] = useState(Colors.light.lightGray);
-  const [email, setEmail] = useState("");
-  const [selectedSchool, setSelectedSchool] = useState(0);
+  const [email, setEmailLocal] = useState("");
+  const [selectedFacultyId, setSelectedFacultyId] = useState(0);
   const toast = useToast();
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
 
   useEffect(() => {
-    if (isValidEmail(email) && selectedSchool) {
-      setButtonColor(Colors.light.darkBlue);
-    } else {
-      setButtonColor(Colors.light.lightGray);
-    }
-  }, [email, selectedSchool]);
-
-  const schoolOptions = [
-    { label: "Comunicación", value: 1 },
-    { label: "Diseño", value: 2 },
-    { label: "Derecho", value: 3 },
-    { label: "Ingeniería", value: 4 },
-    { label: "Medicina", value: 5 },
-    { label: "Negocios", value: 6 },
-    { label: "Psicología", value: 7 },
-    { label: "Turismo", value: 8 },
-  ];
-
-  const displayItems = schoolOptions.map(option => option.label);
-
-  const handleSelect = (selectedLabel: string) => {
-    const selectedOption = schoolOptions.find(option => option.label === selectedLabel);
-    if (selectedOption) {
-      setSelectedSchool(selectedOption.value);
-    }
-  };
-
-  const handleNavigation = async () => {
-    if (isValidEmail(email)) {
-      const isUserUpdated = await saveEmailAndFaculty(email, selectedSchool);
-      
-      if (isUserUpdated) {
-        router.replace("/(tabs)/(home)");
-      } else {
+    async function loadFaculties() {
+      try {
+        const result = await fetchFacultiesFromDB();
+        setFaculties(result);
+      } catch (error) {
         toast.show({
-          id: "registration-email-error",
+          id: "fetch-faculties-error",
           placement: "top",
           duration: 5000,
           render: ({ id }) => (
             <ErrorToast
               id={id}
-              message="Ha habido un error registrando al usuario."
+              message="Ha habido un error cargando las facultades."
               onClose={() => toast.close(id)}
             />
           ),
         });
       }
     }
+    loadFaculties();
+  }, []);
+  
+  
+  const facultyIdOptions = faculties.map(f => ({
+    label: f.name,
+    value: f.id,
+  }));
+  const userFacultyIdValue = user?.facultyId ?? 0;
+  const foundOption = facultyIdOptions.find((opt) => opt.value === userFacultyIdValue);
+  const initialLabel = foundOption ? foundOption.label : "Selecciona una opción...";
+
+  useEffect(() => {
+    if (isValidEmail(email) && selectedFacultyId) {
+      setButtonColor(Colors.light.darkBlue);
+    } else {
+      setButtonColor(Colors.light.lightGray);
+    }
+  }, [email, selectedFacultyId]);
+
+  const displayItems = facultyIdOptions.map(option => option.label);
+
+  const handleSelect = (selectedLabel: string) => {
+    const selectedOption = facultyIdOptions.find(option => option.label === selectedLabel);
+    if (selectedOption) {
+      setSelectedFacultyId(selectedOption.value);
+    }
   };
+
+  const handleNavigation = async () => {
+    if (!isValidEmail(email)) return;
+    try {
+      await updateUser({
+        email,
+        facultyId: selectedFacultyId,
+        name: user?.name,
+        lastName: user?.lastName,
+      });
+      router.push({ pathname: "/(tabs)/(home)" });
+    } catch (error) {
+      toast.show({
+        id: "registration-error",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Ha habido un error registrando al usuario."
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    }
+  };  
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
@@ -95,7 +126,7 @@ const RegistrationForm = () => {
                 <CuckooIsotipo style={styles.logo} />
               </View>
               <Heading size={"2xl"} style={styles.title}>
-                ¡Hola {name}!
+                ¡Hola {user?.name || "Invitado"}!
               </Heading>
               <Text style={styles.text}>Ya estamos en la recta final :)</Text>
               <View style={styles.field_container}>
@@ -106,18 +137,19 @@ const RegistrationForm = () => {
                   isEmail={true}
                   headingText="Correo"
                   placeholder="nombre@mail.com"
-                  onEditComplete={(newValue) => setEmail(newValue)}
+                  onEditComplete={(newValue) => setEmailLocal(newValue)}
+                  onTextChange={(newValue) => setEmailLocal(newValue)}
                   onCancelEdit={() => {}}
                 />
               </View>
               <View style={[styles.field_container, { marginTop: 10 }]}>
                 <InputSelect
-                  initialValue={"Selecciona una opción..."}
+                  initialValue={initialLabel}
                   editable={false}
                   headingText="Escuela"
                   items={displayItems}
                   onEditComplete={handleSelect}
-                  onCancelEdit={() => setSelectedSchool(0)}
+                  onCancelEdit={() => setSelectedFacultyId(0)}
                 />
               </View>
             </Center>
@@ -126,7 +158,7 @@ const RegistrationForm = () => {
             <Button
               onPress={handleNavigation}
               style={[styles.nextButton, { backgroundColor: buttonColor }]}
-              disabled={!isValidEmail(email) || !selectedSchool}
+              disabled={!isValidEmail(email) || !selectedFacultyId}
             >
               <ButtonText>Finalizar</ButtonText>
             </Button>
