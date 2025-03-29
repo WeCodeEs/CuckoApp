@@ -128,6 +128,7 @@ const ProfileScreen = () => {
               onCancelEdit={() => {}}
             />
             <InputSelect 
+              key={currentFacultyIdLabel}
               initialValue={currentFacultyIdLabel}
               editable={true}
               headingText="Escuela"
