@@ -354,7 +354,6 @@ export async function updateUserProfile(userUuid: string, data: Partial<User>): 
 
     if (data.name !== undefined) {
       body.name = data.name;
-      console.log
     }
     if (data.lastName !== undefined) {
       body.lastName = data.lastName;
@@ -369,27 +368,28 @@ export async function updateUserProfile(userUuid: string, data: Partial<User>): 
       body.phone = data.phone;
     }
 
-    console.log("Llamada a update-user-profile con el body:",body);
-
     const { data: res, error } = await supabaseClient.functions.invoke("update-user-profile", {
       body,
     });
 
-    if (error instanceof FunctionsHttpError) {
-      const errorMessage = await error.context.json();
-      console.error("Function returned an error:", errorMessage);
-    } else if (error instanceof FunctionsRelayError) {
-      console.error("Relay error:", error.message);
-    } else if (error instanceof FunctionsFetchError) {
-      console.error("Fetch error:", error.message);
+    if (error) {
+      let errorMessage: string = "Error desconocido";
+      if (error instanceof FunctionsHttpError) {
+        errorMessage = JSON.stringify(await error.context.json());
+      } else if (error instanceof FunctionsRelayError || error instanceof FunctionsFetchError) {
+        errorMessage = error.message;
+      }
+      console.error("Error en updateUserProfile:", errorMessage);
+      throw new Error(errorMessage);
     }
 
     return res;
   } catch (error) {
     console.error("Error al llamar updateUserProfile:", error);
-    return null;
+    throw error;
   }
 }
+
 
 export async function fetchUserProfile(uuid: string): Promise<User | null> {
   try {

@@ -39,11 +39,27 @@ const RegistrationForm = () => {
 
   useEffect(() => {
     async function loadFaculties() {
-      const result = await fetchFacultiesFromDB();
-      setFaculties(result);
+      try {
+        const result = await fetchFacultiesFromDB();
+        setFaculties(result);
+      } catch (error) {
+        toast.show({
+          id: "fetch-faculties-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Ha habido un error cargando las facultades."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      }
     }
     loadFaculties();
   }, []);
+  
   
   const facultyIdOptions = faculties.map(f => ({
     label: f.name,
@@ -72,9 +88,7 @@ const RegistrationForm = () => {
 
   const handleNavigation = async () => {
     if (!isValidEmail(email)) return;
-    console.log("Llamando a UpdateUser desde registrationForm.tsx")
     try {
-      console.log("Se llama a updateUser desde registrationForm")
       await updateUser({
         email,
         facultyId: selectedFacultyId,
@@ -85,7 +99,7 @@ const RegistrationForm = () => {
     } catch (error) {
       toast.show({
         id: "registration-error",
-        placement: 'top',
+        placement: "top",
         duration: 5000,
         render: ({ id }) => (
           <ErrorToast
@@ -96,7 +110,7 @@ const RegistrationForm = () => {
         ),
       });
     }
-  };
+  };  
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -124,6 +138,7 @@ const RegistrationForm = () => {
                   headingText="Correo"
                   placeholder="nombre@mail.com"
                   onEditComplete={(newValue) => setEmailLocal(newValue)}
+                  onTextChange={(newValue) => setEmailLocal(newValue)}
                   onCancelEdit={() => {}}
                 />
               </View>

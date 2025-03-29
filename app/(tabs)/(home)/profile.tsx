@@ -17,6 +17,8 @@ import { isValidPhoneNumber, sanitizePhoneNumber, sanitizeLada } from '@/constan
 import { useUser } from '@/contexts/UserContext';
 import { fetchFacultiesFromDB } from "@/constants/api";
 import { Faculty } from '@/constants/types';
+import { useToast } from "@/components/ui/toast";
+import ErrorToast from "@/components/ErrorToast";
 
 
 const ProfileScreen = () => {
@@ -45,13 +47,31 @@ const ProfileScreen = () => {
   const [phoneLocal, setPhoneLocal] = useState<string>(initialPhone);
   const [showModal, setShowModal] = useState(false);
   const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const toast = useToast();
 
   useEffect(() => {
     (async () => {
-      const result = await fetchFacultiesFromDB();
-      setFaculties(result);
+      try {
+        const result = await fetchFacultiesFromDB();
+        setFaculties(result);
+      } catch (error) {
+        toast.show({
+          id: "fetch-faculties-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Ha habido un error cargando las facultades."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      }
     })();
   }, []);
+  
+
 
   const handleLadaChange = (newLada: string) => {
     setLadaLocal(sanitizeLada(newLada));
@@ -60,6 +80,77 @@ const ProfileScreen = () => {
   const handlePhoneChange = (newPhone: string) => {
     setPhoneLocal(sanitizePhoneNumber(newPhone));
   };
+
+  const handleEmailUpdate = async (newEmail: string) => {
+    try {
+      await setEmail(newEmail);
+      toast.show({
+        id: "profile-email-success",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            variant="success"
+            message="El correo electrónico se actualizó correctamente."
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    } catch (error) {
+      toast.show({
+        id: "profile-email-error",
+        placement: "top",
+        duration: 5000,
+        render: ({ id }) => (
+          <ErrorToast
+            id={id}
+            message="Ha habido un error actualizando el correo electrónico."
+            onClose={() => toast.close(id)}
+          />
+        ),
+      });
+    }
+  };
+  
+  const handleFacultyUpdate = async (selectedLabel: string) => {
+    const selectedOption = facultyIdOptions.find(
+      (option) => option.label === selectedLabel
+    );
+    if (selectedOption) {
+      try {
+        await setFacultyId(selectedOption.value);
+        toast.show({
+          id: "profile-faculty-success",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              variant="success"
+              message="La escuela se actualizó correctamente."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      } catch (error) {
+        toast.show({
+          id: "profile-faculty-error",
+          placement: "top",
+          duration: 5000,
+          render: ({ id }) => (
+            <ErrorToast
+              id={id}
+              message="Ha habido un error actualizando la escuela."
+              onClose={() => toast.close(id)}
+            />
+          ),
+        });
+      }
+    }
+  };
+  
+  
 
   const handlePhoneSave = (newPhone: string) => {
     if (isValidPhoneNumber(newPhone)) {
@@ -124,7 +215,7 @@ const ProfileScreen = () => {
               editable={true}
               isEmail={true}
               headingText={"Correo"}
-              onEditComplete={(email) => setEmail(email)}
+              onEditComplete={(email) => handleEmailUpdate(email)}
               onCancelEdit={() => {}}
             />
             <InputSelect 
@@ -134,10 +225,7 @@ const ProfileScreen = () => {
               headingText="Escuela"
               items={facultyIdOptions.map(option => option.label)}
               onEditComplete={(selectedLabel: string) => {
-                const selectedOption = facultyIdOptions.find(option => option.label === selectedLabel);
-                if (selectedOption) {
-                  setFacultyId(selectedOption.value);
-                }
+                handleFacultyUpdate(selectedLabel);
               }}
               onCancelEdit={() => {}}
             />

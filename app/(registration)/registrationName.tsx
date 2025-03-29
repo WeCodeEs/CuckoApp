@@ -55,16 +55,17 @@ const RegistrationName = () => {
               <Heading style={styles.title} size='2xl'>¡Genial!</Heading>
               <Text style={styles.text}>Ahora, dinos cómo te llamas...</Text>
               <View style={styles.field_container}>
-                <InputInfo
-                  initialValue={name}
-                  editable={true}
-                  alwaysEditable={true}
-                  isEmail={false}
-                  headingText="Nombre"
-                  placeholder="Juan Alejandro"
-                  onEditComplete={(newValue) => setNameLocal(newValue)}
-                  onCancelEdit={() => {}}
-                />
+              <InputInfo
+                initialValue={name}
+                editable={true}
+                alwaysEditable={true}
+                isEmail={false}
+                headingText="Nombre"
+                placeholder="Juan Alejandro"
+                onEditComplete={(newValue) => setNameLocal(newValue)}
+                onTextChange={(newValue) => setNameLocal(newValue)}
+                onCancelEdit={() => {}}
+              />
               </View>
               <View style={styles.field_container}>
                 <InputInfo
@@ -75,6 +76,7 @@ const RegistrationName = () => {
                   headingText="Apellidos"
                   placeholder="Pérez López"
                   onEditComplete={(newValue) => setLastNameLocal(newValue)}
+                  onTextChange={(newValue) => setLastNameLocal(newValue)}
                   onCancelEdit={() => {}}
                 />
               </View>
